@@ -92,6 +92,8 @@ const complaintSchema = new mongoose.Schema(
             upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
             upvoteCount: { type: Number, default: 0 },
             isEmergency: { type: Boolean, default: false },
+            aiPriorityReason: { type: String, trim: true, default: '' },
+            duplicateClusterCount: { type: Number, default: 0 },
             resolvedAt: { type: Date },
             dueDate: { type: Date },
             language: { type: String, default: 'en' },
@@ -113,6 +115,7 @@ complaintSchema.index({ citizen: 1, status: 1 });
 complaintSchema.index({ category: 1, status: 1 });
 complaintSchema.index({ assignedOfficer: 1 });
 complaintSchema.index({ createdAt: -1 });
+complaintSchema.index({ category: 1, 'location.coordinates.lat': 1, 'location.coordinates.lng': 1 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);
 export default Complaint;

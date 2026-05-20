@@ -32,6 +32,29 @@ const userSchema = new mongoose.Schema(
 
             // ── Admin fields ────────────────────────────────────────────────────────
             adminSecretVerified: { type: Boolean, default: false },
+            adminLevel: {
+                  type: String,
+                  enum: ['super_admin', 'department_admin'],
+                  default: 'super_admin',
+            },
+            managedDepartment: {
+                  type: String,
+                  enum: ['electricity', 'water_supply', 'roads_transport', 'sanitation', 'police', 'healthcare', 'municipal', 'education', ''],
+                  default: '',
+            },
+
+            // ── Officer workflow ────────────────────────────────────────────────────
+            officerStatus: {
+                  type: String,
+                  enum: ['pending', 'approved', 'rejected'],
+                  default: 'approved',
+            },
+            assignedArea: { type: String, trim: true, default: '' },
+            performanceStats: {
+                  complaintsResolved: { type: Number, default: 0 },
+                  complaintsAssigned: { type: Number, default: 0 },
+                  avgRating: { type: Number, default: 0 },
+            },
 
             // ── Shared ──────────────────────────────────────────────────────────────
             profileImage: { type: String, default: null },
@@ -61,7 +84,16 @@ userSchema.methods.matchPassword = async function (entered) {
 };
 
 userSchema.methods.getSignedJwtToken = function () {
-      return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+      return jwt.sign(
+            {
+                  id: this._id,
+                  role: this.role,
+                  adminLevel: this.adminLevel,
+                  managedDepartment: this.managedDepartment,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRE }
+      );
 };
 
 userSchema.methods.getResetPasswordToken = function () {

@@ -24,16 +24,20 @@ export const AuthProvider = ({ children }) => {
             if (!hasToken) return;
 
             let cancelled = false;
+
+            const timeoutId = setTimeout(() => {
+                  if (!cancelled) setInitializing(false);
+            }, 15000);
+
             const verifyAuth = async () => {
                   try {
-                        const { data } = await api.get('/auth/me');
+                        const { data } = await api.get('/auth/me', { silent: true });
                         if (!cancelled) {
                               setUser(data.user);
                               localStorage.setItem('user', JSON.stringify(data.user));
                         }
                   } catch {
                         if (!cancelled) {
-                              // Token invalid or backend down — clear it silently
                               localStorage.removeItem('token');
                               localStorage.removeItem('user');
                               setUser(null);
@@ -44,7 +48,10 @@ export const AuthProvider = ({ children }) => {
             };
 
             verifyAuth();
-            return () => { cancelled = true; };
+            return () => {
+                  cancelled = true;
+                  clearTimeout(timeoutId);
+            };
       }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
       const login = useCallback(async (email, password) => {

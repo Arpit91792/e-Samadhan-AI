@@ -1,7 +1,9 @@
 import Complaint from '../models/Complaint.js';
 import Department from '../models/Department.js';
+import User from '../models/User.js';
 import Notification from '../models/Notification.js';
-import { notifyStatusUpdate } from '../services/notificationService.js';
+import { notifyStatusUpdate, notifyComplaintAssigned } from '../services/notificationService.js';
+import { emitComplaintUpdate } from '../socket/index.js';
 import { validateStatusUpdate } from '../validators/complaintValidator.js';
 
 // @desc  Get officer dashboard
@@ -12,7 +14,8 @@ export const getOfficerDashboard = async (req, res, next) => {
             const dept = await Department.findOne({ slug: req.user.department });
             const deptFilter = dept ? { department: dept._id } : { assignedOfficer: req.user._id };
 
-            const [assigned, inProgress, resolved, overdue, recent] = await Promise.all([
+            const [pending, assigned, inProgress, resolved, overdue, recent] = await Promise.all([
+                  Complaint.countDocuments({ ...deptFilter, status: 'pending' }),
                   Complaint.countDocuments({ ...deptFilter, status: 'assigned' }),
                   Complaint.countDocuments({ ...deptFilter, status: 'in_progress' }),
                   Complaint.countDocuments({ ...deptFilter, status: 'resolved' }),
@@ -33,7 +36,7 @@ export const getOfficerDashboard = async (req, res, next) => {
                   success: true,
                   dashboard: {
                         stats: {
-                              assigned, inProgress, resolved, overdue, total,
+                              pending, assigned, inProgress, resolved, overdue, total,
                               resolutionRate: total > 0 ? ((resolved / total) * 100).toFixed(1) : 0,
                         },
                         department: dept,
@@ -78,6 +81,34 @@ export const getAssignedComplaints = async (req, res, next) => {
       } catch (error) { next(error); }
 };
 
+// @desc  Accept complaint (assign to self)
+// @route PUT /api/officer/complaints/:id/accept
+export const acceptComplaint = async (req, res, next) => {
+      try {
+            const complaint = await Complaint.findById(req.params.id).populate('citizen', 'name _id');
+            if (!complaint) return res.status(404).json({ success: false, message: 'Complaint not found' });
+
+            const dept = await Department.findOne({ slug: req.user.department });
+            if (dept && complaint.department?.toString() !== dept._id.toString()) {
+                  return res.status(403).json({ success: false, message: 'Complaint is outside your department' });
+            }
+
+            complaint.assignedOfficer = req.user._id;
+            complaint.status = 'assigned';
+            complaint.timeline.push({
+                  status: 'assigned',
+                  note: `Accepted by officer ${req.user.name}`,
+                  updatedBy: req.user._id,
+            });
+            await complaint.save();
+
+            await notifyStatusUpdate(complaint.citizen._id, complaint._id, complaint.title, 'assigned', complaint);
+            emitComplaintUpdate(complaint.citizen._id, complaint, { event: 'accepted' });
+
+            res.status(200).json({ success: true, message: 'Complaint accepted', complaint });
+      } catch (error) { next(error); }
+};
+
 // @desc  Update complaint status
 // @route PUT /api/officer/complaints/:id/status
 // @access Private (officer)
@@ -105,7 +136,14 @@ export const updateComplaintStatus = async (req, res, next) => {
             });
             await complaint.save();
 
-            await notifyStatusUpdate(complaint.citizen._id, complaint._id, complaint.title, status);
+            await notifyStatusUpdate(complaint.citizen._id, complaint._id, complaint.title, status, complaint);
+            emitComplaintUpdate(complaint.citizen._id, complaint, { event: 'status_change', note });
+
+            if (status === 'resolved' && req.user._id) {
+                  await User.findByIdAndUpdate(req.user._id, {
+                        $inc: { 'performanceStats.complaintsResolved': 1 },
+                  });
+            }
 
             res.status(200).json({ success: true, message: `Complaint marked as "${status}"`, complaint });
       } catch (error) { next(error); }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, Building2, IdCard, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, Building2, Contact, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
 import { FormField, PasswordStrength, OTPSection } from './FormField';
@@ -158,9 +158,9 @@ export default function OfficerSignup({ onBack }) {
                                           </select>
                                           {errors.department && <p className="mt-1 text-xs text-red-500">{errors.department}</p>}
                                     </div>
-                                    <FormField label="Employee ID" icon={IdCard} required error={errors.employeeId}
+                                    <FormField label="Employee ID" icon={Contact} required error={errors.employeeId}
                                           value={form.employeeId} onChange={e => set('employeeId', e.target.value)} placeholder="EMP-2025-XXXXX" />
-                                    <FormField label="Government ID Number" icon={IdCard} error={errors.governmentId}
+                                    <FormField label="Government ID Number" icon={Contact} error={errors.governmentId}
                                           value={form.governmentId} onChange={e => set('governmentId', e.target.value)} placeholder="Official ID number" />
                                     <div>
                                           <label className="block text-sm font-semibold text-gray-700 mb-1.5">Upload Government ID <span className="text-gray-400 font-normal">(optional)</span></label>

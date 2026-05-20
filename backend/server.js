@@ -1,8 +1,9 @@
-// ── Load env FIRST ────────────────────────────────────────────────────────────
-import dotenv from 'dotenv';
-dotenv.config();
+// ── Env + Mongoose setup MUST be first (before models / routes) ───────────────
+import './config/loadEnv.js';
+import './config/mongooseSetup.js';
 
 import express from 'express';
+import http from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -12,16 +13,25 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 
-import connectDB from './config/db.js';
+import connectDB, { isDbConnected, getDbStateLabel } from './config/db.js';
+import clearDatabase from './config/clearDB.js';
+import { printEnvReport } from './config/validateEnv.js';
 import { verifyEmailConnection } from './utils/sendEmail.js';
 import errorHandler from './middleware/errorHandler.js';
+
+printEnvReport();
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 import authRoutes from './routes/authRoutes.js';
 import complaintRoutes from './routes/complaintRoutes.js';
+import citizenComplaintRoutes from './routes/citizenComplaintRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import officerRoutes from './routes/officerRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import documentRoutes from './routes/documentRoutes.js';
+import faceRoutes from './routes/faceRoutes.js';
+import livenessRoutes from './routes/livenessRoutes.js';
+import { initSocket } from './socket/index.js';
 
 // ── Register all Mongoose models ──────────────────────────────────────────────
 import './models/User.js';
@@ -32,9 +42,21 @@ import './models/OTP.js';
 import './models/AuditLog.js';
 import './models/Feedback.js';
 import './models/Verification.js';
+import './models/LivenessSession.js';
+import './models/LivenessAttempt.js';
+import { cleanupLivenessData, autoResetOnStartup } from './services/livenessAttempts.js';
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-connectDB();
+// ── Database must connect before accepting traffic ───────────────────────────
+const dbReady = await connectDB();
+if (!dbReady) {
+      console.error('\n🛑 Server startup aborted: MongoDB is required.\n');
+      console.error('   Fix MONGO_URI / Atlas network access, then restart.\n');
+      process.exit(1);
+}
+
+await clearDatabase();
+await autoResetOnStartup();
+await cleanupLivenessData();
 verifyEmailConnection();
 
 const app = express();
@@ -87,23 +109,35 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ── API Routes ────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => res.send('API Running'));
+
 app.use('/api/auth', authRoutes);
+// Citizen dashboard stats — register before /api/complaints to avoid /:id conflicts
+app.use('/api/complaints/citizen', citizenComplaintRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/officer', officerRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/face', faceRoutes);
+app.use('/api/liveness', livenessRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-      res.status(200).json({
-            success: true,
-            message: '✅ e-Samadhan AI API is running',
+      const dbConnected = isDbConnected();
+      res.status(dbConnected ? 200 : 503).json({
+            success: dbConnected,
+            message: dbConnected
+                  ? '✅ e-Samadhan AI API is running'
+                  : 'API running but database is disconnected',
+            database: { connected: dbConnected, state: getDbStateLabel() },
             environment: process.env.NODE_ENV,
             timestamp: new Date().toISOString(),
             version: '2.0.0',
             endpoints: {
                   auth: '/api/auth',
                   complaints: '/api/complaints',
+                  citizenStats: '/api/complaints/citizen/stats',
                   admin: '/api/admin',
                   officer: '/api/officer',
                   notifications: '/api/notifications',
@@ -121,16 +155,31 @@ app.use(errorHandler);
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT) || 5000;
-const server = app.listen(PORT, () => {
+const httpServer = http.createServer(app);
+initSocket(httpServer);
+
+httpServer.listen(PORT, () => {
       console.log('\n┌─────────────────────────────────────────────────┐');
       console.log(`│  🚀 e-Samadhan AI Server v2.0                    │`);
       console.log(`│  📡 http://localhost:${PORT}/api                    │`);
+      console.log(`│  🗄️  MongoDB: connected                          │`);
+      console.log(`│  🔌 Socket.io real-time enabled                  │`);
       console.log(`│  ❤️  http://localhost:${PORT}/api/health             │`);
       console.log(`│  🌍 Mode: ${(process.env.NODE_ENV || 'development').padEnd(38)}│`);
       console.log('└─────────────────────────────────────────────────┘\n');
+      console.log(`Server running on port ${PORT}`);
 });
 
 process.on('unhandledRejection', (err) => {
-      console.error(`\n❌ Unhandled Rejection: ${err.message}`);
-      server.close(() => process.exit(1));
+      console.error(`\n❌ Unhandled Rejection: ${err?.message || err}`);
+      if (process.env.NODE_ENV === 'production') {
+            httpServer.close(() => process.exit(1));
+      }
+});
+
+process.on('uncaughtException', (err) => {
+      console.error(`\n❌ Uncaught Exception: ${err?.message || err}`);
+      if (process.env.NODE_ENV === 'production') {
+            process.exit(1);
+      }
 });

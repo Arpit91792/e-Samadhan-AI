@@ -1,8 +1,10 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, RoleRoute, PublicRoute } from './components/auth/ProtectedRoute';
+import RoutePageLoader from './components/ui/PageLoader';
+import { lazyWithRetry } from './utils/lazyWithRetry';
 
 // ─── Landing page — eager loaded (always shown first) ─────────────────────────
 import Navbar from './components/Navbar';
@@ -17,24 +19,14 @@ import CTA from './components/CTA';
 import Footer from './components/Footer';
 
 // ─── Auth & Dashboard pages — lazy loaded ─────────────────────────────────────
-const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-const SignupPage = lazy(() => import('./pages/auth/SignupPage'));
-const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPasswordPage'));
-const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPasswordPage'));
-const CitizenDashboard = lazy(() => import('./pages/dashboards/CitizenDashboard'));
-const OfficerDashboard = lazy(() => import('./pages/dashboards/OfficerDashboard'));
-const AdminDashboard = lazy(() => import('./pages/dashboards/AdminDashboard'));
-const UnauthorizedPage = lazy(() => import('./pages/UnauthorizedPage'));
-
-// ─── Page loading fallback ────────────────────────────────────────────────────
-const PageLoader = () => (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-            <div className="flex flex-col items-center gap-4">
-                  <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-                  <p className="text-sm text-gray-500 font-medium">Loading...</p>
-            </div>
-      </div>
-);
+const LoginPage = lazyWithRetry(() => import('./pages/auth/LoginPage'), 'LoginPage');
+const SignupPage = lazyWithRetry(() => import('./pages/auth/SignupPage'), 'SignupPage');
+const ForgotPasswordPage = lazyWithRetry(() => import('./pages/auth/ForgotPasswordPage'), 'ForgotPasswordPage');
+const ResetPasswordPage = lazyWithRetry(() => import('./pages/auth/ResetPasswordPage'), 'ResetPasswordPage');
+const CitizenDashboard = lazyWithRetry(() => import('./pages/dashboards/CitizenDashboard'), 'CitizenDashboard');
+const OfficerDashboard = lazyWithRetry(() => import('./pages/dashboards/OfficerDashboard'), 'OfficerDashboard');
+const AdminDashboard = lazyWithRetry(() => import('./pages/dashboards/AdminDashboard'), 'AdminDashboard');
+const UnauthorizedPage = lazyWithRetry(() => import('./pages/UnauthorizedPage'), 'UnauthorizedPage');
 
 // ─── Landing page ─────────────────────────────────────────────────────────────
 function LandingPage() {
@@ -78,7 +70,7 @@ export default function App() {
             <BrowserRouter>
                   <AuthProvider>
                         <Toaster position="top-right" toastOptions={toastOptions} />
-                        <Suspense fallback={<PageLoader />}>
+                        <Suspense fallback={<RoutePageLoader />}>
                               <Routes>
                                     {/* Landing */}
                                     <Route path="/" element={<LandingPage />} />

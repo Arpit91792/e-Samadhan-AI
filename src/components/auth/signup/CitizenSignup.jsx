@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Phone, MapPin, Building2, IdCard, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Building2, Contact, ArrowLeft, ArrowRight, Loader2, Camera, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
 import { FormField, PasswordStrength, OTPSection } from './FormField';
-import WebcamCapture from './WebcamCapture';
+import LiveFaceCapture from './LiveFaceCapture';
 
 const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu & Kashmir', 'Ladakh'];
 const GOVT_IDS = [
@@ -16,7 +16,7 @@ const GOVT_IDS = [
       { value: 'passport', label: 'Passport' },
 ];
 
-const STEPS = ['Personal Info', 'Address & ID', 'Verification'];
+const STEPS = ['Personal Info', 'Address & ID', 'Face Verification', 'Email Verification'];
 
 export default function CitizenSignup({ onBack }) {
       const navigate = useNavigate();
@@ -25,6 +25,7 @@ export default function CitizenSignup({ onBack }) {
       const [loading, setLoading] = useState(false);
       const [otpVerified, setOtpVerified] = useState(false);
       const [liveImage, setLiveImage] = useState(null);
+      const [liveImageConfirmed, setLiveImageConfirmed] = useState(false);
       const [errors, setErrors] = useState({});
 
       const [form, setForm] = useState({
@@ -53,19 +54,44 @@ export default function CitizenSignup({ onBack }) {
                   if (!form.state) e.state = 'Select your state';
                   if (!form.govtIdNumber.trim()) e.govtIdNumber = 'Government ID number is required';
             }
+            // ✅ MANDATORY: Face capture required
             if (step === 2) {
+                  if (!liveImage || !liveImageConfirmed) {
+                        e.face = 'Live face verification is mandatory. Please capture your selfie.';
+                  }
+            }
+            if (step === 3) {
                   if (!otpVerified) e.otp = 'Please verify your email with OTP';
             }
             setErrors(e);
             return Object.keys(e).length === 0;
       };
 
-      const next = () => { if (validateStep()) setStep(s => s + 1); };
+      const next = () => {
+            if (validateStep()) {
+                  setStep(s => s + 1);
+                  setErrors({});
+            } else {
+                  if (step === 2 && (!liveImage || !liveImageConfirmed)) {
+                        toast.error('⚠️ Live face verification is mandatory. Please capture your selfie.');
+                  } else {
+                        toast.error('Please complete all required fields');
+                  }
+            }
+      };
       const prev = () => setStep(s => s - 1);
 
       const handleSubmit = async (e) => {
             e.preventDefault();
             if (!validateStep()) return;
+
+            // ✅ Double-check mandatory face verification
+            if (!liveImage || !liveImageConfirmed) {
+                  toast.error('⚠️ Live face verification is mandatory to complete registration.');
+                  setStep(2);
+                  return;
+            }
+
             setLoading(true);
             try {
                   const fd = new FormData();
@@ -189,7 +215,7 @@ export default function CitizenSignup({ onBack }) {
                                                 {GOVT_IDS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
                                           </select>
                                     </div>
-                                    <FormField label="Government ID Number" icon={IdCard} required error={errors.govtIdNumber}
+                                    <FormField label="Government ID Number" icon={Contact} required error={errors.govtIdNumber}
                                           value={form.govtIdNumber} onChange={e => set('govtIdNumber', e.target.value)}
                                           placeholder={form.govtIdType === 'aadhaar' ? '12-digit Aadhaar' : 'Enter ID number'} />
                                     <div>
@@ -201,10 +227,56 @@ export default function CitizenSignup({ onBack }) {
                               </motion.div>
                         )}
 
-                        {/* ── Step 2: Verification ── */}
+                        {/* ── Step 2: Face Verification ── */}
                         {step === 2 && (
                               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-                                    <WebcamCapture label="Live Selfie Capture (optional)" onCapture={setLiveImage} />
+                                    {/* Mandatory Warning */}
+                                    <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg flex gap-3">
+                                          <Camera className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                                          <div>
+                                                <p className="font-semibold text-blue-900 text-sm">Face Verification Required</p>
+                                                <p className="text-xs text-blue-700 mt-1">You must capture a live selfie to complete your registration. This is a mandatory security requirement for government identity verification.</p>
+                                          </div>
+                                    </div>
+
+                                    {/* Live Face Capture Component */}
+                                    <LiveFaceCapture
+                                          onCapture={setLiveImage}
+                                          onConfirm={() => setLiveImageConfirmed(true)}
+                                          label="📸 Live Face Verification"
+                                          required={true}
+                                          showIsMandatory={true}
+                                    />
+
+                                    {/* Error message if not captured */}
+                                    {errors.face && (
+                                          <motion.div
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="p-3 bg-red-50 border border-red-200 rounded-lg flex gap-2 items-start"
+                                          >
+                                                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                                                <p className="text-xs text-red-700 font-medium">{errors.face}</p>
+                                          </motion.div>
+                                    )}
+
+                                    {/* Status Indicator */}
+                                    {liveImageConfirmed && (
+                                          <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex gap-2 items-start"
+                                          >
+                                                <div className="w-2 h-2 rounded-full bg-emerald-600 mt-1.5 flex-shrink-0" />
+                                                <p className="text-xs text-emerald-700 font-medium">✅ Face verification complete. You can proceed to email verification.</p>
+                                          </motion.div>
+                                    )}
+                              </motion.div>
+                        )}
+
+                        {/* ── Step 3: Email Verification ── */}
+                        {step === 3 && (
+                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                                     <OTPSection email={form.email} onVerified={() => setOtpVerified(true)} />
                                     {errors.otp && <p className="text-xs text-red-500">{errors.otp}</p>}
                               </motion.div>
@@ -220,12 +292,13 @@ export default function CitizenSignup({ onBack }) {
                               )}
                               {step < STEPS.length - 1 ? (
                                     <button type="button" onClick={next}
-                                          className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl shadow-lg text-sm flex items-center justify-center gap-2">
+                                          disabled={step === 2 && (!liveImage || !liveImageConfirmed)}
+                                          className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl shadow-lg text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
                                           Next <ArrowRight className="w-4 h-4" />
                                     </button>
                               ) : (
-                                    <button type="submit" disabled={loading}
-                                          className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl shadow-lg text-sm flex items-center justify-center gap-2 disabled:opacity-70">
+                                    <button type="submit" disabled={loading || !liveImage || !liveImageConfirmed}
+                                          className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl shadow-lg text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
                                           {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</> : <>Create Account <ArrowRight className="w-4 h-4" /></>}
                                     </button>
                               )}

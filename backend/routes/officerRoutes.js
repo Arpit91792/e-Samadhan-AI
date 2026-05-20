@@ -1,7 +1,7 @@
 import express from 'express';
 import {
       getOfficerDashboard, getAssignedComplaints,
-      updateComplaintStatus, addNote, getPerformance,
+      acceptComplaint, updateComplaintStatus, addNote, getPerformance,
 } from '../controllers/officerController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -12,6 +12,7 @@ router.use(protect, authorize('officer', 'admin'));
 
 router.get('/dashboard', getOfficerDashboard);
 router.get('/complaints', getAssignedComplaints);
+router.put('/complaints/:id/accept', acceptComplaint);
 router.put('/complaints/:id/status', updateComplaintStatus);
 router.post('/complaints/:id/note', addNote);
 router.get('/performance', getPerformance);

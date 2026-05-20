@@ -62,13 +62,28 @@ export const isEmergency = (text) => {
 // ── Full AI analysis of a complaint ──────────────────────────────────────────
 export const analyzeComplaint = (title, description) => {
       const fullText = `${title} ${description}`;
+      const suggestedPriority = detectPriority(fullText);
+      const emergency = isEmergency(fullText);
+      const reasons = [];
+      if (emergency) reasons.push('Emergency keywords detected in description');
+      else if (suggestedPriority === 'high') reasons.push('High-severity keywords detected');
+      else if (suggestedPriority === 'medium') reasons.push('Standard grievance — medium priority');
+      else reasons.push('Low-priority / suggestion-type complaint');
+
       return {
             suggestedCategory: detectCategory(fullText),
-            suggestedPriority: detectPriority(fullText),
-            isEmergency: isEmergency(fullText),
+            suggestedPriority: emergency ? 'emergency' : suggestedPriority,
+            isEmergency: emergency,
+            aiPriorityReason: reasons.join('. '),
             confidence: 'rule-based',
             analyzedAt: new Date().toISOString(),
       };
+};
+
+export const buildAiPriorityReason = (ai, duplicateResult) => {
+      const parts = [ai.aiPriorityReason];
+      if (duplicateResult?.reason) parts.push(duplicateResult.reason);
+      return parts.filter(Boolean).join(' · ');
 };
 
 // ── Generate complaint ID ─────────────────────────────────────────────────────

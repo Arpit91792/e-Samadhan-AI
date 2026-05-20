@@ -1,4 +1,5 @@
 import Notification from '../models/Notification.js';
+import { emitComplaintUpdate, emitNotification } from '../socket/index.js';
 
 // ── Create and save a notification ───────────────────────────────────────────
 export const createNotification = async ({
@@ -18,6 +19,16 @@ export const createNotification = async ({
                   complaint,
                   channels,
             });
+            if (notification) {
+                  emitNotification(recipient, {
+                        _id: notification._id,
+                        type,
+                        title,
+                        message,
+                        complaint,
+                        createdAt: notification.createdAt,
+                  });
+            }
             return notification;
       } catch (err) {
             console.error('Notification create error:', err.message);
@@ -68,21 +79,30 @@ export const notifyComplaintAssigned = async (officerId, complaintId, complaintT
       });
 };
 
-export const notifyStatusUpdate = async (citizenId, complaintId, complaintTitle, newStatus) => {
+export const notifyStatusUpdate = async (citizenId, complaintId, complaintTitle, newStatus, complaintDoc = null) => {
       const statusMessages = {
-            assigned: 'has been assigned to an officer',
+            assigned: 'has been accepted by an officer',
             in_progress: 'is now being worked on',
-            resolved: 'has been resolved',
+            resolved: 'has been solved',
             closed: 'has been closed',
             rejected: 'has been rejected',
+            pending: 'is pending review',
       };
-      return createNotification({
+      const notif = await createNotification({
             recipient: citizenId,
             type: 'status_update',
             title: 'Complaint Status Updated',
             message: `Your complaint "${complaintTitle}" ${statusMessages[newStatus] || 'has been updated'}.`,
             complaint: complaintId,
       });
+      emitComplaintUpdate(citizenId, complaintDoc || {
+            _id: complaintId,
+            complaintId: null,
+            status: newStatus,
+            priority: null,
+            title: complaintTitle,
+      }, { event: 'status_update', newStatus });
+      return notif;
 };
 
 export const notifyEscalation = async (officerId, complaintId, complaintTitle) => {

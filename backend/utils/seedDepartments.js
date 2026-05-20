@@ -39,13 +39,20 @@ const seedDB = async () => {
                         email: 'admin@esamadhan.gov.in',
                         password: 'Admin@1234',
                         role: 'admin',
+                        adminLevel: 'super_admin',
+                        managedDepartment: '',
+                        adminSecretVerified: true,
                         phone: '9000000000',
                         isEmailVerified: true,
                         isActive: true,
                   });
                   console.log('  ✔ Admin user created: admin@esamadhan.gov.in / Admin@1234');
             } else {
-                  console.log('  ℹ Admin user already exists');
+                  await User.updateMany(
+                        { role: 'admin', $or: [{ adminLevel: { $exists: false } }, { adminLevel: null }] },
+                        { $set: { adminLevel: 'super_admin', managedDepartment: '' } }
+                  );
+                  console.log('  ℹ Admin user already exists (super_admin ensured)');
             }
 
             console.log('\n🎉 Database seeded successfully!\n');

@@ -1,43 +1,75 @@
 import User from '../models/User.js';
 import Complaint from '../models/Complaint.js';
 import Department from '../models/Department.js';
-import Notification from '../models/Notification.js';
 import AuditLog from '../models/AuditLog.js';
+import { buildComplaintFilter, buildOfficerFilter } from '../utils/adminScope.js';
 
-// @desc  Get dashboard stats
+// @desc  Get dashboard stats (scoped by department for dept admins)
 // @route GET /api/admin/dashboard
 // @access Private (admin)
 export const getDashboard = async (req, res, next) => {
       try {
+            const scope = req.adminScope;
+            const complaintFilter = await buildComplaintFilter(scope);
+            const officerFilter = buildOfficerFilter(scope, { officerStatus: 'approved', isActive: true });
+
             const [
-                  totalUsers, totalCitizens, totalOfficers,
-                  totalComplaints, resolvedComplaints, pendingComplaints, emergencyComplaints,
-                  departments, recentComplaints, recentUsers,
+                  totalComplaints,
+                  resolvedComplaints,
+                  pendingComplaints,
+                  inProgressComplaints,
+                  emergencyComplaints,
+                  escalatedComplaints,
+                  activeOfficers,
+                  pendingOfficers,
+                  departments,
+                  recentComplaints,
+                  recentUsers,
             ] = await Promise.all([
-                  User.countDocuments({ isActive: true }),
-                  User.countDocuments({ role: 'citizen', isActive: true }),
-                  User.countDocuments({ role: 'officer', isActive: true }),
-                  Complaint.countDocuments(),
-                  Complaint.countDocuments({ status: 'resolved' }),
-                  Complaint.countDocuments({ status: { $in: ['pending', 'assigned', 'in_progress'] } }),
-                  Complaint.countDocuments({ isEmergency: true }),
-                  Department.find({ isActive: true }).select('name slug stats color icon'),
-                  Complaint.find().sort({ createdAt: -1 }).limit(10)
+                  Complaint.countDocuments(complaintFilter),
+                  Complaint.countDocuments({ ...complaintFilter, status: { $in: ['resolved', 'closed'] } }),
+                  Complaint.countDocuments({ ...complaintFilter, status: 'pending' }),
+                  Complaint.countDocuments({ ...complaintFilter, status: { $in: ['assigned', 'in_progress'] } }),
+                  Complaint.countDocuments({ ...complaintFilter, isEmergency: true }),
+                  Complaint.countDocuments({
+                        ...complaintFilter,
+                        status: { $nin: ['resolved', 'closed', 'rejected'] },
+                        createdAt: { $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+                  }),
+                  User.countDocuments(officerFilter),
+                  User.countDocuments(buildOfficerFilter(scope, { officerStatus: 'pending' })),
+                  scope.isSuper
+                        ? Department.find({ isActive: true }).select('name slug stats color icon')
+                        : Department.find({ slug: scope.departmentSlug }).select('name slug stats color icon'),
+                  Complaint.find(complaintFilter).sort({ createdAt: -1 }).limit(10)
                         .populate('citizen', 'name email')
-                        .populate('department', 'name'),
-                  User.find().sort({ createdAt: -1 }).limit(5).select('name email role createdAt'),
+                        .populate('department', 'name slug'),
+                  scope.isSuper
+                        ? User.find().sort({ createdAt: -1 }).limit(5).select('name email role createdAt')
+                        : User.find(buildOfficerFilter(scope)).sort({ createdAt: -1 }).limit(5).select('name email role createdAt'),
             ]);
+
+            const dept = scope.department || departments[0] || null;
 
             res.status(200).json({
                   success: true,
+                  scope: {
+                        isSuper: scope.isSuper,
+                        departmentSlug: scope.departmentSlug,
+                        departmentName: dept?.name || 'Platform',
+                  },
                   dashboard: {
-                        users: { total: totalUsers, citizens: totalCitizens, officers: totalOfficers },
                         complaints: {
-                              total: totalComplaints, resolved: resolvedComplaints,
-                              pending: pendingComplaints, emergency: emergencyComplaints,
+                              total: totalComplaints,
+                              resolved: resolvedComplaints,
+                              pending: pendingComplaints,
+                              inProgress: inProgressComplaints,
+                              emergency: emergencyComplaints,
+                              escalated: escalatedComplaints,
                               resolutionRate: totalComplaints > 0
                                     ? ((resolvedComplaints / totalComplaints) * 100).toFixed(1) : 0,
                         },
+                        officers: { active: activeOfficers, pendingApproval: pendingOfficers },
                         departments,
                         recentComplaints,
                         recentUsers,
@@ -82,9 +114,13 @@ export const getAllUsers = async (req, res, next) => {
 // @access Private (admin)
 export const toggleUserStatus = async (req, res, next) => {
       try {
+            const scope = req.adminScope;
             const user = await User.findById(req.params.id);
             if (!user) return res.status(404).json({ success: false, message: 'User not found' });
             if (user.role === 'admin') return res.status(403).json({ success: false, message: 'Cannot deactivate admin accounts' });
+            if (!scope.isSuper && user.role === 'officer' && user.department !== scope.departmentSlug) {
+                  return res.status(403).json({ success: false, message: 'Officer is outside your department' });
+            }
 
             user.isActive = !user.isActive;
             await user.save({ validateBeforeSave: false });
@@ -111,7 +147,9 @@ export const toggleUserStatus = async (req, res, next) => {
 // @access Private (admin)
 export const getDepartments = async (req, res, next) => {
       try {
-            const departments = await Department.find()
+            const scope = req.adminScope;
+            const query = scope.isSuper ? {} : { slug: scope.departmentSlug };
+            const departments = await Department.find(query)
                   .populate('headOfficer', 'name email')
                   .sort({ name: 1 });
             res.status(200).json({ success: true, departments });
@@ -162,7 +200,10 @@ export const getAuditLogs = async (req, res, next) => {
 // @access Private (admin)
 export const getPlatformAnalytics = async (req, res, next) => {
       try {
+            const scope = req.adminScope;
+            const complaintFilter = await buildComplaintFilter(scope);
             const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            const matchStage = { ...complaintFilter, createdAt: { $gte: thirtyDaysAgo } };
 
             const [
                   complaintsByDay,
@@ -172,21 +213,27 @@ export const getPlatformAnalytics = async (req, res, next) => {
                   topDepts,
             ] = await Promise.all([
                   Complaint.aggregate([
-                        { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+                        { $match: matchStage },
                         { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
                         { $sort: { _id: 1 } },
                   ]),
-                  Complaint.aggregate([{ $group: { _id: '$category', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
-                  Complaint.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
                   Complaint.aggregate([
-                        { $match: { status: 'resolved', resolvedAt: { $exists: true } } },
+                        { $match: complaintFilter },
+                        { $group: { _id: '$category', count: { $sum: 1 } } },
+                        { $sort: { count: -1 } },
+                  ]),
+                  Complaint.aggregate([
+                        { $match: complaintFilter },
+                        { $group: { _id: '$status', count: { $sum: 1 } } },
+                  ]),
+                  Complaint.aggregate([
+                        { $match: { ...complaintFilter, status: 'resolved', resolvedAt: { $exists: true } } },
                         { $project: { hours: { $divide: [{ $subtract: ['$resolvedAt', '$createdAt'] }, 3600000] } } },
                         { $group: { _id: null, avgHours: { $avg: '$hours' } } },
                   ]),
-                  Department.find({ isActive: true })
-                        .select('name stats color')
-                        .sort({ 'stats.resolvedComplaints': -1 })
-                        .limit(5),
+                  scope.isSuper
+                        ? Department.find({ isActive: true }).select('name stats color').sort({ 'stats.resolvedComplaints': -1 }).limit(8)
+                        : Department.find({ slug: scope.departmentSlug }).select('name stats color'),
             ]);
 
             res.status(200).json({

@@ -20,7 +20,15 @@ const verificationSchema = new mongoose.Schema(
                   verifiedAt: { type: Date },
                   rejectedReason: { type: String },
             },
-            // Face / liveness verification
+            // AI liveness verification (anti-spoof)
+            liveness: {
+                  sessionId: { type: String },
+                  imageUrl: { type: String },
+                  status: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },
+                  verifiedAt: { type: Date },
+                  confidence: { type: Number },
+                  completedActions: [{ type: String }],
+            },
             face: {
                   imageUrl: { type: String },
                   status: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },

@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "server": "cd backend && npm run dev"
+    "server": "cd backend && npm run dev",
+    "download-models": "node scripts/downloadModels.js"
   },
   "dependencies": {
+    "@vladmandic/face-api": "^1.7.15",
     "axios": "^1.16.0",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.395.0",
@@ -22,7 +24,10 @@
     "react-hot-toast": "^2.6.0",
     "react-intersection-observer": "^9.10.3",
     "react-router-dom": "^6.30.3",
-    "react-webcam": "^7.2.0"
+    "react-webcam": "^7.2.0",
+    "recharts": "^3.8.1",
+    "socket.io-client": "^4.8.3",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

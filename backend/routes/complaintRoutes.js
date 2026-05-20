@@ -2,7 +2,7 @@ import express from 'express';
 import {
       fileComplaint, getComplaints, getComplaint,
       updateStatus, assignComplaint, upvoteComplaint,
-      submitFeedback, getAnalytics,
+      submitFeedback, getAnalytics, analyzeComplaintText,
 } from '../controllers/complaintController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { complaintUpload } from '../services/uploadService.js';
@@ -14,6 +14,7 @@ router.use(protect);
 
 // Analytics (officer + admin only) — must be before /:id
 router.get('/analytics', authorize('officer', 'admin'), getAnalytics);
+router.post('/analyze', analyzeComplaintText);
 
 // CRUD
 router.post('/', authorize('citizen'), complaintUpload.array('attachments', 5), fileComplaint);

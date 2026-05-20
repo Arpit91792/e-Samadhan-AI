@@ -31,3 +31,9 @@ export const submitFeedback = (id, rating, comment) =>
 // ── Analytics ─────────────────────────────────────────────────────────────────
 export const getComplaintAnalytics = () =>
       api.get('/complaints/analytics');
+
+export const getCitizenStats = () =>
+      api.get('/complaints/citizen/stats', { silent: true });
+
+export const analyzeComplaint = (title, description) =>
+      api.post('/complaints/analyze', { title, description });

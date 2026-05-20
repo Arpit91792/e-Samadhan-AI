@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import User from '../models/User.js';
 import OTP from '../models/OTP.js';
+import LivenessSession from '../models/LivenessSession.js';
 import sendToken from '../utils/sendToken.js';
 import sendEmail, { forgotPasswordEmail } from '../utils/sendEmail.js';
 
@@ -39,6 +40,40 @@ export const register = async (req, res, next) => {
                   }
             }
 
+            // ✅ MANDATORY: Citizens must pass AI liveness verification
+            if (userRole === 'citizen') {
+                  const { livenessSessionId } = req.body;
+                  if (!livenessSessionId) {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'AI liveness verification is mandatory. Complete live face checks before registration.',
+                        });
+                  }
+                  const liveness = await LivenessSession.findOne({
+                        sessionId: livenessSessionId,
+                        verificationStatus: 'verified',
+                        livenessVerified: true,
+                  });
+                  if (!liveness) {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'Invalid or incomplete liveness verification. Please complete live verification again.',
+                        });
+                  }
+                  if (liveness.email && liveness.email !== email?.toLowerCase()) {
+                        return res.status(403).json({
+                              success: false,
+                              message: 'Liveness session does not match registration email.',
+                        });
+                  }
+                  if (!req.files?.liveImage?.[0]) {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'Live capture image is required after liveness verification.',
+                        });
+                  }
+            }
+
             // Build user data
             const userData = { name, email, password, role: userRole, phone };
 
@@ -46,10 +81,18 @@ export const register = async (req, res, next) => {
                   Object.assign(userData, { address, city, state, govtIdType, govtIdNumber });
             }
             if (userRole === 'officer') {
-                  Object.assign(userData, { department, employeeId, governmentId });
+                  Object.assign(userData, {
+                        department,
+                        employeeId,
+                        governmentId,
+                        officerStatus: 'pending',
+                        isActive: false,
+                  });
             }
             if (userRole === 'admin') {
                   userData.adminSecretVerified = true;
+                  userData.adminLevel = 'super_admin';
+                  userData.managedDepartment = '';
             }
 
             // File uploads

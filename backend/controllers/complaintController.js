@@ -2,7 +2,8 @@ import Complaint from '../models/Complaint.js';
 import Department from '../models/Department.js';
 import User from '../models/User.js';
 import { validateComplaint, validateStatusUpdate } from '../validators/complaintValidator.js';
-import { analyzeComplaint, generateComplaintId } from '../services/aiService.js';
+import { analyzeComplaint, buildAiPriorityReason, generateComplaintId } from '../services/aiService.js';
+import { checkDuplicateCluster, mergePriorityWithDuplicate } from '../services/duplicateDetection.js';
 import {
       notifyComplaintFiled,
       notifyComplaintAssigned,
@@ -19,21 +20,9 @@ export const fileComplaint = async (req, res, next) => {
             const { isValid, errors } = validateComplaint({ title, description, category });
             if (!isValid) return res.status(400).json({ success: false, message: 'Validation failed', errors });
 
-            // AI analysis
+            // AI analysis — citizen cannot override priority
             const ai = analyzeComplaint(title, description);
             const finalCategory = category || ai.suggestedCategory;
-            const finalPriority = ai.suggestedPriority;
-
-            // Find matching department
-            const dept = await Department.findOne({ slug: finalCategory, isActive: true });
-
-            // Build complaint
-            const complaintId = await generateComplaintId(Complaint);
-            const attachments = req.files?.map(f => ({
-                  url: `/uploads/complaints/${f.filename}`,
-                  filename: f.originalname,
-                  mimetype: f.mimetype,
-            })) || [];
 
             let parsedLocation = {};
             if (location) {
@@ -41,13 +30,36 @@ export const fileComplaint = async (req, res, next) => {
                   catch { /* ignore */ }
             }
 
+            const duplicateResult = await checkDuplicateCluster({
+                  category: finalCategory,
+                  coordinates: parsedLocation?.coordinates,
+            });
+            const finalPriority = mergePriorityWithDuplicate(
+                  ai.suggestedPriority,
+                  duplicateResult,
+                  ai.isEmergency
+            );
+            const aiPriorityReason = buildAiPriorityReason(ai, duplicateResult);
+
+            // Find matching department
+            const dept = await Department.findOne({ slug: finalCategory, isActive: true });
+
+            const complaintId = await generateComplaintId(Complaint);
+            const attachments = req.files?.map(f => ({
+                  url: `/uploads/complaints/${f.filename}`,
+                  filename: f.originalname,
+                  mimetype: f.mimetype,
+            })) || [];
+
             const complaint = await Complaint.create({
                   complaintId,
                   title: title.trim(),
                   description: description.trim(),
                   category: finalCategory,
                   priority: finalPriority,
-                  isEmergency: ai.isEmergency,
+                  isEmergency: ai.isEmergency || duplicateResult.boostPriority,
+                  aiPriorityReason,
+                  duplicateClusterCount: duplicateResult.duplicateCount,
                   citizen: req.user._id,
                   department: dept?._id || null,
                   location: parsedLocation,
@@ -78,7 +90,9 @@ export const fileComplaint = async (req, res, next) => {
                         priority: complaint.priority,
                         category: complaint.category,
                         isEmergency: complaint.isEmergency,
-                        aiAnalysis: ai,
+                        aiPriorityReason: complaint.aiPriorityReason,
+                        duplicateClusterCount: complaint.duplicateClusterCount,
+                        aiAnalysis: { ...ai, finalPriority, duplicateResult },
                         createdAt: complaint.createdAt,
                   },
             });
@@ -99,8 +113,11 @@ export const getComplaints = async (req, res, next) => {
             } else if (req.user.role === 'officer') {
                   const dept = await Department.findOne({ slug: req.user.department });
                   if (dept) query.department = dept._id;
+            } else if (req.user.role === 'admin') {
+                  const { getAdminScope, buildComplaintFilter } = await import('../utils/adminScope.js');
+                  const scope = await getAdminScope(req.user);
+                  Object.assign(query, await buildComplaintFilter(scope));
             }
-            // admin sees all
 
             if (status) query.status = status;
             if (category) query.category = category;
@@ -191,7 +208,7 @@ export const updateStatus = async (req, res, next) => {
             }
 
             // Notify citizen
-            await notifyStatusUpdate(complaint.citizen._id, complaint._id, complaint.title, status);
+            await notifyStatusUpdate(complaint.citizen._id, complaint._id, complaint.title, status, complaint);
 
             res.status(200).json({ success: true, message: `Status updated to "${status}"`, complaint });
       } catch (error) { next(error); }
@@ -279,6 +296,53 @@ export const submitFeedback = async (req, res, next) => {
             await complaint.save();
 
             res.status(200).json({ success: true, message: 'Feedback submitted. Thank you!', feedback: complaint.feedback });
+      } catch (error) { next(error); }
+};
+
+// @desc  Citizen dashboard stats
+// @route GET /api/complaints/citizen/stats
+// @access Private (citizen)
+export const getCitizenStats = async (req, res, next) => {
+      try {
+            const citizenId = req.user._id;
+            const base = { citizen: citizenId };
+
+            const [total, pending, inProgress, resolved, emergency, recent] = await Promise.all([
+                  Complaint.countDocuments(base),
+                  Complaint.countDocuments({ ...base, status: 'pending' }),
+                  Complaint.countDocuments({ ...base, status: { $in: ['assigned', 'in_progress'] } }),
+                  Complaint.countDocuments({ ...base, status: { $in: ['resolved', 'closed'] } }),
+                  Complaint.countDocuments({ ...base, isEmergency: true }),
+                  Complaint.find(base)
+                        .sort({ createdAt: -1 })
+                        .limit(5)
+                        .populate('department', 'name slug')
+                        .select('complaintId title status priority category createdAt isEmergency'),
+            ]);
+
+            const stats = { total, pending, inProgress, resolved, emergency };
+
+            res.status(200).json({
+                  success: true,
+                  total,
+                  pending,
+                  resolved,
+                  inProgress,
+                  emergency,
+                  stats,
+                  recent,
+            });
+      } catch (error) { next(error); }
+};
+
+// @desc  AI analyze complaint text (preview before submit)
+// @route POST /api/complaints/analyze
+// @access Private
+export const analyzeComplaintText = async (req, res, next) => {
+      try {
+            const { title = '', description = '' } = req.body;
+            const analysis = analyzeComplaint(title, description);
+            res.status(200).json({ success: true, analysis });
       } catch (error) { next(error); }
 };
 
