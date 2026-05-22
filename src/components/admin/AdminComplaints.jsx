@@ -17,13 +17,17 @@ export default function AdminComplaints() {
             setLoading(true);
             Promise.all([
                   getAdminComplaints({ status: status || undefined, limit: 50 }),
-                  getAdminOfficers({ status: 'approved', limit: 100 }),
+                  getAdminOfficers(),
             ])
                   .then(([cRes, oRes]) => {
                         setComplaints(cRes.data.complaints || []);
-                        setOfficers(oRes.data.officers || []);
+                        // API returns { success, data: [...] }
+                        setOfficers(oRes.data.data || []);
                   })
-                  .catch(() => toast.error('Failed to load complaints'))
+                  .catch((err) => {
+                        console.error('Load complaints error:', err?.response?.data || err.message);
+                        toast.error(err?.response?.data?.message || 'Failed to load complaints');
+                  })
                   .finally(() => setLoading(false));
       };
 

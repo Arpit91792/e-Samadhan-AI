@@ -1,11 +1,10 @@
 import React from 'react';
 import {
       LayoutDashboard, FileText, Users, BarChart3, Siren,
-      Shield, LogOut, Zap, UserCog,
+      LogOut, Zap,
 } from 'lucide-react';
-import { isSuperAdmin } from '../../utils/departmentMeta';
 
-const BASE_NAV = [
+const NAV_ITEMS = [
       { id: 'home', label: 'Dashboard', icon: LayoutDashboard },
       { id: 'complaints', label: 'Complaints', icon: FileText },
       { id: 'officers', label: 'Officers', icon: Users },
@@ -13,15 +12,7 @@ const BASE_NAV = [
       { id: 'analytics', label: 'Analytics', icon: BarChart3 },
 ];
 
-const SUPER_NAV = [
-      { id: 'dept-admins', label: 'Dept Admins', icon: UserCog },
-      { id: 'departments', label: 'Departments', icon: Shield },
-];
-
 export default function AdminSidebar({ active, onNavigate, user, onLogout, mobileOpen, onClose, departmentName }) {
-      const superAdmin = isSuperAdmin(user);
-      const nav = superAdmin ? [...BASE_NAV, ...SUPER_NAV] : BASE_NAV;
-
       return (
             <>
                   {mobileOpen && (
@@ -36,14 +27,14 @@ export default function AdminSidebar({ active, onNavigate, user, onLogout, mobil
                                     <div>
                                           <p className="font-black text-white text-sm">e-Samadhan AI</p>
                                           <p className="text-[10px] text-red-300 font-semibold">
-                                                {superAdmin ? 'Super Admin' : departmentName}
+                                                {departmentName}
                                           </p>
                                     </div>
                               </div>
                         </div>
 
                         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-                              {nav.map((item) => (
+                              {NAV_ITEMS.map((item) => (
                                     <button
                                           key={item.id}
                                           type="button"
@@ -66,7 +57,7 @@ export default function AdminSidebar({ active, onNavigate, user, onLogout, mobil
                                     </div>
                                     <div className="min-w-0">
                                           <p className="text-sm font-bold text-white truncate">{user?.name}</p>
-                                          <p className="text-[10px] text-red-300">{superAdmin ? 'Full access' : 'Dept admin'}</p>
+                                          <p className="text-[10px] text-red-300">Department Admin</p>
                                     </div>
                               </div>
                               <button type="button" onClick={onLogout} className="w-full flex items-center justify-center gap-2 py-2.5 text-red-400 hover:bg-red-500/10 rounded-xl text-sm font-semibold">

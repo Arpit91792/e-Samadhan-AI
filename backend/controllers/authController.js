@@ -4,6 +4,7 @@ import OTP from '../models/OTP.js';
 import LivenessSession from '../models/LivenessSession.js';
 import sendToken from '../utils/sendToken.js';
 import sendEmail, { forgotPasswordEmail } from '../utils/sendEmail.js';
+import { resolveDepartmentSlug } from '../utils/departmentResolve.js';
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY || 'ESAMADHAN_ADMIN_2025';
 
@@ -33,11 +34,39 @@ export const register = async (req, res, next) => {
             const validRoles = ['citizen', 'officer', 'admin'];
             const userRole = validRoles.includes(role) ? role : 'citizen';
 
-            // Admin secret check
+            if (userRole === 'officer') {
+                  return res.status(400).json({
+                        success: false,
+                        message: 'Officer registration must be completed through /api/officer/register after your department admin creates your account.',
+                        code: 'OFFICER_REGISTRATION_BLOCKED',
+                  });
+            }
+
+            // Admin secret + department (required for department-based access)
             if (userRole === 'admin') {
-                  if (adminSecretKey !== ADMIN_SECRET) {
-                        return res.status(403).json({ success: false, message: 'Invalid Admin Secret Key' });
+                  if (!department?.trim()) {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'Please select department',
+                              code: 'DEPARTMENT_REQUIRED',
+                        });
                   }
+                  const departmentSlug = resolveDepartmentSlug(department);
+                  if (!departmentSlug) {
+                        return res.status(400).json({
+                              success: false,
+                              message: 'Invalid department selected',
+                              code: 'INVALID_DEPARTMENT',
+                        });
+                  }
+                  if (adminSecretKey !== ADMIN_SECRET) {
+                        return res.status(403).json({
+                              success: false,
+                              message: 'Invalid Admin Secret Key',
+                              code: 'INVALID_SECRET',
+                        });
+                  }
+                  req._adminDepartmentSlug = departmentSlug;
             }
 
             // ✅ MANDATORY: Citizens must pass AI liveness verification
@@ -91,8 +120,8 @@ export const register = async (req, res, next) => {
             }
             if (userRole === 'admin') {
                   userData.adminSecretVerified = true;
-                  userData.adminLevel = 'super_admin';
-                  userData.managedDepartment = '';
+                  userData.adminLevel = 'department_admin';
+                  userData.managedDepartment = req._adminDepartmentSlug || resolveDepartmentSlug(department) || '';
             }
 
             // File uploads
@@ -155,11 +184,30 @@ export const logout = async (req, res, next) => {
       } catch (error) { next(error); }
 };
 
-// @desc  Get me
+// @desc  Get me (citizen, officer, admin, or legacy user admin)
 // @route GET /api/auth/me
 export const getMe = async (req, res, next) => {
       try {
-            const user = await User.findById(req.user.id);
+            const u = req.user;
+            if (!u) {
+                  return res.status(401).json({ success: false, message: 'Not authorized' });
+            }
+            const user = {
+                  _id: u._id,
+                  id: u._id || u.id,
+                  name: u.name,
+                  email: u.email,
+                  role: u.role,
+                  phone: u.phone || u.mobile,
+                  department: u.department,
+                  managedDepartment: u.managedDepartment || u.department,
+                  employeeId: u.employeeId,
+                  adminLevel: u.adminLevel,
+                  officerStatus: u.officerStatus,
+                  profileImage: u.profileImage,
+                  isEmailVerified: u.isEmailVerified,
+                  createdAt: u.createdAt,
+            };
             res.status(200).json({ success: true, user });
       } catch (error) { next(error); }
 };

@@ -17,5 +17,28 @@ export const deptTheme = (slug) => {
       return themes[slug] || { gradient: 'from-blue-600 to-violet-700', accent: 'text-blue-300' };
 };
 
-export const isSuperAdmin = (user) =>
-      user?.role === 'admin' && (!user?.adminLevel || user.adminLevel === 'super_admin');
+export const isSuperAdmin = () => false; // No super admin in this system
+
+/** Department login dropdown — spec order, no "other" */
+export const ADMIN_LOGIN_DEPARTMENTS = [
+      { value: 'police', label: 'Police' },
+      { value: 'electricity', label: 'Electricity' },
+      { value: 'water_supply', label: 'Water Supply' },
+      { value: 'healthcare', label: 'Healthcare' },
+      { value: 'roads_transport', label: 'Roads & Transport' },
+      { value: 'municipal', label: 'Municipal Services' },
+      { value: 'sanitation', label: 'Sanitation' },
+      { value: 'education', label: 'Education' },
+];
+
+const ADMIN_DEPT_SLUGS = new Set(ADMIN_LOGIN_DEPARTMENTS.map((d) => d.value));
+
+/** Department dashboard URL, e.g. /admin/police/dashboard */
+export const getAdminDashboardPath = (departmentSlug) => {
+      if (!departmentSlug || !ADMIN_DEPT_SLUGS.has(departmentSlug)) {
+            return '/admin/dashboard';
+      }
+      return `/admin/${departmentSlug}/dashboard`;
+};
+
+export const isValidAdminDepartment = (slug) => ADMIN_DEPT_SLUGS.has(slug);

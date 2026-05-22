@@ -3,9 +3,10 @@ import toast from 'react-hot-toast';
 import { retry, isRetryableError } from '../utils/retry';
 import { getErrorMessage, isAuthError, isNetworkError, parseApiResponse } from '../utils/apiErrors';
 import { logError } from '../utils/monitoring';
+import { isAuthFresh } from '../utils/authStorage';
 
-const AUTH_PATHS = ['/login', '/signup', '/forgot-password', '/reset-password'];
-const SILENT_PATHS = ['/auth/me', '/health', '/complaints/citizen/stats', '/admin/dashboard', '/admin/analytics'];
+const AUTH_PATHS = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login', '/admin/register'];
+const SILENT_PATHS = ['/auth/me', '/health', '/complaints/citizen/stats', '/admin/', '/officer/'];
 
 const isAuthPage = () => {
       const path = window.location.pathname;
@@ -35,6 +36,15 @@ api.interceptors.request.use(
       },
       (error) => Promise.reject(error)
 );
+
+// Keep default Authorization header in sync when token is saved
+export function setAxiosAuthToken(token) {
+      if (token) {
+            api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      } else {
+            delete api.defaults.headers.common.Authorization;
+      }
+}
 
 api.interceptors.response.use(
       (response) => {
@@ -70,13 +80,27 @@ api.interceptors.response.use(
             }
 
             if (error.response?.status === 401) {
-                  localStorage.removeItem('token');
-                  localStorage.removeItem('user');
-                  if (!isAuthPage()) {
-                        if (!isSilentRequest(config)) {
-                              toast.error(getErrorMessage(error, 'Session expired. Please sign in again.'));
-                        }
-                        window.location.href = '/login';
+                  const url = config?.url || '';
+                  const isAdminApi = url.includes('/admin/');
+                  // Do NOT wipe session on silent/admin API failures (common after login when dashboard loads)
+                  const skipClear =
+                        config?.skipSessionClear === true
+                        || isSilentRequest(config)
+                        || isAdminApi
+                        || isAuthFresh();
+
+                  if (!skipClear) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        localStorage.removeItem('admin');
+                        sessionStorage.removeItem('authFresh');
+                        sessionStorage.removeItem('adminDepartment');
+                        window.dispatchEvent(new CustomEvent('auth:session-expired', {
+                              detail: { path: window.location.pathname },
+                        }));
+                  }
+                  if (!isAuthPage() && !skipClear && !isSilentRequest(config)) {
+                        toast.error(getErrorMessage(error, 'Session expired. Please sign in again.'));
                   }
             } else if (!isSilentRequest(config) && !isAuthError(error)) {
                   const message = getErrorMessage(error);

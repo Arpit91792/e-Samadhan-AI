@@ -34,19 +34,7 @@ const seedDB = async () => {
             // Create admin user if not exists
             const adminExists = await User.findOne({ role: 'admin' });
             if (!adminExists) {
-                  await User.create({
-                        name: 'Super Admin',
-                        email: 'admin@esamadhan.gov.in',
-                        password: 'Admin@1234',
-                        role: 'admin',
-                        adminLevel: 'super_admin',
-                        managedDepartment: '',
-                        adminSecretVerified: true,
-                        phone: '9000000000',
-                        isEmailVerified: true,
-                        isActive: true,
-                  });
-                  console.log('  ✔ Admin user created: admin@esamadhan.gov.in / Admin@1234');
+                  console.log('  ℹ No super admin needed - use /api/admin/register for department admins');
             } else {
                   await User.updateMany(
                         { role: 'admin', $or: [{ adminLevel: { $exists: false } }, { adminLevel: null }] },

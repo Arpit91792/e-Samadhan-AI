@@ -19,6 +19,7 @@ export function useSocket(handlers = {}) {
 
             socket.on('complaint:update', (payload) => handlersRef.current.onComplaintUpdate?.(payload));
             socket.on('notification:new', (payload) => handlersRef.current.onNotification?.(payload));
+            socket.on('admin:alert', (payload) => handlersRef.current.onAdminAlert?.(payload));
 
             return () => {
                   socket.disconnect();

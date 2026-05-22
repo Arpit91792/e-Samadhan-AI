@@ -19,6 +19,10 @@ import { printEnvReport } from './config/validateEnv.js';
 import { verifyEmailConnection } from './utils/sendEmail.js';
 import errorHandler from './middleware/errorHandler.js';
 
+// ── Dev database system ───────────────────────────────────────────────────────
+import initializeDatabase from './utils/dbInitializer.js';
+import { registerShutdownHandlers } from './utils/shutdownHandler.js';
+
 printEnvReport();
 
 // ── Routes ────────────────────────────────────────────────────────────────────
@@ -35,6 +39,8 @@ import { initSocket } from './socket/index.js';
 
 // ── Register all Mongoose models ──────────────────────────────────────────────
 import './models/User.js';
+import './models/Admin.js';
+import './models/Officer.js';
 import './models/Complaint.js';
 import './models/Department.js';
 import './models/Notification.js';
@@ -54,6 +60,11 @@ if (!dbReady) {
       process.exit(1);
 }
 
+// ── Temporary Development Database System ────────────────────────────────────
+// Runs startup initializer: creates folders, resets DB if DEV_RESET_DATABASE=true
+await initializeDatabase();
+
+// ── Legacy clear + liveness cleanup ──────────────────────────────────────────
 await clearDatabase();
 await autoResetOnStartup();
 await cleanupLivenessData();
@@ -62,8 +73,8 @@ verifyEmailConnection();
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// ── Ensure upload dirs exist ──────────────────────────────────────────────────
-['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids'].forEach(dir => {
+// ── Ensure upload dirs exist (also handled by initializeDatabase) ─────────────
+['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids', 'uploads/liveness', 'uploads/ids'].forEach(dir => {
       const full = path.join(__dirname, dir);
       if (!fs.existsSync(full)) fs.mkdirSync(full, { recursive: true });
 });
@@ -75,7 +86,7 @@ app.use(cors({
       origin: process.env.CLIENT_URL || 'http://localhost:5173',
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Department'],
 }));
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
@@ -95,6 +106,8 @@ const authLimiter = rateLimit({
 
 app.use('/api/', globalLimiter);
 app.use('/api/auth/login', authLimiter);
+app.use('/api/admin/login', authLimiter);
+app.use('/api/admin/register', authLimiter);
 app.use('/api/auth/register', authLimiter);
 app.use('/api/auth/send-otp', authLimiter);
 app.use('/api/auth/forgot-password', authLimiter);
@@ -132,6 +145,11 @@ app.get('/api/health', (req, res) => {
                   : 'API running but database is disconnected',
             database: { connected: dbConnected, state: getDbStateLabel() },
             environment: process.env.NODE_ENV,
+            devMode: {
+                  enabled: process.env.NODE_ENV === 'development',
+                  autoReset: process.env.DEV_RESET_DATABASE === 'true',
+                  dataErasedOnShutdown: process.env.NODE_ENV === 'development',
+            },
             timestamp: new Date().toISOString(),
             version: '2.0.0',
             endpoints: {
@@ -159,27 +177,23 @@ const httpServer = http.createServer(app);
 initSocket(httpServer);
 
 httpServer.listen(PORT, () => {
-      console.log('\n┌─────────────────────────────────────────────────┐');
-      console.log(`│  🚀 e-Samadhan AI Server v2.0                    │`);
-      console.log(`│  📡 http://localhost:${PORT}/api                    │`);
-      console.log(`│  🗄️  MongoDB: connected                          │`);
-      console.log(`│  🔌 Socket.io real-time enabled                  │`);
-      console.log(`│  ❤️  http://localhost:${PORT}/api/health             │`);
-      console.log(`│  🌍 Mode: ${(process.env.NODE_ENV || 'development').padEnd(38)}│`);
-      console.log('└─────────────────────────────────────────────────┘\n');
+      const isDev = process.env.NODE_ENV === 'development';
+      const autoReset = process.env.DEV_RESET_DATABASE === 'true';
+
+      console.log('\n┌─────────────────────────────────────────────────────┐');
+      console.log('│  🚀 e-Samadhan AI Server v2.0                        │');
+      console.log(`│  📡 http://localhost:${PORT}/api                        │`);
+      console.log(`│  🗄️  MongoDB: connected                              │`);
+      console.log(`│  🔌 Socket.io real-time enabled                      │`);
+      console.log(`│  ❤️  http://localhost:${PORT}/api/health                 │`);
+      console.log(`│  🌍 Mode: ${(process.env.NODE_ENV || 'development').padEnd(42)}│`);
+      if (isDev) {
+            console.log(`│  🔧 Temp DB: ${autoReset ? '✅ Auto-reset ON ' : '⏸️  Auto-reset OFF'}                        │`);
+            console.log('│  🗑️  Data erased automatically on shutdown           │');
+      }
+      console.log('└─────────────────────────────────────────────────────┘\n');
       console.log(`Server running on port ${PORT}`);
 });
 
-process.on('unhandledRejection', (err) => {
-      console.error(`\n❌ Unhandled Rejection: ${err?.message || err}`);
-      if (process.env.NODE_ENV === 'production') {
-            httpServer.close(() => process.exit(1));
-      }
-});
-
-process.on('uncaughtException', (err) => {
-      console.error(`\n❌ Uncaught Exception: ${err?.message || err}`);
-      if (process.env.NODE_ENV === 'production') {
-            process.exit(1);
-      }
-});
+// ── Register graceful shutdown (erases all dev data on Ctrl+C / stop) ────────
+registerShutdownHandlers(httpServer);

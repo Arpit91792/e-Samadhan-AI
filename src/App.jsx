@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
-import { ProtectedRoute, RoleRoute, PublicRoute } from './components/auth/ProtectedRoute';
+import { ProtectedRoute, RoleRoute, PublicRoute, AdminPublicRoute, AdminRoleRoute } from './components/auth/ProtectedRoute';
 import RoutePageLoader from './components/ui/PageLoader';
 import { lazyWithRetry } from './utils/lazyWithRetry';
 
@@ -25,7 +25,11 @@ const ForgotPasswordPage = lazyWithRetry(() => import('./pages/auth/ForgotPasswo
 const ResetPasswordPage = lazyWithRetry(() => import('./pages/auth/ResetPasswordPage'), 'ResetPasswordPage');
 const CitizenDashboard = lazyWithRetry(() => import('./pages/dashboards/CitizenDashboard'), 'CitizenDashboard');
 const OfficerDashboard = lazyWithRetry(() => import('./pages/dashboards/OfficerDashboard'), 'OfficerDashboard');
+const AdminLoginPage = lazyWithRetry(() => import('./pages/auth/AdminLoginPage'), 'AdminLoginPage');
+const AdminRegisterPage = lazyWithRetry(() => import('./pages/auth/AdminRegisterPage'), 'AdminRegisterPage');
 const AdminDashboard = lazyWithRetry(() => import('./pages/dashboards/AdminDashboard'), 'AdminDashboard');
+const AdminDashboardRedirect = lazyWithRetry(() => import('./components/auth/AdminDashboardRedirect'), 'AdminDashboardRedirect');
+const OfficerRegisterPage = lazyWithRetry(() => import('./pages/auth/OfficerRegisterPage'), 'OfficerRegisterPage');
 const UnauthorizedPage = lazyWithRetry(() => import('./pages/UnauthorizedPage'), 'UnauthorizedPage');
 
 // ─── Landing page ─────────────────────────────────────────────────────────────
@@ -77,9 +81,12 @@ export default function App() {
 
                                     {/* Auth — redirect away if already logged in */}
                                     <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+                                    <Route path="/admin/login" element={<AdminPublicRoute><AdminLoginPage /></AdminPublicRoute>} />
+                                    <Route path="/admin/register" element={<AdminPublicRoute><AdminRegisterPage /></AdminPublicRoute>} />
                                     <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
                                     <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
                                     <Route path="/reset-password/:token" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
+                                    <Route path="/officer/register" element={<PublicRoute><OfficerRegisterPage /></PublicRoute>} />
 
                                     {/* Protected dashboards */}
                                     <Route path="/citizen/dashboard" element={
@@ -89,7 +96,10 @@ export default function App() {
                                           <RoleRoute roles={['officer']}><OfficerDashboard /></RoleRoute>
                                     } />
                                     <Route path="/admin/dashboard" element={
-                                          <RoleRoute roles={['admin']}><AdminDashboard /></RoleRoute>
+                                          <AdminRoleRoute><AdminDashboardRedirect /></AdminRoleRoute>
+                                    } />
+                                    <Route path="/admin/:department/dashboard" element={
+                                          <AdminRoleRoute><AdminDashboard /></AdminRoleRoute>
                                     } />
 
                                     <Route path="/unauthorized" element={<UnauthorizedPage />} />

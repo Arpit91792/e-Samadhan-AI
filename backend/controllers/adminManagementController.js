@@ -13,6 +13,7 @@ import {
 } from '../utils/adminScope.js';
 import { generateEmployeeId } from '../utils/employeeId.js';
 import { sendOfficerWelcomeEmail } from '../utils/officerEmail.js';
+import { emitAdminAlert } from '../socket/index.js';
 import crypto from 'crypto';
 
 // @desc  Department-scoped complaints
@@ -136,6 +137,13 @@ export const assignOfficerToComplaint = async (req, res, next) => {
                   complaint: complaint._id,
             });
 
+            emitAdminAlert(complaint.category, {
+                  type: 'complaint_assigned',
+                  complaintId: complaint.complaintId,
+                  title: complaint.title,
+                  status: complaint.status,
+            });
+
             res.status(200).json({ success: true, message: 'Officer assigned', complaint });
       } catch (error) { next(error); }
 };
@@ -171,6 +179,13 @@ export const updateComplaintStatusAdmin = async (req, res, next) => {
                         $inc: { 'performanceStats.complaintsResolved': 1 },
                   });
             }
+
+            emitAdminAlert(complaint.category, {
+                  type: 'status_updated',
+                  complaintId: complaint.complaintId,
+                  title: complaint.title,
+                  status: complaint.status,
+            });
 
             res.status(200).json({ success: true, message: 'Status updated', complaint });
       } catch (error) { next(error); }
@@ -260,20 +275,21 @@ export const getDepartmentAdmins = async (req, res, next) => {
 export const createOfficer = async (req, res, next) => {
       try {
             const scope = req.adminScope || await getAdminScope(req.user);
-            const { name, email, mobile, department } = req.body;
-            if (!name || !email || !mobile || !department) {
+            const { name, email, mobile } = req.body;
+            const department = req.admin?.department || req.user?.department || scope.departmentSlug;
+            const deptSlug = scope.isSuper ? department : (scope.departmentSlug || department);
+
+            if (!name || !email || !mobile) {
                   return res.status(400).json({
                         success: false,
-                        message: 'name, email, mobile, and department are required',
+                        message: 'name, email, and mobile are required',
                   });
             }
-
-            const deptSlug = department;
+            if (!deptSlug || !DEPT_SLUGS.includes(deptSlug)) {
+                  return res.status(400).json({ success: false, message: 'Invalid or missing department' });
+            }
             if (!scope.isSuper && deptSlug !== scope.departmentSlug) {
                   return res.status(403).json({ success: false, message: 'Cannot create officer outside your department' });
-            }
-            if (!DEPT_SLUGS.includes(deptSlug)) {
-                  return res.status(400).json({ success: false, message: 'Invalid department' });
             }
 
             const exists = await User.findOne({ email: email.toLowerCase() });

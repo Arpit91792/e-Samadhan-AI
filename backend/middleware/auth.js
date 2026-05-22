@@ -1,16 +1,20 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Admin from '../models/Admin.js';
+import Officer from '../models/Officer.js';
+import { resolveDepartmentSlug } from '../utils/departmentResolve.js';
 
-// ── Protect: verify JWT ───────────────────────────────────────────────────────
+function attachReqUser(req, payload) {
+      req.user = payload;
+}
+
+// ── Protect: verify JWT (User, Admin, or Officer) ─────────────────────────────
 export const protect = async (req, res, next) => {
       let token;
 
-      // 1. HTTP-only cookie
       if (req.cookies?.token) {
             token = req.cookies.token;
-      }
-      // 2. Authorization header
-      else if (req.headers.authorization?.startsWith('Bearer ')) {
+      } else if (req.headers.authorization?.startsWith('Bearer ')) {
             token = req.headers.authorization.split(' ')[1];
       }
 
@@ -20,8 +24,65 @@ export const protect = async (req, res, next) => {
 
       try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await User.findById(decoded.id).select('-password -aadhaarNumber -govtIdNumber');
 
+            if (decoded.role === 'officer') {
+                  const officer = await Officer.findById(decoded.id).select('-password');
+                  if (!officer) {
+                        return res.status(401).json({ success: false, message: 'Officer account no longer exists.' });
+                  }
+                  if (officer.banned) {
+                        return res.status(403).json({ success: false, message: 'Account deactivated. Contact support.' });
+                  }
+                  attachReqUser(req, {
+                        _id: officer._id,
+                        id: officer._id,
+                        name: officer.name,
+                        email: officer.email,
+                        phone: officer.mobile,
+                        mobile: officer.mobile,
+                        role: 'officer',
+                        department: officer.department,
+                        employeeId: officer.employeeId,
+                        isActive: true,
+                  });
+                  return next();
+            }
+
+            if (decoded.role === 'admin') {
+                  const admin = await Admin.findById(decoded.id).select('name email mobile department');
+                  if (admin) {
+                        const dept = resolveDepartmentSlug(admin.department) || admin.department;
+                        attachReqUser(req, {
+                              _id: admin._id,
+                              id: admin._id,
+                              name: admin.name,
+                              email: admin.email,
+                              phone: admin.mobile,
+                              mobile: admin.mobile,
+                              role: 'admin',
+                              department: dept,
+                              managedDepartment: dept,
+                              adminLevel: 'department_admin',
+                              isActive: true,
+                        });
+                        return next();
+                  }
+
+                  const userAdmin = await User.findById(decoded.id).select('-password -aadhaarNumber -govtIdNumber');
+                  if (userAdmin?.role === 'admin' && userAdmin.isActive !== false) {
+                        const dept = resolveDepartmentSlug(userAdmin.managedDepartment) || userAdmin.managedDepartment;
+                        attachReqUser(req, {
+                              ...userAdmin.toObject(),
+                              id: userAdmin._id,
+                              managedDepartment: dept || userAdmin.managedDepartment,
+                        });
+                        return next();
+                  }
+
+                  return res.status(401).json({ success: false, message: 'Admin account no longer exists.' });
+            }
+
+            const user = await User.findById(decoded.id).select('-password -aadhaarNumber -govtIdNumber');
             if (!user) {
                   return res.status(401).json({ success: false, message: 'User account no longer exists.' });
             }
@@ -29,7 +90,7 @@ export const protect = async (req, res, next) => {
                   return res.status(401).json({ success: false, message: 'Account deactivated. Contact support.' });
             }
 
-            req.user = user;
+            attachReqUser(req, { ...user.toObject(), id: user._id });
             next();
       } catch (err) {
             return res.status(401).json({
@@ -61,9 +122,15 @@ export const optionalAuth = async (req, res, next) => {
 
       try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await User.findById(decoded.id).select('-password');
+            if (decoded.role === 'officer') {
+                  req.user = await Officer.findById(decoded.id).select('-password');
+                  if (req.user) req.user = { ...req.user.toObject(), role: 'officer', id: req.user._id };
+            } else {
+                  req.user = await User.findById(decoded.id).select('-password');
+                  if (req.user) req.user = { ...req.user.toObject(), id: req.user._id };
+            }
       } catch {
-            // ignore — just proceed without user
+            // ignore
       }
       next();
 };

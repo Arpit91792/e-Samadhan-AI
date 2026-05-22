@@ -1,54 +1,53 @@
 import express from 'express';
 import {
-      getDashboard, getAllUsers, toggleUserStatus,
-      getDepartments, updateDepartment,
-      getAuditLogs, getPlatformAnalytics,
+  registerAdmin,
+  loginAdmin,
+  createOfficer,
+  getOfficers,
+  banOfficer,
+  getAdminProfile,
+  getAdminAnalytics,
+  getAdminComplaints,
+  assignOfficerToComplaint,
+  updateComplaintStatus,
+  getEmergencyComplaints,
+  getOfficerDetail,
+  toggleBlockOfficer,
+  updateOfficerStatus,
+  getOfficerAnalytics,
 } from '../controllers/adminController.js';
-import {
-      getAdminComplaints, getAdminOfficers, assignOfficerToComplaint,
-      updateComplaintStatusAdmin, createDepartmentAdmin, removeDepartmentAdmin,
-      getDepartmentAdmins, createOfficer, approveOfficer, rejectOfficer, generateOfficerEmployeeId,
-      blockOfficer, getEmergencyComplaints, sendDepartmentNotification,
-} from '../controllers/adminManagementController.js';
-import { protect, authorize } from '../middleware/auth.js';
-import { attachAdminScope } from '../utils/adminScope.js';
-import { requireSuperAdmin } from '../middleware/adminMiddleware.js';
+import { protectAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.use(protect, authorize('admin'), attachAdminScope);
+// Public — Admin auth
+router.post('/register', registerAdmin);
+router.post('/login', loginAdmin);
 
-// Dashboard & analytics
-router.get('/dashboard', getDashboard);
-router.get('/analytics', getPlatformAnalytics);
+// Protected — all routes below require admin auth
+router.use(protectAdmin);
 
-// Complaints & officers (department-scoped)
+router.get('/session-check', (req, res) => {
+  res.status(200).json({ success: true, admin: req.admin });
+});
+
+// Profile & analytics
+router.get('/profile', getAdminProfile);
+router.get('/analytics', getAdminAnalytics);
+router.get('/officer-analytics', getOfficerAnalytics);
+
+// Complaints
 router.get('/complaints', getAdminComplaints);
-router.get('/officers', getAdminOfficers);
-router.put('/assign-officer', assignOfficerToComplaint);
-router.put('/update-status', updateComplaintStatusAdmin);
 router.get('/emergencies', getEmergencyComplaints);
+router.put('/assign-officer', assignOfficerToComplaint);
+router.put('/update-status', updateComplaintStatus);
 
-// Officer workflow
+// Officers
 router.post('/create-officer', createOfficer);
-router.put('/officers/:id/approve', approveOfficer);
-router.put('/officers/:id/reject', rejectOfficer);
-router.post('/officers/:id/generate-id', generateOfficerEmployeeId);
-router.put('/officers/:id/block', blockOfficer);
-
-// Notifications
-router.post('/notifications', sendDepartmentNotification);
-
-// Super admin only
-router.post('/create-department-admin', requireSuperAdmin, createDepartmentAdmin);
-router.get('/department-admins', requireSuperAdmin, getDepartmentAdmins);
-router.delete('/department-admins/:id', requireSuperAdmin, removeDepartmentAdmin);
-
-// Users & departments
-router.get('/users', getAllUsers);
-router.put('/users/:id/toggle', toggleUserStatus);
-router.get('/departments', getDepartments);
-router.put('/departments/:id', requireSuperAdmin, updateDepartment);
-router.get('/audit-logs', requireSuperAdmin, getAuditLogs);
+router.get('/officers', getOfficers);
+router.get('/officers/:id', getOfficerDetail);
+router.put('/ban-officer/:id', banOfficer);
+router.put('/officers/:id/toggle-block', toggleBlockOfficer);
+router.put('/officers/:id/status', updateOfficerStatus);
 
 export default router;

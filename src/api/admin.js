@@ -1,40 +1,93 @@
 import api from './axios';
+import { readStoredToken, readStoredAuth } from '../utils/authStorage';
 
-export const getAdminDashboard = () => api.get('/admin/dashboard', { silent: true });
+/** Attach Bearer token + never wipe session on admin API errors */
+const adminConfig = (extra = {}) => {
+      const stored = readStoredAuth();
+      const dept =
+            stored?.managedDepartment
+            || stored?.department
+            || sessionStorage.getItem('adminDepartment')
+            || '';
 
-export const getAdminAnalytics = () => api.get('/admin/analytics', { silent: true });
+      return {
+            silent: true,
+            skipSessionClear: true,
+            headers: dept ? { 'X-Admin-Department': dept } : {},
+            ...extra,
+            headers: {
+                  ...(dept ? { 'X-Admin-Department': dept } : {}),
+                  ...(extra.headers || {}),
+            },
+      };
+};
 
-export const getAdminComplaints = (params) => api.get('/admin/complaints', { params });
+const adminGet = (url, config = {}) => api.get(url, adminConfig(config));
 
-export const getAdminOfficers = (params) => api.get('/admin/officers', { params });
+const adminMutate = (method, url, data, config = {}) =>
+      api.request({
+            method,
+            url,
+            data,
+            ...adminConfig(config),
+      });
+
+export const registerAdmin = (payload) =>
+      api.post('/admin/register', payload, adminConfig());
+
+export const adminLogin = (email, password, department) =>
+      api.post('/admin/login', { email, password, department }, adminConfig());
+
+export const getAdminProfile = () => adminGet('/admin/profile');
+
+/** Confirms token + admin are valid before opening officer UI */
+export const verifyAdminSession = () => adminGet('/admin/session-check');
+
+export const getAdminDashboard = () => adminGet('/admin/dashboard');
+
+export const getAdminAnalytics = () => adminGet('/admin/analytics');
+
+export const getAdminComplaints = (params) => adminGet('/admin/complaints', { params });
+
+export const getAdminOfficers = (params) => adminGet('/admin/officers', { params });
 
 export const assignOfficer = (complaintId, officerId) =>
-      api.put('/admin/assign-officer', { complaintId, officerId });
+      adminMutate('put', '/admin/assign-officer', { complaintId, officerId });
 
 export const updateComplaintStatus = (complaintId, status, note = '') =>
-      api.put('/admin/update-status', { complaintId, status, note });
+      adminMutate('put', '/admin/update-status', { complaintId, status, note });
 
-export const getEmergencyComplaints = () => api.get('/admin/emergencies');
+export const getEmergencyComplaints = () => adminGet('/admin/emergencies');
 
-export const createOfficer = (data) => api.post('/admin/create-officer', data);
+export const createOfficer = (data) => adminMutate('post', '/admin/create-officer', data);
 
-export const approveOfficer = (id) => api.put(`/admin/officers/${id}/approve`);
+export const banOfficer = (officerId) => adminMutate('put', `/admin/ban-officer/${officerId}`);
 
-export const rejectOfficer = (id) => api.put(`/admin/officers/${id}/reject`);
+export const getOfficerDetail = (id) => adminGet(`/admin/officers/${id}`);
 
-export const generateEmployeeId = (id) => api.post(`/admin/officers/${id}/generate-id`);
+export const toggleBlockOfficer = (id) => adminMutate('put', `/admin/officers/${id}/toggle-block`);
 
-export const blockOfficer = (id) => api.put(`/admin/officers/${id}/block`);
+export const updateOfficerStatus = (id, status) => adminMutate('put', `/admin/officers/${id}/status`, { status });
 
-export const getDepartmentAdmins = () => api.get('/admin/department-admins');
+export const getOfficerAnalytics = () => adminGet('/admin/officer-analytics');
 
-export const createDepartmentAdmin = (data) => api.post('/admin/create-department-admin', data);
+export const approveOfficer = (id) => adminMutate('put', `/admin/officers/${id}/approve`);
 
-export const removeDepartmentAdmin = (id) => api.delete(`/admin/department-admins/${id}`);
+export const rejectOfficer = (id) => adminMutate('put', `/admin/officers/${id}/reject`);
 
-export const getDepartments = () => api.get('/admin/departments');
+export const generateEmployeeId = (id) => adminMutate('post', `/admin/officers/${id}/generate-id`);
+
+export const blockOfficer = (id) => adminMutate('put', `/admin/officers/${id}/block`);
+
+export const getDepartmentAdmins = () => adminGet('/admin/department-admins');
+
+export const createDepartmentAdmin = (data) => adminMutate('post', '/admin/create-department-admin', data);
+
+export const removeDepartmentAdmin = (id) => adminMutate('delete', `/admin/department-admins/${id}`);
+
+export const getDepartments = () => adminGet('/admin/departments');
 
 export const sendDepartmentNotification = (title, message) =>
-      api.post('/admin/notifications', { title, message });
+      adminMutate('post', '/admin/notifications', { title, message });
 
-export const getAdminUsers = (params) => api.get('/admin/users', { params });
+export const getAdminUsers = (params) => adminGet('/admin/users', { params });

@@ -5,6 +5,7 @@ import Webcam from 'react-webcam';
 import toast from 'react-hot-toast';
 import { User, Mail, Phone, Lock, Building2, CreditCard, Camera, Upload, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { registerOfficer } from '../../../api/officer';
 import {
       Field, Input, PasswordInput, PasswordStrength, PasswordMatch,
       Select, SubmitButton, SectionHeader, ErrorAlert, OTPSection
@@ -24,7 +25,7 @@ const DEPARTMENTS = [
 
 export default function OfficerSignup() {
       const navigate = useNavigate();
-      const { register, getDashboardPath } = useAuth();
+      const { setSession, getDashboardPath } = useAuth();
       const otpHook = useOTP();
 
       const [form, setForm] = useState({
@@ -76,7 +77,6 @@ export default function OfficerSignup() {
             try {
                   const fd = new FormData();
                   Object.entries(form).forEach(([k, v]) => fd.append(k, v));
-                  fd.append('role', 'officer');
                   fd.append('otpVerified', 'true');
                   if (govtIdFile) fd.append('govtIdImage', govtIdFile);
                   if (liveImage) {
@@ -84,7 +84,8 @@ export default function OfficerSignup() {
                         fd.append('liveImage', blob, 'selfie.jpg');
                   }
 
-                  const data = await register(fd);
+                  const { data } = await registerOfficer(fd);
+                  setSession(data.token, data.user);
                   toast.success(data.message || 'Officer account created!');
                   navigate(getDashboardPath('officer'), { replace: true });
             } catch (err) {

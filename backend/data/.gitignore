@@ -1,0 +1,5 @@
+# Ignore all temporary JSON snapshot files generated at runtime
+*.json
+
+# Keep the folder structure in git
+!.gitignore

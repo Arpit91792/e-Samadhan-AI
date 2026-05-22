@@ -84,16 +84,18 @@ userSchema.methods.matchPassword = async function (entered) {
 };
 
 userSchema.methods.getSignedJwtToken = function () {
-      return jwt.sign(
-            {
-                  id: this._id,
-                  role: this.role,
-                  adminLevel: this.adminLevel,
-                  managedDepartment: this.managedDepartment,
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRE }
-      );
+      const payload = {
+            id: this._id.toString(),
+            role: this.role,
+            email: this.email,
+            name: this.name,
+            adminLevel: this.adminLevel,
+            managedDepartment: this.managedDepartment,
+      };
+      if (this.role === 'admin' && this.managedDepartment) {
+            payload.department = this.managedDepartment;
+      }
+      return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
 };
 
 userSchema.methods.getResetPasswordToken = function () {

@@ -1,4 +1,21 @@
 node_modules/
 .env
-uploads/
 *.log
+
+# ── Temporary Development Database System ─────────────────────────────────────
+# Uploaded files (erased on shutdown in dev mode)
+uploads/profiles/*
+uploads/complaints/*
+uploads/govt-ids/*
+uploads/liveness/*
+uploads/ids/*
+# Keep folder structure
+!uploads/profiles/.gitkeep
+!uploads/complaints/.gitkeep
+!uploads/govt-ids/.gitkeep
+!uploads/liveness/.gitkeep
+!uploads/ids/.gitkeep
+
+# Local JSON data snapshots (erased on shutdown in dev mode)
+data/**/*.json
+data/*.json

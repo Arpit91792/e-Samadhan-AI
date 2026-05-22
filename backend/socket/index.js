@@ -18,6 +18,8 @@ export function initSocket(httpServer) {
                   const decoded = jwt.verify(token, process.env.JWT_SECRET);
                   socket.userId = decoded.id;
                   socket.userRole = decoded.role;
+                  socket.managedDepartment = decoded.managedDepartment;
+                  socket.adminLevel = decoded.adminLevel;
                   next();
             } catch {
                   next(new Error('Invalid token'));
@@ -27,6 +29,12 @@ export function initSocket(httpServer) {
       io.on('connection', (socket) => {
             socket.join(`user:${socket.userId}`);
             if (socket.userRole) socket.join(`role:${socket.userRole}`);
+            if (socket.userRole === 'admin') {
+                  socket.join('admins');
+                  if (socket.managedDepartment) {
+                        socket.join(`dept:${socket.managedDepartment}`);
+                  }
+            }
       });
 
       console.log('✅ Socket.io real-time server ready');
@@ -55,4 +63,14 @@ export function emitComplaintUpdate(citizenId, complaint, extra = {}) {
 
 export function emitNotification(userId, notification) {
       emitToUser(userId, 'notification:new', notification);
+}
+
+export function emitToDepartment(departmentSlug, event, payload) {
+      if (!io || !departmentSlug) return;
+      io.to(`dept:${departmentSlug}`).emit(event, payload);
+      io.to('admins').emit(event, payload);
+}
+
+export function emitAdminAlert(departmentSlug, payload) {
+      emitToDepartment(departmentSlug, 'admin:alert', payload);
 }
