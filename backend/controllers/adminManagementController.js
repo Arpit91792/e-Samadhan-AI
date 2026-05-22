@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Officer from '../models/Officer.js';
 import Complaint from '../models/Complaint.js';
 import Department from '../models/Department.js';
 import Notification from '../models/Notification.js';
@@ -425,10 +426,62 @@ export const blockOfficer = async (req, res, next) => {
                   return res.status(403).json({ success: false, message: 'Officer is outside your department' });
             }
 
+            // ── Update User collection ──────────────────────────────────────────────
             officer.isActive = false;
             await officer.save({ validateBeforeSave: false });
 
-            res.status(200).json({ success: true, message: 'Officer blocked' });
+            // ── Update Officer collection (sync status) ──────────────────────────────
+            try {
+                  const officerRecord = await Officer.findOne({ email: officer.email, employeeId: officer.employeeId });
+                  if (officerRecord) {
+                        officerRecord.isBlocked = true;
+                        officerRecord.isActive = false;
+                        officerRecord.blockedAt = new Date();
+                        officerRecord.blockedBy = req.user._id;
+                        await officerRecord.save({ validateBeforeSave: false });
+                        console.log('[blockOfficer] ✓ Officer collection updated:', officer.employeeId);
+                  }
+            } catch (officerErr) {
+                  console.error('[blockOfficer] ⚠️ Failed to update Officer collection:', officerErr.message);
+            }
+
+            res.status(200).json({ success: true, message: 'Officer blocked successfully' });
+      } catch (error) { next(error); }
+};
+
+// @desc  Unblock officer
+// @route PUT /api/admin/officers/:id/unblock
+export const unblockOfficer = async (req, res, next) => {
+      try {
+            const scope = req.adminScope || await getAdminScope(req.user);
+            const officer = await User.findOne({ _id: req.params.id, role: 'officer' });
+            if (!officer) return res.status(404).json({ success: false, message: 'Officer not found' });
+
+            if (!scope.isSuper && officer.department !== scope.departmentSlug) {
+                  return res.status(403).json({ success: false, message: 'Officer is outside your department' });
+            }
+
+            // ── Update User collection ───────────────────────────────────────────────────
+            officer.isActive = true;
+            await officer.save({ validateBeforeSave: false });
+
+            // ── Update Officer collection (sync status) ─────────────────────────────────
+            try {
+                  const officerRecord = await Officer.findOne({ email: officer.email, employeeId: officer.employeeId });
+                  if (officerRecord) {
+                        officerRecord.isBlocked = false;
+                        officerRecord.isActive = true;
+                        officerRecord.blockedAt = null;
+                        officerRecord.blockedBy = null;
+                        officerRecord.blockReason = '';
+                        await officerRecord.save({ validateBeforeSave: false });
+                        console.log('[unblockOfficer] ✓ Officer collection updated:', officer.employeeId);
+                  }
+            } catch (officerErr) {
+                  console.error('[unblockOfficer] ⚠️ Failed to update Officer collection:', officerErr.message);
+            }
+
+            res.status(200).json({ success: true, message: 'Officer unblocked successfully' });
       } catch (error) { next(error); }
 };
 
