@@ -646,6 +646,172 @@ export const getOfficerProfile = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+// ── Admin: Block Officer ──────────────────────────────────────────────────────
+// @route PATCH /api/officers/block/:id
+// @desc  Block an officer from accessing the system
+export const blockOfficer = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+    const adminId = req.admin?.id || req.user?._id;
+
+    const officer = await Officer.findById(id);
+    if (!officer) {
+      return res.status(404).json({ success: false, message: 'Officer not found', code: 'OFFICER_NOT_FOUND' });
+    }
+
+    // Department-based security: verify admin can block this officer
+    if (req.admin?.department && officer.department !== req.admin.department) {
+      return res.status(403).json({ success: false, message: 'Cannot block officer from another department', code: 'DEPARTMENT_MISMATCH' });
+    }
+
+    // Block the officer
+    officer.isBlocked = true;
+    officer.blockedAt = new Date();
+    officer.blockedBy = adminId;
+    officer.blockReason = reason || 'Blocked by department admin';
+    officer.status = 'suspended';
+    officer.isActive = false;
+    await officer.save();
+
+    // ── Also update User collection (sync) ─────────────────────────────────────
+    try {
+      await User.updateOne(
+        { email: officer.email, role: 'officer' },
+        { 
+          isActive: false,
+          officerStatus: 'approved',
+          lastLogin: new Date()
+        }
+      );
+    } catch (userErr) {
+      console.error('[blockOfficer] ⚠️ User sync failed:', userErr.message);
+    }
+
+    // ── Invalidate active sessions ────────────────────────────────────────────
+    try {
+      await Session.deleteMany({ 
+        userId: officer._id,
+        role: 'officer'
+      });
+      console.log('[blockOfficer] ✓ Sessions cleared for:', officer.employeeId);
+    } catch (sessionErr) {
+      console.error('[blockOfficer] ⚠️ Session clear failed:', sessionErr.message);
+    }
+
+    // ── Create audit log ──────────────────────────────────────────────────────
+    try {
+      await AuditLog.create({
+        action: 'Officer Blocked',
+        performedBy: adminId,
+        performedByModel: 'User',
+        role: 'admin',
+        targetId: officer._id,
+        targetModel: 'Officer',
+        employeeId: officer.employeeId,
+        department: officer.department,
+        details: { 
+          blockedOfficer: officer.name,
+          reason: officer.blockReason,
+          blockedAt: officer.blockedAt
+        },
+        ipAddress: req.ip || '',
+        userAgent: req.headers['user-agent'] || '',
+      });
+      console.log('[blockOfficer] ✓ Audit log created');
+    } catch (auditErr) {
+      console.error('[blockOfficer] ⚠️ Audit log failed:', auditErr.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Officer ${officer.name} has been blocked successfully`,
+      data: {
+        officerId: officer._id,
+        employeeId: officer.employeeId,
+        name: officer.name,
+        isBlocked: officer.isBlocked,
+        blockedAt: officer.blockedAt,
+        blockReason: officer.blockReason,
+      }
+    });
+  } catch (err) { next(err); }
+};
+
+// ── Admin: Unblock Officer ────────────────────────────────────────────────────
+// @route PATCH /api/officers/unblock/:id
+// @desc  Unblock an officer to restore system access
+export const unblockOfficer = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const adminId = req.admin?.id || req.user?._id;
+
+    const officer = await Officer.findById(id);
+    if (!officer) {
+      return res.status(404).json({ success: false, message: 'Officer not found', code: 'OFFICER_NOT_FOUND' });
+    }
+
+    // Department-based security: verify admin can unblock this officer
+    if (req.admin?.department && officer.department !== req.admin.department) {
+      return res.status(403).json({ success: false, message: 'Cannot unblock officer from another department', code: 'DEPARTMENT_MISMATCH' });
+    }
+
+    // Unblock the officer
+    officer.isBlocked = false;
+    officer.blockedAt = null;
+    officer.blockedBy = null;
+    officer.blockReason = '';
+    officer.status = 'offline';
+    officer.isActive = true;
+    await officer.save();
+
+    // ── Also update User collection (sync) ─────────────────────────────────────
+    try {
+      await User.updateOne(
+        { email: officer.email, role: 'officer' },
+        { isActive: true }
+      );
+    } catch (userErr) {
+      console.error('[unblockOfficer] ⚠️ User sync failed:', userErr.message);
+    }
+
+    // ── Create audit log ──────────────────────────────────────────────────────
+    try {
+      await AuditLog.create({
+        action: 'Officer Unblocked',
+        performedBy: adminId,
+        performedByModel: 'User',
+        role: 'admin',
+        targetId: officer._id,
+        targetModel: 'Officer',
+        employeeId: officer.employeeId,
+        department: officer.department,
+        details: { 
+          unblockedOfficer: officer.name,
+          unblockedAt: new Date()
+        },
+        ipAddress: req.ip || '',
+        userAgent: req.headers['user-agent'] || '',
+      });
+      console.log('[unblockOfficer] ✓ Audit log created');
+    } catch (auditErr) {
+      console.error('[unblockOfficer] ⚠️ Audit log failed:', auditErr.message);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Officer ${officer.name} has been unblocked successfully and can now login`,
+      data: {
+        officerId: officer._id,
+        employeeId: officer.employeeId,
+        name: officer.name,
+        isBlocked: officer.isBlocked,
+        status: officer.status,
+      }
+    });
+  } catch (err) { next(err); }
+};
+
 // ── Helper ────────────────────────────────────────────────────────────────────
 function buildOfficerResponse(officer) {
   return {
@@ -659,6 +825,10 @@ function buildOfficerResponse(officer) {
     status: officer.status,
     banned: officer.banned,
     isActive: officer.isActive,
+    isBlocked: officer.isBlocked,
+    blockedAt: officer.blockedAt,
+    blockedBy: officer.blockedBy,
+    blockReason: officer.blockReason,
     complaintsSolved: officer.complaintsSolved,
     complaintsPending: officer.complaintsPending,
     complaintsInProgress: officer.complaintsInProgress,

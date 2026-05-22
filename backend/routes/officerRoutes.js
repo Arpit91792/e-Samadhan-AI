@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import Officer from '../models/Officer.js';
+import { protectAdmin } from '../middleware/authMiddleware.js';
 import {
   registerOfficer,
   loginOfficer,
@@ -11,6 +12,8 @@ import {
   addOfficerNote,
   getOfficerPerformance,
   getOfficerProfile,
+  blockOfficer,
+  unblockOfficer,
 } from '../controllers/officerController.js';
 
 const router = express.Router();
@@ -128,5 +131,10 @@ router.get('/complaints', getAssignedComplaints);
 router.put('/complaints/:id/status', updateComplaintStatus);
 router.put('/complaints/:id/accept', acceptComplaint);
 router.post('/complaints/:id/note', addOfficerNote);
+
+// ── Admin routes (block/unblock officers) ────────────────────────────────────
+// These are protected by admin auth middleware
+router.patch('/block/:id', protectAdmin, blockOfficer);
+router.patch('/unblock/:id', protectAdmin, unblockOfficer);
 
 export default router;
