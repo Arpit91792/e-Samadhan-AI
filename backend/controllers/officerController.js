@@ -1,4 +1,5 @@
 import Officer from '../models/Officer.js';
+import User from '../models/User.js';
 import Complaint from '../models/Complaint.js';
 import AuditLog from '../models/AuditLog.js';
 import Session from '../models/Session.js';
@@ -114,6 +115,34 @@ export const registerOfficer = async (req, res, next) => {
       browser: req.headers['user-agent'] || '',
     });
     await byEmpId.save();
+
+    // ── Create corresponding User record ──────────────────────────────────────
+    try {
+      const existingUser = await User.findOne({ email: normalEmail });
+      if (!existingUser) {
+        await User.create({
+          name: byEmpId.name,
+          email: normalEmail,
+          password: password,
+          role: 'officer',
+          phone: byEmpId.mobile,
+          department: byEmpId.department,
+          employeeId: byEmpId.employeeId,
+          governmentId: byEmpId.employeeId,
+          officerStatus: 'approved',
+          isEmailVerified: true,
+          otpVerified: true,
+          isActive: true,
+          lastLogin: new Date(),
+        });
+        console.log('[registerOfficer] ✓ User record created:', normalEmail);
+      } else {
+        console.log('[registerOfficer] ℹ User record already exists:', normalEmail);
+      }
+    } catch (userErr) {
+      console.error('[registerOfficer] ⚠️ User creation failed:', userErr.message);
+      // Don't fail registration if user creation fails
+    }
 
     // Clean up used OTP
     await OTP.deleteMany({ email: normalEmail, purpose: 'register' });
