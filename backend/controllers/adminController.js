@@ -733,7 +733,10 @@ export const toggleBlockOfficer = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Officer not found in your department' });
     }
     const now = new Date();
+    const wasBlocked = officer.isBlocked;
+
     if (!officer.isBlocked) {
+      // ── Block ──────────────────────────────────────────────────────────────
       officer.isBlocked = true;
       officer.blockedAt = now;
       officer.blockedBy = req.admin.id;
@@ -741,7 +744,11 @@ export const toggleBlockOfficer = async (req, res) => {
       officer.banned = true;
       officer.isActive = false;
       officer.status = 'suspended';
+
+      // Clear active JWT session so existing tokens stop working immediately
+      officer.activeSession = { token: null, loginAt: null };
     } else {
+      // ── Unblock ────────────────────────────────────────────────────────────
       officer.isBlocked = false;
       officer.blockedAt = null;
       officer.blockedBy = null;
@@ -752,10 +759,48 @@ export const toggleBlockOfficer = async (req, res) => {
     }
     await officer.save({ validateBeforeSave: false });
 
-    // Log audit
-    try { await AuditLog.create({ action: 'admin_action', performedBy: req.admin.id, targetModel: 'User', targetId: officer._id, details: { action: officer.isBlocked ? 'block_officer' : 'unblock_officer', reason: officer.blockReason }, ipAddress: req.ip }); } catch (e) { console.warn('AuditLog create failed', e?.message); }
+    // ── Invalidate sessions in sessions collection when blocking ──────────────
+    if (!wasBlocked) {
+      try {
+        const Session = (await import('../models/Session.js')).default;
+        await Session.deleteMany({ userId: officer._id, role: 'officer' });
+        console.log('[toggleBlockOfficer] ✓ Sessions cleared for:', officer.employeeId);
+      } catch (sessionErr) {
+        console.error('[toggleBlockOfficer] ⚠️ Session clear failed:', sessionErr.message);
+      }
+    }
 
-    res.status(200).json({ success: true, message: `Officer ${officer.isBlocked ? 'blocked' : 'unblocked'} successfully`, data: { isBlocked: officer.isBlocked, blockedAt: officer.blockedAt, blockedBy: officer.blockedBy, status: officer.status } });
+    // ── Audit log ─────────────────────────────────────────────────────────────
+    try {
+      await AuditLog.create({
+        action: officer.isBlocked ? 'officer_blocked' : 'officer_unblocked',
+        performedBy: req.admin.id,
+        performedByModel: 'User',
+        role: 'admin',
+        targetModel: 'Officer',
+        targetId: officer._id,
+        employeeId: officer.employeeId,
+        department: officer.department,
+        details: {
+          action: officer.isBlocked ? 'block_officer' : 'unblock_officer',
+          reason: officer.blockReason,
+          officerName: officer.name,
+        },
+        ipAddress: req.ip,
+      });
+    } catch (e) { console.warn('[toggleBlockOfficer] AuditLog failed:', e?.message); }
+
+    res.status(200).json({
+      success: true,
+      message: `Officer ${officer.isBlocked ? 'blocked' : 'unblocked'} successfully`,
+      data: {
+        isBlocked: officer.isBlocked,
+        blockedAt: officer.blockedAt,
+        blockedBy: officer.blockedBy,
+        blockReason: officer.blockReason,
+        status: officer.status,
+      },
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -1,4 +1,15 @@
 import api from './axios';
+import { readStoredOfficerToken } from '../utils/authStorage';
+
+/** Config that forces officer token — never uses admin/citizen token */
+const officerConfig = (extra = {}) => ({
+      silent: true,
+      ...extra,
+      headers: {
+            Authorization: `Bearer ${readStoredOfficerToken() || ''}`,
+            ...(extra.headers || {}),
+      },
+});
 
 export const registerOfficer = (payload) => api.post('/officer/register', payload);
 
@@ -14,17 +25,25 @@ export const checkEmployeeId = (employeeId, email = '', department = '') =>
             silent: true,
       });
 
-export const getOfficerProfile = () => api.get('/officer/profile', { silent: true });
+export const getOfficerProfile = () => api.get('/officer/profile', officerConfig());
 
-export const getOfficerDashboard = () => api.get('/officer/dashboard', { silent: true });
+export const getOfficerDashboard = () => api.get('/officer/dashboard', officerConfig());
 
-export const getOfficerComplaints = (params) => api.get('/officer/complaints', { params });
+/** Department queue — all unaccepted pending complaints for officer's department */
+export const getDepartmentQueue = (params) =>
+      api.get('/officer/queue', officerConfig({ params }));
 
-export const acceptComplaint = (id) => api.put(`/officer/complaints/${id}/accept`);
+/** Officer picks up a complaint from the shared department queue */
+export const selfAssignComplaint = (id) =>
+      api.put(`/officer/complaints/${id}/self-assign`, {}, officerConfig());
+
+export const getOfficerComplaints = (params) => api.get('/officer/complaints', officerConfig({ params }));
+
+export const acceptComplaint = (id) => api.put(`/officer/complaints/${id}/accept`, {}, officerConfig());
 
 export const updateOfficerComplaintStatus = (id, status, note = '') =>
-      api.put(`/officer/complaints/${id}/status`, { status, note });
+      api.put(`/officer/complaints/${id}/status`, { status, note }, officerConfig());
 
-export const addOfficerNote = (id, note) => api.post(`/officer/complaints/${id}/note`, { note });
+export const addOfficerNote = (id, note) => api.post(`/officer/complaints/${id}/note`, { note }, officerConfig());
 
-export const getOfficerPerformance = () => api.get('/officer/performance', { silent: true });
+export const getOfficerPerformance = () => api.get('/officer/performance', officerConfig());

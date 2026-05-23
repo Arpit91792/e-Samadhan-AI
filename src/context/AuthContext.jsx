@@ -16,6 +16,10 @@ import {
 
       clearAuthSession,
 
+      clearAdminSession,
+
+      clearCitizenSession,
+
       normalizeAuthUser,
 
       hasValidSession,
@@ -25,6 +29,8 @@ import {
       isAuthFresh,
 
       debugAuthStorage,
+
+      STORAGE_KEYS,
 
 } from '../utils/authStorage';
 
@@ -102,9 +108,20 @@ export const AuthProvider = ({ children }) => {
 
 
 
+      // clearSession clears ONLY admin/citizen keys — never officer keys
       const clearSession = useCallback(() => {
 
-            clearAuthSession();
+            const storedUser = readStoredAuth();
+
+            if (storedUser?.role === 'admin') {
+
+                  clearAdminSession();
+
+            } else {
+
+                  clearCitizenSession();
+
+            }
 
             setAxiosAuthToken(null);
 
@@ -128,7 +145,21 @@ export const AuthProvider = ({ children }) => {
 
             const storedToken = readStoredToken();
 
+            // If there is no admin/citizen token, skip verification entirely.
+            // Officer-only sessions are managed independently and must not trigger this flow.
             if (!storedToken) {
+
+                  setInitializing(false);
+
+                  return;
+
+            }
+
+            // If only an officer session exists (no admin/citizen token), skip verification.
+            const adminToken = localStorage.getItem(STORAGE_KEYS.adminToken);
+            const citizenToken = localStorage.getItem(STORAGE_KEYS.citizenToken);
+            const legacyToken = localStorage.getItem(STORAGE_KEYS.token);
+            if (!adminToken && !citizenToken && !legacyToken) {
 
                   setInitializing(false);
 
@@ -291,6 +322,11 @@ export const AuthProvider = ({ children }) => {
 
                   }
 
+                  // Only clear if the current context user is not admin
+                  const storedUser = readStoredAuth();
+
+                  if (storedUser?.role === 'admin') return;
+
                   clearSession();
 
             };
@@ -379,6 +415,7 @@ export const AuthProvider = ({ children }) => {
 
             } finally {
 
+                  // clearSession only clears admin/citizen keys — officer session is unaffected
                   clearSession();
 
             }

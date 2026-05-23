@@ -1,14 +1,18 @@
 import React from 'react';
 import ErrorPage from './ErrorPage';
 import { logError } from '../../utils/monitoring';
+import { readStoredAuth, readStoredOfficer } from '../../utils/authStorage';
 
 function getDashboardHref() {
       try {
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            // Check officer session first (isolated keys)
+            const officer = readStoredOfficer();
+            if (officer?.role === 'officer') return '/officer/dashboard';
+            // Then admin/citizen
+            const user = readStoredAuth();
             if (!user?.role) return null;
             switch (user.role) {
                   case 'admin': return '/admin/dashboard';
-                  case 'officer': return '/officer/dashboard';
                   case 'citizen': return '/citizen/dashboard';
                   default: return null;
             }

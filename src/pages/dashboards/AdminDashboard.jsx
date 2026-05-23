@@ -28,7 +28,7 @@ export default function AdminDashboard() {
                   toast('New alert', { icon: '🔔' });
             },
             onNotification: () => { },
-      });
+      }, { role: 'admin' });
 
       const handleLogout = async () => {
             await logout();

@@ -7,6 +7,8 @@ import {
   loginOfficer,
   getOfficerDashboard,
   getAssignedComplaints,
+  getDepartmentQueue,
+  selfAssignComplaint,
   updateComplaintStatus,
   acceptComplaint,
   addOfficerNote,
@@ -127,7 +129,9 @@ router.use(protectOfficer);
 router.get('/profile', getOfficerProfile);
 router.get('/dashboard', getOfficerDashboard);
 router.get('/performance', getOfficerPerformance);
+router.get('/queue', getDepartmentQueue);
 router.get('/complaints', getAssignedComplaints);
+router.put('/complaints/:id/self-assign', selfAssignComplaint);
 router.put('/complaints/:id/status', updateComplaintStatus);
 router.put('/complaints/:id/accept', acceptComplaint);
 router.post('/complaints/:id/note', addOfficerNote);

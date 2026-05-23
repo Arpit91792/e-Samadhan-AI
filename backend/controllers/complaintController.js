@@ -9,6 +9,7 @@ import {
       notifyComplaintAssigned,
       notifyStatusUpdate,
 } from '../services/notificationService.js';
+import { emitNewComplaintToDept, emitComplaintUpdate } from '../socket/index.js';
 
 // @desc  File a new complaint
 // @route POST /api/complaints
@@ -78,6 +79,9 @@ export const fileComplaint = async (req, res, next) => {
 
             // Notify citizen
             await notifyComplaintFiled(req.user._id, complaint._id, title);
+
+            // Notify all officers in the department via socket
+            emitNewComplaintToDept(finalCategory, complaint);
 
             res.status(201).json({
                   success: true,

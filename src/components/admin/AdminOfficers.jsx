@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Loader2, User, Eye, Slash, Copy, CheckCircle2 } from 'lucide-react';
+import { Loader2, User, Eye, ShieldOff, ShieldCheck, Copy, CheckCircle2, AlertTriangle, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAdminOfficers, toggleBlockOfficer, createOfficer } from '../../api/admin';
@@ -12,11 +12,145 @@ const DEPT_LABELS = {
       municipal: 'Municipal Services', sanitation: 'Sanitation', education: 'Education',
 };
 
+// ── Block Confirmation Dialog ─────────────────────────────────────────────────
+function BlockConfirmDialog({ officer, onConfirm, onCancel, loading }) {
+      const [reason, setReason] = useState('');
+
+      return (
+            <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
+                  <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className="bg-slate-900 border border-rose-500/30 rounded-2xl p-6 w-full max-w-md shadow-2xl"
+                  >
+                        <div className="flex items-start gap-3 mb-4">
+                              <div className="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center flex-shrink-0">
+                                    <ShieldOff className="w-5 h-5 text-rose-400" />
+                              </div>
+                              <div>
+                                    <h3 className="text-white font-bold text-lg">Block Officer</h3>
+                                    <p className="text-slate-400 text-sm mt-0.5">
+                                          This will immediately revoke <strong className="text-white">{officer?.name}</strong>'s access.
+                                    </p>
+                              </div>
+                        </div>
+
+                        <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl mb-4">
+                              <p className="text-xs text-rose-300 font-medium mb-1">After blocking:</p>
+                              <ul className="space-y-0.5 text-xs text-rose-400">
+                                    <li>❌ Officer cannot login</li>
+                                    <li>❌ Existing JWT session invalidated immediately</li>
+                                    <li>❌ Dashboard access revoked</li>
+                                    <li>❌ Cannot update or manage complaints</li>
+                              </ul>
+                        </div>
+
+                        <div className="mb-4">
+                              <label className="text-sm text-slate-300 font-medium block mb-1.5">
+                                    Block Reason <span className="text-slate-500">(optional)</span>
+                              </label>
+                              <textarea
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="e.g. Misconduct, policy violation, investigation..."
+                                    rows={2}
+                                    className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/40 resize-none"
+                              />
+                        </div>
+
+                        <div className="flex gap-2">
+                              <button
+                                    type="button"
+                                    onClick={onCancel}
+                                    disabled={loading}
+                                    className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-bold transition-colors disabled:opacity-50"
+                              >
+                                    Cancel
+                              </button>
+                              <button
+                                    type="button"
+                                    onClick={() => onConfirm(reason)}
+                                    disabled={loading}
+                                    className="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                              >
+                                    {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Blocking...</> : <><ShieldOff className="w-4 h-4" /> Block Officer</>}
+                              </button>
+                        </div>
+                  </motion.div>
+            </div>
+      );
+}
+
+// ── Unblock Confirmation Dialog ───────────────────────────────────────────────
+function UnblockConfirmDialog({ officer, onConfirm, onCancel, loading }) {
+      return (
+            <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
+                  <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        className="bg-slate-900 border border-emerald-500/30 rounded-2xl p-6 w-full max-w-md shadow-2xl"
+                  >
+                        <div className="flex items-start gap-3 mb-4">
+                              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                                    <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                              </div>
+                              <div>
+                                    <h3 className="text-white font-bold text-lg">Unblock Officer</h3>
+                                    <p className="text-slate-400 text-sm mt-0.5">
+                                          Restore full access for <strong className="text-white">{officer?.name}</strong>.
+                                    </p>
+                              </div>
+                        </div>
+
+                        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl mb-4">
+                              <p className="text-xs text-emerald-300 font-medium mb-1">After unblocking:</p>
+                              <ul className="space-y-0.5 text-xs text-emerald-400">
+                                    <li>✅ Officer can login normally</li>
+                                    <li>✅ Dashboard access restored</li>
+                                    <li>✅ Can manage and update complaints</li>
+                              </ul>
+                        </div>
+
+                        {officer?.blockReason && (
+                              <div className="p-3 bg-white/5 rounded-xl mb-4 text-xs text-slate-400">
+                                    <span className="text-slate-500">Previous block reason: </span>
+                                    <span className="text-slate-300">{officer.blockReason}</span>
+                              </div>
+                        )}
+
+                        <div className="flex gap-2">
+                              <button
+                                    type="button"
+                                    onClick={onCancel}
+                                    disabled={loading}
+                                    className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm font-bold transition-colors disabled:opacity-50"
+                              >
+                                    Cancel
+                              </button>
+                              <button
+                                    type="button"
+                                    onClick={onConfirm}
+                                    disabled={loading}
+                                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                              >
+                                    {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Unblocking...</> : <><ShieldCheck className="w-4 h-4" /> Unblock Officer</>}
+                              </button>
+                        </div>
+                  </motion.div>
+            </div>
+      );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
 export default function AdminOfficers() {
       const [loading, setLoading] = useState(true);
       const [officers, setOfficers] = useState([]);
       const [selectedId, setSelectedId] = useState(null);
-      const [blocking, setBlocking] = useState(null);
+      const [blockTarget, setBlockTarget] = useState(null);   // officer to block
+      const [unblockTarget, setUnblockTarget] = useState(null); // officer to unblock
+      const [actionLoading, setActionLoading] = useState(false);
       const [createOpen, setCreateOpen] = useState(false);
       const [creating, setCreating] = useState(false);
       const [form, setForm] = useState({ name: '', email: '', mobile: '' });
@@ -37,17 +171,48 @@ export default function AdminOfficers() {
 
       useEffect(() => { load(); }, []);
 
-      const handleToggleBlock = async (id) => {
-            setBlocking(id);
+      // ── Block with reason ─────────────────────────────────────────────────────
+      const handleBlock = async (reason) => {
+            if (!blockTarget) return;
+            setActionLoading(true);
             try {
-                  await toggleBlockOfficer(id);
-                  toast.success('Updated');
+                  await toggleBlockOfficer(blockTarget._id, reason);
+                  toast.success(`🚫 Officer ${blockTarget.name} blocked successfully. Access revoked.`, { duration: 4000 });
+                  setBlockTarget(null);
                   await load();
             } catch (err) {
-                  toast.error(err?.response?.data?.message || 'Update failed');
+                  toast.error(err?.response?.data?.message || 'Block failed');
             } finally {
-                  setBlocking(null);
+                  setActionLoading(false);
             }
+      };
+
+      // ── Unblock ───────────────────────────────────────────────────────────────
+      const handleUnblock = async () => {
+            if (!unblockTarget) return;
+            setActionLoading(true);
+            try {
+                  await toggleBlockOfficer(unblockTarget._id);
+                  toast.success(`✅ Officer ${unblockTarget.name} unblocked. Access restored.`, { duration: 4000 });
+                  setUnblockTarget(null);
+                  await load();
+            } catch (err) {
+                  toast.error(err?.response?.data?.message || 'Unblock failed');
+            } finally {
+                  setActionLoading(false);
+            }
+      };
+
+      // ── Toggle from detail modal (no reason prompt) ───────────────────────────
+      const handleToggleFromModal = async (id) => {
+            const officer = officers.find((o) => o._id === id);
+            if (!officer) return;
+            if (officer.isBlocked) {
+                  setUnblockTarget(officer);
+            } else {
+                  setBlockTarget(officer);
+            }
+            setSelectedId(null);
       };
 
       const handleCreate = async (e) => {
@@ -151,11 +316,20 @@ export default function AdminOfficers() {
                                                       </td>
                                                       <td className="px-4 py-3">
                                                             {o.isBlocked ? (
-                                                                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-rose-600/20 text-rose-400 text-xs font-semibold">🔴 Blocked</span>
+                                                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-rose-600/20 text-rose-400 text-xs font-semibold">
+                                                                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                                                                        Blocked
+                                                                  </span>
                                                             ) : !o.password ? (
-                                                                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold">⏳ Pending</span>
+                                                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold">
+                                                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                                                        Pending
+                                                                  </span>
                                                             ) : (
-                                                                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-emerald-600/20 text-emerald-400 text-xs font-semibold">🟢 Active</span>
+                                                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-600/20 text-emerald-400 text-xs font-semibold">
+                                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                                        Active
+                                                                  </span>
                                                             )}
                                                       </td>
                                                       <td className="px-4 py-3">
@@ -167,14 +341,25 @@ export default function AdminOfficers() {
                                                                   >
                                                                         <Eye className="w-4 h-4" />
                                                                   </button>
-                                                                  <button
-                                                                        title={o.isBlocked ? 'Unblock officer' : 'Block officer'}
-                                                                        onClick={() => handleToggleBlock(o._id)}
-                                                                        disabled={blocking === o._id}
-                                                                        className={`p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors ${o.isBlocked ? 'text-emerald-400' : 'text-rose-400'}`}
-                                                                  >
-                                                                        <Slash className="w-4 h-4" />
-                                                                  </button>
+                                                                  {o.isBlocked ? (
+                                                                        <button
+                                                                              title="Unblock officer — restore access"
+                                                                              onClick={() => setUnblockTarget(o)}
+                                                                              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-semibold transition-colors"
+                                                                        >
+                                                                              <ShieldCheck className="w-3.5 h-3.5" />
+                                                                              Unblock
+                                                                        </button>
+                                                                  ) : (
+                                                                        <button
+                                                                              title="Block officer — revoke access"
+                                                                              onClick={() => setBlockTarget(o)}
+                                                                              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 text-xs font-semibold transition-colors"
+                                                                        >
+                                                                              <ShieldOff className="w-3.5 h-3.5" />
+                                                                              Block
+                                                                        </button>
+                                                                  )}
                                                             </div>
                                                       </td>
                                                 </tr>
@@ -184,21 +369,42 @@ export default function AdminOfficers() {
                         </div>
                   )}
 
-                  {/* ── Officer Detail Modal (full-featured) ───────────────────────── */}
+                  {/* ── Officer Detail Modal ───────────────────────────────────────── */}
                   <AnimatePresence>
                         {selectedId && (
                               <OfficerDetailModal
                                     officerId={selectedId}
                                     onClose={() => setSelectedId(null)}
-                                    onToggleBlock={async (id) => {
-                                          await handleToggleBlock(id);
-                                          setSelectedId(null);
-                                    }}
+                                    onToggleBlock={handleToggleFromModal}
                               />
                         )}
                   </AnimatePresence>
 
-                  {/* ── Create Officer Modal ─────────────────────────────────────────────── */}
+                  {/* ── Block Confirmation Dialog ──────────────────────────────────── */}
+                  <AnimatePresence>
+                        {blockTarget && (
+                              <BlockConfirmDialog
+                                    officer={blockTarget}
+                                    onConfirm={handleBlock}
+                                    onCancel={() => setBlockTarget(null)}
+                                    loading={actionLoading}
+                              />
+                        )}
+                  </AnimatePresence>
+
+                  {/* ── Unblock Confirmation Dialog ────────────────────────────────── */}
+                  <AnimatePresence>
+                        {unblockTarget && (
+                              <UnblockConfirmDialog
+                                    officer={unblockTarget}
+                                    onConfirm={handleUnblock}
+                                    onCancel={() => setUnblockTarget(null)}
+                                    loading={actionLoading}
+                              />
+                        )}
+                  </AnimatePresence>
+
+                  {/* ── Create Officer Modal ─────────────────────────────────────────── */}
                   {createOpen && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
                               <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg">

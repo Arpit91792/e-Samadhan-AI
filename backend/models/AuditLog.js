@@ -15,6 +15,7 @@ const auditLogSchema = new mongoose.Schema(
                         'officer_login', 'officer_logout', 'officer_register',
                         'officer_complaint_update', 'officer_complaint_accept',
                         'officer_complaint_resolve', 'officer_note_added',
+                        'officer_blocked', 'officer_unblocked',
                         // Complaint actions
                         'complaint_create', 'complaint_update', 'complaint_assign',
                         'complaint_resolve', 'complaint_reject', 'complaint_escalate',

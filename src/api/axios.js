@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { retry, isRetryableError } from '../utils/retry';
 import { getErrorMessage, isAuthError, isNetworkError, parseApiResponse } from '../utils/apiErrors';
 import { logError } from '../utils/monitoring';
-import { isAuthFresh } from '../utils/authStorage';
+import { isAuthFresh, STORAGE_KEYS, clearOfficerSession } from '../utils/authStorage';
 
 const AUTH_PATHS = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login', '/admin/register'];
 const SILENT_PATHS = ['/auth/me', '/health', '/complaints/citizen/stats', '/admin/', '/officer/'];
@@ -27,10 +27,26 @@ const api = axios.create({
 
 api.interceptors.request.use(
       (config) => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                  config.headers.Authorization = `Bearer ${token}`;
+            const url = config?.url || '';
+            const isOfficerApi = url.includes('/officer/');
+
+            // Officer API calls must use officerToken — never the admin/citizen token
+            if (isOfficerApi) {
+                  const officerToken = localStorage.getItem(STORAGE_KEYS.officerToken);
+                  if (officerToken) {
+                        config.headers.Authorization = `Bearer ${officerToken}`;
+                  }
+            } else {
+                  // Admin/citizen: prefer adminToken, fall back to citizenToken, then legacy 'token'
+                  const adminToken = localStorage.getItem(STORAGE_KEYS.adminToken);
+                  const citizenToken = localStorage.getItem(STORAGE_KEYS.citizenToken);
+                  const legacyToken = localStorage.getItem(STORAGE_KEYS.token);
+                  const token = adminToken || citizenToken || legacyToken;
+                  if (token) {
+                        config.headers.Authorization = `Bearer ${token}`;
+                  }
             }
+
             config._retryCount = config._retryCount ?? 0;
             return config;
       },
@@ -82,6 +98,17 @@ api.interceptors.response.use(
             if (error.response?.status === 401) {
                   const url = config?.url || '';
                   const isAdminApi = url.includes('/admin/');
+                  const isOfficerApi = url.includes('/officer/');
+
+                  // Officer 401 — clear only officer session
+                  if (isOfficerApi) {
+                        clearOfficerSession();
+                        if (!isAuthPage()) {
+                              window.dispatchEvent(new CustomEvent('auth:officer-session-expired'));
+                        }
+                        return Promise.reject(error);
+                  }
+
                   // Do NOT wipe session on silent/admin API failures (common after login when dashboard loads)
                   const skipClear =
                         config?.skipSessionClear === true
@@ -90,9 +117,11 @@ api.interceptors.response.use(
                         || isAuthFresh();
 
                   if (!skipClear) {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('user');
-                        localStorage.removeItem('admin');
+                        // Only clear citizen/legacy keys — never touch adminToken or adminData
+                        localStorage.removeItem(STORAGE_KEYS.citizenToken);
+                        localStorage.removeItem(STORAGE_KEYS.citizenData);
+                        localStorage.removeItem(STORAGE_KEYS.token);
+                        localStorage.removeItem(STORAGE_KEYS.user);
                         sessionStorage.removeItem('authFresh');
                         sessionStorage.removeItem('adminDepartment');
                         window.dispatchEvent(new CustomEvent('auth:session-expired', {
@@ -101,6 +130,24 @@ api.interceptors.response.use(
                   }
                   if (!isAuthPage() && !skipClear && !isSilentRequest(config)) {
                         toast.error(getErrorMessage(error, 'Session expired. Please sign in again.'));
+                  }
+            } else if (error.response?.status === 403) {
+                  const code = error.response?.data?.code;
+                  const url = config?.url || '';
+                  const isOfficerApi = url.includes('/officer/');
+
+                  // Officer account blocked — clear ONLY officer session, never admin keys
+                  if (code === 'ACCOUNT_BLOCKED' || code === 'ACCOUNT_SUSPENDED') {
+                        clearOfficerSession();
+                        window.dispatchEvent(new CustomEvent('auth:account-blocked', {
+                              detail: { message: error.response?.data?.message },
+                        }));
+                        if (!isAuthPage()) {
+                              toast.error('Your account has been blocked by the department admin.', { id: 'account-blocked', duration: 6000 });
+                              setTimeout(() => { window.location.href = '/login'; }, 1500);
+                        }
+                  } else if (!isSilentRequest(config) && !isAuthError(error)) {
+                        toast.error(getErrorMessage(error));
                   }
             } else if (!isSilentRequest(config) && !isAuthError(error)) {
                   const message = getErrorMessage(error);

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Building2, Contact, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
+import { persistOfficerSession } from '../../../utils/authStorage';
 import { FormField, PasswordStrength, OTPSection } from './FormField';
 import WebcamCapture from './WebcamCapture';
 
@@ -82,8 +83,12 @@ export default function OfficerSignup({ onBack }) {
                   const data = await response.json();
 
                   if (data.success) {
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                        const saved = persistOfficerSession(data.token, data.officer || data.user, {
+                              debug: import.meta.env.DEV,
+                        });
+                        if (!saved) {
+                              throw new Error('Could not persist officer session');
+                        }
                         toast.success(data.message);
                         navigate(getDashboardPath('officer'));
                   } else {

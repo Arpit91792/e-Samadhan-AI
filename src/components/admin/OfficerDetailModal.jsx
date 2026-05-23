@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
       X, User, BadgeCheck, Phone, Mail, Building2, Calendar, Clock,
-      Shield, ShieldOff, Activity, ClipboardList, CheckCircle2, AlertTriangle,
+      Shield, ShieldOff, ShieldCheck, Activity, ClipboardList, CheckCircle2, AlertTriangle,
       Zap, BarChart3, MapPin, ChevronRight, Eye, ArrowLeft, Loader2,
       TrendingUp, Star, Timer, FileText, Image as ImageIcon,
 } from 'lucide-react';
@@ -396,12 +396,15 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                             {onToggleBlock && (
                                                                   <button
                                                                         onClick={() => onToggleBlock(officer._id)}
-                                                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${officer.isBlocked
-                                                                                    ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                                                                                    : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30'
+                                                                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border ${officer.isBlocked
+                                                                              ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border-emerald-500/30'
+                                                                              : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 border-rose-500/30'
                                                                               }`}
                                                                   >
-                                                                        {officer.isBlocked ? '🔓 Unblock' : '🔒 Block'}
+                                                                        {officer.isBlocked
+                                                                              ? <><ShieldCheck className="w-3.5 h-3.5" /> Unblock Officer</>
+                                                                              : <><ShieldOff className="w-3.5 h-3.5" /> Block Officer</>
+                                                                        }
                                                                   </button>
                                                             )}
                                                             <button onClick={onClose}
@@ -427,6 +430,33 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                             </div>
                                                       ))}
                                                 </div>
+
+                                                {/* Block status banner */}
+                                                {officer.isBlocked && (
+                                                      <div className="relative mt-4 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl">
+                                                            <div className="flex items-center gap-2 mb-2">
+                                                                  <ShieldOff className="w-4 h-4 text-rose-400" />
+                                                                  <span className="text-rose-400 font-bold text-sm">Account Blocked</span>
+                                                            </div>
+                                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                                                  <div className="bg-white/5 rounded-lg px-3 py-2">
+                                                                        <p className="text-slate-500 mb-0.5">Blocked At</p>
+                                                                        <p className="text-rose-300 font-medium">{officer.blockedAt ? fmt(officer.blockedAt) : '—'}</p>
+                                                                  </div>
+                                                                  <div className="bg-white/5 rounded-lg px-3 py-2">
+                                                                        <p className="text-slate-500 mb-0.5">Block Reason</p>
+                                                                        <p className="text-rose-300 font-medium">{officer.blockReason || 'No reason provided'}</p>
+                                                                  </div>
+                                                                  <div className="bg-white/5 rounded-lg px-3 py-2">
+                                                                        <p className="text-slate-500 mb-0.5">Status</p>
+                                                                        <p className="text-rose-300 font-medium capitalize">{officer.status || 'suspended'}</p>
+                                                                  </div>
+                                                            </div>
+                                                            <p className="mt-2 text-xs text-rose-400/70">
+                                                                  This officer cannot login or access the dashboard until unblocked.
+                                                            </p>
+                                                      </div>
+                                                )}
                                           </div>
 
                                           {/* ANALYTICS */}

@@ -7,8 +7,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AuthLayout from '../../components/auth/AuthLayout';
-import { useAuth } from '../../context/AuthContext';
 import { checkEmployeeId, registerOfficer } from '../../api/officer';
+import { persistOfficerSession } from '../../utils/authStorage';
 import api from '../../api/axios';
 
 // ── Department options ────────────────────────────────────────────────────────
@@ -38,11 +38,9 @@ const STEP_LABELS = ['Verify Identity', 'Verify Email', 'Set Password'];
 
 export default function OfficerRegisterPage() {
       const navigate = useNavigate();
-      const { setSession } = useAuth();
 
       // ── Step state ──────────────────────────────────────────────────────────────
       const [step, setStep] = useState(1);
-
       // ── Step 1 fields ───────────────────────────────────────────────────────────
       const [empId, setEmpId] = useState('');
       const [email, setEmail] = useState('');
@@ -192,7 +190,9 @@ export default function OfficerRegisterPage() {
                   });
 
                   const { token, user } = res.data;
-                  setSession(token, user);
+                  // Use officer-specific storage — NEVER touches admin/citizen session
+                  const officerData = res.data.officer || user;
+                  persistOfficerSession(token, officerData, { debug: import.meta.env.DEV });
                   toast.success(res.data.message || 'Registration complete!');
                   navigate('/officer/dashboard', { replace: true });
             } catch (err) {

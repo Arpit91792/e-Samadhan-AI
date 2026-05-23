@@ -65,7 +65,7 @@ export const banOfficer = (officerId) => adminMutate('put', `/admin/ban-officer/
 
 export const getOfficerDetail = (id) => adminGet(`/admin/officers/${id}`);
 
-export const toggleBlockOfficer = (id) => adminMutate('put', `/admin/officers/${id}/toggle-block`);
+export const toggleBlockOfficer = (id, reason) => adminMutate('put', `/admin/officers/${id}/toggle-block`, reason ? { reason } : {});
 
 export const updateOfficerStatus = (id, status) => adminMutate('put', `/admin/officers/${id}/status`, { status });
 

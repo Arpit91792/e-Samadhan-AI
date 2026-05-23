@@ -4,8 +4,13 @@ import Complaint from '../models/Complaint.js';
 import AuditLog from '../models/AuditLog.js';
 import Session from '../models/Session.js';
 import OTP from '../models/OTP.js';
+import Department from '../models/Department.js';
 import crypto from 'crypto';
 import { resolveDepartmentSlug } from '../utils/departmentResolve.js';
+import {
+  emitComplaintAcceptedToDept,
+  emitComplaintUpdate,
+} from '../socket/index.js';
 
 // ── Helper: silently update officer lastActive ────────────────────────────────
 async function touchLastActive(officerId) {
@@ -678,7 +683,7 @@ export const blockOfficer = async (req, res, next) => {
     try {
       await User.updateOne(
         { email: officer.email, role: 'officer' },
-        { 
+        {
           isActive: false,
           officerStatus: 'approved',
           lastLogin: new Date()
@@ -690,7 +695,7 @@ export const blockOfficer = async (req, res, next) => {
 
     // ── Invalidate active sessions ────────────────────────────────────────────
     try {
-      await Session.deleteMany({ 
+      await Session.deleteMany({
         userId: officer._id,
         role: 'officer'
       });
@@ -702,7 +707,7 @@ export const blockOfficer = async (req, res, next) => {
     // ── Create audit log ──────────────────────────────────────────────────────
     try {
       await AuditLog.create({
-        action: 'Officer Blocked',
+        action: 'officer_blocked',
         performedBy: adminId,
         performedByModel: 'User',
         role: 'admin',
@@ -710,7 +715,7 @@ export const blockOfficer = async (req, res, next) => {
         targetModel: 'Officer',
         employeeId: officer.employeeId,
         department: officer.department,
-        details: { 
+        details: {
           blockedOfficer: officer.name,
           reason: officer.blockReason,
           blockedAt: officer.blockedAt
@@ -778,7 +783,7 @@ export const unblockOfficer = async (req, res, next) => {
     // ── Create audit log ──────────────────────────────────────────────────────
     try {
       await AuditLog.create({
-        action: 'Officer Unblocked',
+        action: 'officer_unblocked',
         performedBy: adminId,
         performedByModel: 'User',
         role: 'admin',
@@ -786,7 +791,7 @@ export const unblockOfficer = async (req, res, next) => {
         targetModel: 'Officer',
         employeeId: officer.employeeId,
         department: officer.department,
-        details: { 
+        details: {
           unblockedOfficer: officer.name,
           unblockedAt: new Date()
         },
@@ -808,6 +813,167 @@ export const unblockOfficer = async (req, res, next) => {
         isBlocked: officer.isBlocked,
         status: officer.status,
       }
+    });
+  } catch (err) { next(err); }
+};
+
+// ── Department complaint queue (unassigned complaints for officer's dept) ─────
+// @route GET /api/officer/queue
+// @desc  Returns all pending, unaccepted complaints for the officer's department.
+//        Officers see this shared queue and can self-assign from it.
+export const getDepartmentQueue = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 30, priority } = req.query;
+    const deptSlug = req.officer.department;
+
+    // Resolve department ObjectId from slug
+    const dept = await Department.findOne({ slug: deptSlug });
+    if (!dept) {
+      // Fallback: query by category slug directly (handles cases where dept doc missing)
+      const filter = {
+        category: deptSlug,
+        isAccepted: false,
+        status: 'pending',
+      };
+      if (priority) filter.priority = priority;
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const [total, complaints] = await Promise.all([
+        Complaint.countDocuments(filter),
+        Complaint.find(filter)
+          .populate('citizen', 'name phone email')
+          .sort({ isEmergency: -1, priority: -1, createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit)),
+      ]);
+      return res.status(200).json({ success: true, total, queue: complaints });
+    }
+
+    const filter = {
+      department: dept._id,
+      isAccepted: false,
+      status: 'pending',
+    };
+    if (priority) filter.priority = priority;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const [total, complaints] = await Promise.all([
+      Complaint.countDocuments(filter),
+      Complaint.find(filter)
+        .populate('citizen', 'name phone email')
+        .sort({ isEmergency: -1, priority: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit)),
+    ]);
+
+    await touchLastActive(req.officer.id);
+
+    res.status(200).json({ success: true, total, queue: complaints });
+  } catch (err) { next(err); }
+};
+
+// ── Self-assign complaint from department queue ───────────────────────────────
+// @route PUT /api/officer/complaints/:id/self-assign
+// @desc  Officer picks up an unaccepted complaint from the shared department queue.
+//        Uses findOneAndUpdate with atomic check to prevent race conditions.
+export const selfAssignComplaint = async (req, res, next) => {
+  try {
+    const officerId = req.officer.id;
+    const deptSlug = req.officer.department;
+
+    // Resolve department ObjectId
+    const dept = await Department.findOne({ slug: deptSlug });
+
+    // Atomic update — only succeeds if complaint is still unaccepted
+    // This prevents two officers from accepting the same complaint simultaneously
+    const departmentFilter = dept
+      ? { department: dept._id }
+      : { category: deptSlug };
+
+    const complaint = await Complaint.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        ...departmentFilter,
+        isAccepted: false,
+        status: 'pending',
+      },
+      {
+        $set: {
+          isAccepted: true,
+          acceptedBy: officerId,
+          acceptedAt: new Date(),
+          assignedOfficer: officerId,
+          status: 'assigned',
+        },
+        $push: {
+          timeline: {
+            status: 'assigned',
+            note: `Accepted by officer ${req.officer.employeeId} from department queue`,
+            updatedBy: officerId,
+            updatedAt: new Date(),
+          },
+        },
+      },
+      { new: true }
+    ).populate('citizen', 'name phone email');
+
+    if (!complaint) {
+      // Either not found, wrong dept, or already accepted by another officer
+      const existing = await Complaint.findById(req.params.id).select('isAccepted acceptedBy');
+      if (existing?.isAccepted) {
+        return res.status(409).json({
+          success: false,
+          message: 'This complaint has already been accepted by another officer.',
+          code: 'ALREADY_ACCEPTED',
+        });
+      }
+      return res.status(404).json({
+        success: false,
+        message: 'Complaint not found or not available in your department queue.',
+        code: 'NOT_FOUND',
+      });
+    }
+
+    // Update officer stats + status
+    const officer = await Officer.findById(officerId);
+    if (officer) {
+      officer.lastActive = new Date();
+      officer.status = 'busy';
+      await officer.save({ validateBeforeSave: false });
+    }
+
+    // Notify all dept officers via socket — remove from their queues
+    emitComplaintAcceptedToDept(deptSlug, complaint._id.toString(), req.officer.employeeId);
+
+    // Notify citizen via socket
+    emitComplaintUpdate(complaint.citizen?._id, complaint, {
+      message: `Your complaint has been accepted by an officer`,
+    });
+
+    // Audit log
+    try {
+      await AuditLog.create({
+        action: 'officer_complaint_accept',
+        performedBy: officerId,
+        performedByModel: 'Officer',
+        role: 'officer',
+        employeeId: req.officer.employeeId,
+        department: deptSlug,
+        targetModel: 'Complaint',
+        targetId: complaint._id,
+        details: { complaintId: complaint.complaintId, source: 'department_queue' },
+        ipAddress: req.ip || '',
+        userAgent: req.headers['user-agent'] || '',
+      });
+    } catch (auditErr) {
+      console.error('[selfAssignComplaint] ⚠️ Audit log failed:', auditErr.message);
+    }
+
+    console.log('[selfAssignComplaint] ✅ Complaint', complaint.complaintId, 'accepted by', req.officer.employeeId);
+
+    res.status(200).json({
+      success: true,
+      message: `Complaint ${complaint.complaintId} accepted successfully`,
+      data: complaint,
     });
   } catch (err) { next(err); }
 };

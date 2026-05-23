@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, MapPin, Building2, Contact, ArrowLeft, ArrowRight, Loader2, Camera, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../../context/AuthContext';
+import { persistAuthSession } from '../../../utils/authStorage';
 import { FormField, PasswordStrength, OTPSection } from './FormField';
 import LiveFaceCapture from './LiveFaceCapture';
 
@@ -110,8 +111,12 @@ export default function CitizenSignup({ onBack }) {
                   const data = await response.json();
 
                   if (data.success) {
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                        const saved = persistAuthSession(data.token, data.user, {
+                              debug: import.meta.env.DEV,
+                        });
+                        if (!saved) {
+                              throw new Error('Could not persist citizen session');
+                        }
                         toast.success(data.message);
                         navigate(getDashboardPath('citizen'));
                   } else {

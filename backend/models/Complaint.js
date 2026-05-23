@@ -97,6 +97,16 @@ const complaintSchema = new mongoose.Schema(
             resolvedAt: { type: Date },
             dueDate: { type: Date },
             language: { type: String, default: 'en' },
+
+            // ── Queue / self-assignment fields ────────────────────────────────
+            // True once an officer picks it up from the department queue
+            isAccepted: { type: Boolean, default: false },
+            acceptedBy: {
+                  type: mongoose.Schema.Types.ObjectId,
+                  ref: 'Officer',
+                  default: null,
+            },
+            acceptedAt: { type: Date, default: null },
       },
       { timestamps: true }
 );
@@ -116,6 +126,8 @@ complaintSchema.index({ category: 1, status: 1 });
 complaintSchema.index({ assignedOfficer: 1 });
 complaintSchema.index({ createdAt: -1 });
 complaintSchema.index({ category: 1, 'location.coordinates.lat': 1, 'location.coordinates.lng': 1 });
+// Queue index — fast lookup of unaccepted complaints per department
+complaintSchema.index({ department: 1, isAccepted: 1, status: 1, createdAt: -1 });
 
 const Complaint = mongoose.model('Complaint', complaintSchema);
 export default Complaint;

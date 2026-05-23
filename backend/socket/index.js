@@ -18,6 +18,7 @@ export function initSocket(httpServer) {
                   const decoded = jwt.verify(token, process.env.JWT_SECRET);
                   socket.userId = decoded.id;
                   socket.userRole = decoded.role;
+                  socket.department = decoded.department;          // officer department slug
                   socket.managedDepartment = decoded.managedDepartment;
                   socket.adminLevel = decoded.adminLevel;
                   next();
@@ -34,6 +35,10 @@ export function initSocket(httpServer) {
                   if (socket.managedDepartment) {
                         socket.join(`dept:${socket.managedDepartment}`);
                   }
+            }
+            // Officers join their department room so they receive new-complaint notifications
+            if (socket.userRole === 'officer' && socket.department) {
+                  socket.join(`dept:${socket.department}`);
             }
       });
 
@@ -73,4 +78,29 @@ export function emitToDepartment(departmentSlug, event, payload) {
 
 export function emitAdminAlert(departmentSlug, payload) {
       emitToDepartment(departmentSlug, 'admin:alert', payload);
+}
+
+// ── New complaint filed — notify all officers in that department ──────────────
+export function emitNewComplaintToDept(departmentSlug, complaint) {
+      if (!io || !departmentSlug) return;
+      io.to(`dept:${departmentSlug}`).emit('complaint:new', {
+            _id: complaint._id,
+            complaintId: complaint.complaintId,
+            title: complaint.title,
+            category: complaint.category,
+            priority: complaint.priority,
+            isEmergency: complaint.isEmergency,
+            status: complaint.status,
+            location: complaint.location,
+            createdAt: complaint.createdAt,
+      });
+}
+
+// ── Complaint accepted from queue — notify dept to remove it from queue ───────
+export function emitComplaintAcceptedToDept(departmentSlug, complaintId, officerName) {
+      if (!io || !departmentSlug) return;
+      io.to(`dept:${departmentSlug}`).emit('complaint:accepted', {
+            complaintId,
+            acceptedBy: officerName,
+      });
 }

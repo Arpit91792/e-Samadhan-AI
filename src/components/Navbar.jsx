@@ -72,11 +72,10 @@ export default function Navbar() {
                                     ))}
                               </div>
 
-                              {/* Desktop CTA — changes based on auth state */}
+                              {/* Desktop CTA */}
                               <div className="hidden lg:flex items-center gap-3">
                                     {isAuthenticated ? (
                                           <>
-                                                {/* Go to dashboard */}
                                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
                                                       <Link
                                                             to={getDashboardPath(user?.role)}
@@ -86,7 +85,6 @@ export default function Navbar() {
                                                             Dashboard
                                                       </Link>
                                                 </motion.div>
-                                                {/* Logout */}
                                                 <motion.button
                                                       onClick={handleLogout}
                                                       whileHover={{ scale: 1.05 }}
@@ -107,7 +105,6 @@ export default function Navbar() {
                                                             Login
                                                       </Link>
                                                 </motion.div>
-                                                {/* Sign Up */}
                                                 <motion.div
                                                       whileHover={{ scale: 1.05, boxShadow: '0 8px 25px rgba(37,99,235,0.4)' }}
                                                       whileTap={{ scale: 0.97 }}

@@ -6,7 +6,6 @@ import CitizenSignup from './signup/CitizenSignup';
 import OfficerSignup from './signup/OfficerSignup';
 import AdminSignup from './signup/AdminSignup';
 
-// ── Role selection cards ──────────────────────────────────────────────────────
 const roles = [
       {
             id: 'citizen',
@@ -78,7 +77,6 @@ export default function SignupPage() {
                         <div className="flex-1 flex items-center justify-center px-4 py-8">
                               <AnimatePresence mode="wait">
                                     {!selectedRole ? (
-                                          /* ── Role Selection ── */
                                           <motion.div
                                                 key="role-select"
                                                 initial={{ opacity: 0, y: 30 }}
@@ -117,7 +115,6 @@ export default function SignupPage() {
                                                                   onClick={() => setSelectedRole(role.id)}
                                                                   className={`${role.bg} border-2 ${role.border} rounded-2xl p-6 text-left shadow-md hover:shadow-xl transition-all duration-300 group relative overflow-hidden`}
                                                             >
-                                                                  {/* Glow on hover */}
                                                                   <div className={`absolute inset-0 bg-gradient-to-br ${role.gradient} opacity-0 group-hover:opacity-5 transition-opacity rounded-2xl`} />
 
                                                                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${role.gradient} flex items-center justify-center mb-4 shadow-lg text-2xl`}>
@@ -145,7 +142,6 @@ export default function SignupPage() {
                                                 </p>
                                           </motion.div>
                                     ) : (
-                                          /* ── Signup Form ── */
                                           <motion.div
                                                 key={`form-${selectedRole}`}
                                                 initial={{ opacity: 0, x: 40 }}
@@ -154,7 +150,6 @@ export default function SignupPage() {
                                                 transition={{ duration: 0.4 }}
                                                 className="w-full max-w-2xl"
                                           >
-                                                {/* Back button */}
                                                 <button
                                                       onClick={() => setSelectedRole(null)}
                                                       className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-6 transition-colors font-medium"

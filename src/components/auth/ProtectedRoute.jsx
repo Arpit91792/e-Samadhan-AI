@@ -4,9 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import {
       readStoredToken,
       readStoredAuth,
+      readStoredOfficer,
+      readStoredOfficerToken,
       hasValidSession,
       hasValidAdminSession,
+      hasValidOfficerSession,
       isAuthFresh,
+      isOfficerAuthFresh,
 } from '../../utils/authStorage';
 import { getAdminDashboardPath, isValidAdminDepartment } from '../../utils/departmentMeta';
 import PageLoader from '../ui/PageLoader';
@@ -36,6 +40,23 @@ export const ProtectedRoute = ({ children }) => {
 export const RoleRoute = ({ children, roles }) => {
       const { user, initializing, getDashboardPath } = useAuth();
       const location = useLocation();
+
+      // ── Officer role: use completely isolated officer storage ─────────────────
+      if (roles.includes('officer')) {
+            const officerToken = readStoredOfficerToken();
+            const officer = readStoredOfficer();
+            const officerSessionOk = Boolean(officerToken) && (hasValidOfficerSession() || isOfficerAuthFresh());
+
+            if (!officerSessionOk) {
+                  return <Navigate to="/login" state={{ from: location }} replace />;
+            }
+            if (!officer || officer.role !== 'officer') {
+                  return <Navigate to="/login" state={{ from: location }} replace />;
+            }
+            return children;
+      }
+
+      // ── Citizen / other roles: use standard auth storage ──────────────────────
       const token = readStoredToken();
       const u = effectiveUser(user);
       const sessionOk = Boolean(token) && (hasValidSession() || isAuthFresh());
@@ -57,10 +78,12 @@ export const RoleRoute = ({ children, roles }) => {
 export const PublicRoute = ({ children }) => {
       const { user, initializing, getDashboardPath } = useAuth();
       const u = effectiveUser(user);
+      // Only check admin/citizen sessions — never redirect based on officer session
       const sessionOk = hasValidSession() || isAuthFresh();
 
       if (initializing && readStoredToken() && !isAuthFresh()) return children;
-      if (sessionOk && u?.role) {
+      // Only redirect if admin or citizen is logged in — officers have their own login page
+      if (sessionOk && u?.role && u.role !== 'officer') {
             return <Navigate to={getDashboardPath(u.role)} replace />;
       }
       return children;

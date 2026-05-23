@@ -28,7 +28,7 @@ export default function CitizenDashboard() {
       const loadUnread = useCallback(() => {
             getNotifications({ unreadOnly: 'true', limit: 1 })
                   .then(({ data }) => setUnread(data.unreadCount ?? 0))
-                  .catch(() => {});
+                  .catch(() => { });
       }, []);
 
       useEffect(() => {

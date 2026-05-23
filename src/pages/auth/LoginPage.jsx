@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, BadgeCheck, Building2 } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2, BadgeCheck, Building2, ShieldOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AuthLayout from '../../components/auth/AuthLayout';
 import { useAuth } from '../../context/AuthContext';
 import { loginOfficer } from '../../api/officer';
-import { hasValidSession, readStoredAuth } from '../../utils/authStorage';
+import {
+      hasValidSession,
+      hasValidOfficerSession,
+      readStoredAuth,
+      readStoredOfficer,
+      persistOfficerSession,
+} from '../../utils/authStorage';
 
 const DEPARTMENTS = [
       { value: 'electricity', label: '⚡ Electricity' },
@@ -29,6 +35,7 @@ export default function LoginPage() {
       const [showPassword, setShowPassword] = useState(false);
       const [loading, setLoading] = useState(false);
       const [errors, setErrors] = useState({});
+      const [blockedInfo, setBlockedInfo] = useState(null);
 
       const from = location.state?.from?.pathname || null;
 
@@ -53,6 +60,7 @@ export default function LoginPage() {
             const { name, value, type, checked } = e.target;
             setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
             if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
+            if (blockedInfo) setBlockedInfo(null);
       };
 
       const handleSubmit = async (e) => {
@@ -75,11 +83,20 @@ export default function LoginPage() {
                         if (!data?.token || !data?.user) {
                               throw new Error('Invalid login response from server');
                         }
-                        setSession(data.token, data.user);
-                        // Store dedicated officer keys for easy access
-                        localStorage.setItem('officerToken', data.token);
-                        localStorage.setItem('officerData', JSON.stringify(data.officer || data.user));
+                        const saved = persistOfficerSession(data.token, data.officer || data.user, {
+                              debug: import.meta.env.DEV,
+                        });
+                        if (!saved) throw new Error('Could not save officer session');
+
+                        if (!hasValidOfficerSession()) {
+                              throw new Error('Officer session could not be verified. Please try again.');
+                        }
+                        setErrors({});
+                        toast.success(data.message || 'Welcome back!');
+                        navigate('/officer/dashboard', { replace: true });
+                        return;
                   }
+
                   const authUser = readStoredAuth() || data.user;
                   if (!hasValidSession() || !authUser?.role) {
                         throw new Error('Session could not be saved. Please try again.');
@@ -89,7 +106,14 @@ export default function LoginPage() {
                   const dest = from || getDashboardPath(authUser.role);
                   navigate(dest, { replace: true });
             } catch (err) {
+                  const code = err.response?.data?.code;
                   const msg = err.response?.data?.message || 'Login failed. Please try again.';
+
+                  if (code === 'ACCOUNT_BLOCKED' || code === 'ACCOUNT_SUSPENDED') {
+                        setBlockedInfo({ message: msg });
+                        return;
+                  }
+
                   toast.error(msg);
                   setErrors({ general: msg });
             } finally {
@@ -107,19 +131,50 @@ export default function LoginPage() {
                         <div className="flex items-center gap-2 justify-center mb-3">
                               <button
                                     type="button"
-                                    onClick={() => setRole('citizen')}
+                                    onClick={() => { setRole('citizen'); setBlockedInfo(null); setErrors({}); }}
                                     className={`flex-1 py-2 rounded-2xl text-sm font-semibold transition ${role === 'citizen' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
                               >
                                     Citizen
                               </button>
                               <button
                                     type="button"
-                                    onClick={() => setRole('officer')}
+                                    onClick={() => { setRole('officer'); setBlockedInfo(null); setErrors({}); }}
                                     className={`flex-1 py-2 rounded-2xl text-sm font-semibold transition ${role === 'officer' ? 'bg-violet-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
                               >
                                     Officer
                               </button>
                         </div>
+
+                        {/* Blocked account alert */}
+                        {blockedInfo && (
+                              <motion.div
+                                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    className="rounded-2xl border border-red-200 bg-red-50 overflow-hidden"
+                              >
+                                    <div className="flex items-center gap-3 px-4 py-3 bg-red-600">
+                                          <ShieldOff className="w-5 h-5 text-white flex-shrink-0" />
+                                          <span className="text-white font-bold text-sm">🚫 Access Denied</span>
+                                    </div>
+                                    <div className="px-4 py-4 space-y-2">
+                                          <p className="text-red-800 font-semibold text-sm">
+                                                Your officer account has been blocked by the department admin.
+                                          </p>
+                                          <p className="text-red-600 text-xs leading-relaxed">
+                                                {blockedInfo.message || 'Please contact your department administrator to restore access.'}
+                                          </p>
+                                          <div className="mt-3 p-3 bg-red-100 rounded-xl border border-red-200">
+                                                <p className="text-xs text-red-700 font-medium">What this means:</p>
+                                                <ul className="mt-1.5 space-y-1 text-xs text-red-600">
+                                                      <li>❌ Cannot login to the officer portal</li>
+                                                      <li>❌ Cannot access the dashboard</li>
+                                                      <li>❌ Cannot update or manage complaints</li>
+                                                      <li>✅ Contact your department admin to unblock</li>
+                                                </ul>
+                                          </div>
+                                    </div>
+                              </motion.div>
+                        )}
 
                         {/* General error */}
                         {errors.general && (
