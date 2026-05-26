@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { getDepartmentAdmins, createDepartmentAdmin, removeDepartmentAdmin } from '../../api/admin';
 import { DEPARTMENTS } from '../../utils/complaintConstants';
 import { deptLabel } from '../../utils/departmentMeta';
 
 export default function AdminDeptAdmins() {
+      const { t } = useTranslation();
       const [admins, setAdmins] = useState([]);
       const [form, setForm] = useState({ name: '', email: '', password: '', department: 'police' });
 
       const load = () => {
             getDepartmentAdmins()
                   .then(({ data }) => setAdmins(data.admins || []))
-                  .catch(() => toast.error('Failed to load admins'));
+                  .catch(() => toast.error(t('toast.failedToLoad')));
       };
 
       useEffect(() => { load(); }, []);
@@ -21,22 +23,22 @@ export default function AdminDeptAdmins() {
             e.preventDefault();
             try {
                   await createDepartmentAdmin(form);
-                  toast.success('Department admin created');
+                  toast.success(t('toast.success'));
                   setForm({ name: '', email: '', password: '', department: 'police' });
                   load();
             } catch (err) {
-                  toast.error(err.response?.data?.message || 'Create failed');
+                  toast.error(err.response?.data?.message || t('toast.error'));
             }
       };
 
       const remove = async (id) => {
-            if (!window.confirm('Deactivate this department admin?')) return;
+            if (!window.confirm(t('common.confirmDelete') || 'Deactivate this department admin?')) return;
             try {
                   await removeDepartmentAdmin(id);
-                  toast.success('Admin removed');
+                  toast.success(t('toast.success'));
                   load();
             } catch (err) {
-                  toast.error(err.response?.data?.message || 'Remove failed');
+                  toast.error(err.response?.data?.message || t('toast.error'));
             }
       };
 
@@ -53,7 +55,7 @@ export default function AdminDeptAdmins() {
                                     <option key={d.value} value={d.value}>{d.label}</option>
                               ))}
                         </select>
-                        <button type="submit" className="sm:col-span-2 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold rounded-xl text-sm">Create Department Admin</button>
+                        <button type="submit" className="sm:col-span-2 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold rounded-xl text-sm">{t('adminOfficersPage.createOfficerTitle')}</button>
                   </form>
 
                   <div className="space-y-2">

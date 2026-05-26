@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../hooks/useSocket';
 import { getAdminDashboard } from '../../api/admin';
@@ -30,9 +31,11 @@ export default function AdminDashboard() {
             onNotification: () => { },
       }, { role: 'admin' });
 
+      const { t } = useTranslation();
+
       const handleLogout = async () => {
             await logout();
-            toast.success('Logged out');
+            toast.success(t('toast.loggedOut'));
             navigate('/admin/login');
       };
 
@@ -67,7 +70,7 @@ export default function AdminDashboard() {
                                           <Menu className="w-5 h-5" />
                                     </button>
                                     <p className="text-sm font-bold text-white truncate">
-                                          {departmentName} · Admin Panel
+                                          {departmentName} · {t('sidebar.dashboard')}
                                     </p>
                               </header>
                               <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">

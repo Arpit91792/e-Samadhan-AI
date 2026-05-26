@@ -40,14 +40,25 @@ function loadLeaflet() {
 
 async function reverseGeocode(lat, lng) {
       const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-            { headers: { 'Accept-Language': 'en' } }
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
+            { headers: { 'Accept-Language': 'en-IN,en' } }
       );
       const data = await res.json();
       const a = data.address || {};
+
+      // Build address — covers urban roads and rural villages/hamlets
+      const parts = [
+            a.house_number,
+            a.road || a.pedestrian || a.footway,
+            a.neighbourhood || a.suburb,
+            a.village || a.hamlet || a.locality,
+      ].filter(Boolean);
+
       return {
-            address: data.display_name?.split(',').slice(0, 4).join(', ') || '',
-            city: a.city || a.town || a.village || '',
+            address: parts.length > 0
+                  ? parts.join(', ')
+                  : (data.display_name?.split(',').slice(0, 4).join(', ') || ''),
+            city: a.city || a.town || a.village || a.hamlet || a.county || '',
             state: a.state || '',
             pincode: a.postcode || '',
       };

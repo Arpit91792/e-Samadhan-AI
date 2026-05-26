@@ -2,10 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
+import { useTranslation } from 'react-i18next';
 import { ArrowRight, FileText, Sparkles } from 'lucide-react';
 
 export default function CTA() {
+      const { t } = useTranslation();
       const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+
+      const stats = [
+            { value: t('cta.free'), label: t('cta.freeDesc') },
+            { value: t('cta.support'), label: t('cta.supportDesc') },
+            { value: t('cta.secure'), label: t('cta.secureDesc') },
+      ];
 
       return (
             <section className="py-24 relative overflow-hidden">
@@ -24,8 +32,7 @@ export default function CTA() {
                   />
 
                   {[...Array(5)].map((_, i) => (
-                        <motion.div
-                              key={i}
+                        <motion.div key={i}
                               animate={{ y: [0, -15, 0], rotate: [0, 10, 0], opacity: [0.2, 0.4, 0.2] }}
                               transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.7 }}
                               className="absolute w-8 h-8 border-2 border-white/30 rounded-xl"
@@ -42,56 +49,36 @@ export default function CTA() {
                         >
                               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 border border-white/30 rounded-full mb-6">
                                     <Sparkles className="w-4 h-4 text-yellow-300" />
-                                    <span className="text-sm font-semibold text-white">Join the Digital Governance Revolution</span>
+                                    <span className="text-sm font-semibold text-white">{t('cta.badge')}</span>
                               </div>
 
                               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
-                                    Transform Public Grievance{' '}
-                                    <span className="bg-gradient-to-r from-yellow-300 to-amber-300 bg-clip-text text-transparent">
-                                          Management with AI
-                                    </span>
+                                    {t('cta.title')}
                               </h2>
 
                               <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto leading-relaxed">
-                                    Join 2.4 million citizens who have already experienced faster, smarter, and more transparent government services.
+                                    {t('cta.subtitle')}
                               </p>
 
-                              {/* ── Buttons — React Router Links ── */}
                               <div className="flex flex-wrap justify-center gap-4 mb-12">
-                                    <motion.div
-                                          whileHover={{ scale: 1.06, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
-                                          whileTap={{ scale: 0.97 }}
-                                    >
-                                          <Link
-                                                to="/signup"
-                                                className="flex items-center gap-2 px-8 py-4 bg-white text-blue-700 font-black rounded-2xl shadow-2xl text-base transition-all"
-                                          >
+                                    <motion.div whileHover={{ scale: 1.06, boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} whileTap={{ scale: 0.97 }}>
+                                          <Link to="/signup" className="flex items-center gap-2 px-8 py-4 bg-white text-blue-700 font-black rounded-2xl shadow-2xl text-base transition-all">
                                                 <Sparkles className="w-5 h-5" />
-                                                Get Started Free
+                                                {t('cta.getStartedFree')}
                                                 <ArrowRight className="w-5 h-5" />
                                           </Link>
                                     </motion.div>
 
-                                    <motion.div
-                                          whileHover={{ scale: 1.06 }}
-                                          whileTap={{ scale: 0.97 }}
-                                    >
-                                          <Link
-                                                to="/signup"
-                                                className="flex items-center gap-2 px-8 py-4 bg-white/15 text-white font-bold rounded-2xl border-2 border-white/40 hover:bg-white/25 text-base transition-all backdrop-blur-sm"
-                                          >
+                                    <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.97 }}>
+                                          <Link to="/signup" className="flex items-center gap-2 px-8 py-4 bg-white/15 text-white font-bold rounded-2xl border-2 border-white/40 hover:bg-white/25 text-base transition-all backdrop-blur-sm">
                                                 <FileText className="w-5 h-5" />
-                                                Register Complaint
+                                                {t('cta.registerComplaint')}
                                           </Link>
                                     </motion.div>
                               </div>
 
                               <div className="flex flex-wrap justify-center gap-8">
-                                    {[
-                                          { value: 'Free', label: 'Always free for citizens' },
-                                          { value: '24/7', label: 'Round the clock support' },
-                                          { value: '100%', label: 'Secure & encrypted' },
-                                    ].map((item) => (
+                                    {stats.map((item) => (
                                           <div key={item.label} className="flex flex-col items-center">
                                                 <span className="text-2xl font-black text-white">{item.value}</span>
                                                 <span className="text-sm text-blue-200">{item.label}</span>

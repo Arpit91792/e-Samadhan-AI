@@ -9,6 +9,7 @@ import {
       Satellite, AlertTriangle, Wifi, WifiOff, ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import {
       Field, Input, PasswordInput, PasswordStrength, PasswordMatch,
       Select, SubmitButton, SectionHeader, ErrorAlert, OTPSection, StepProgress
@@ -42,6 +43,7 @@ const LOC = { IDLE: 'idle', REQUESTING: 'requesting', FETCHING: 'fetching', SUCC
 export default function CitizenSignup() {
       const navigate = useNavigate();
       const { register, getDashboardPath } = useAuth();
+      const { t } = useTranslation();
       const otpHook = useOTP();
 
       // ── State ──────────────────────────────────────────────────────────────────
@@ -68,8 +70,8 @@ export default function CitizenSignup() {
       // Form
       const [form, setForm] = useState({
             name: '', email: '', phone: '', password: '', confirmPassword: '',
-            address: '', city: '', state: '', pincode: '', latitude: '', longitude: '',
-            govtIdType: 'aadhaar', govtIdNumber: '',
+            nearbyLocation: '', completeAddress: '', city: '', state: '', pincode: '', latitude: '', longitude: '',
+            govtIdType: 'aadhaar', govtIdNumber: '', dob: '', gender: '',
       });
 
       // ── Helpers ────────────────────────────────────────────────────────────────
@@ -80,7 +82,7 @@ export default function CitizenSignup() {
 
       // ── Location ───────────────────────────────────────────────────────────────
       const fetchLocation = useCallback(() => {
-            if (!navigator.geolocation) { toast.error('Geolocation not supported'); return; }
+            if (!navigator.geolocation) { toast.error(t('toastMessages.geolocationNotSupported')); return; }
             setLocStatus(LOC.REQUESTING);
             navigator.geolocation.getCurrentPosition(
                   async ({ coords: { latitude, longitude, accuracy: acc } }) => {
@@ -93,29 +95,53 @@ export default function CitizenSignup() {
                               );
                               const data = await res.json();
                               const a = data.address || {};
-                              const parts = [a.house_number, a.road || a.pedestrian, a.neighbourhood || a.suburb || a.village].filter(Boolean);
+
+                              // Build address — works for both urban and rural areas
+                              const addressParts = [
+                                    a.house_number,
+                                    a.road || a.pedestrian || a.footway,
+                                    a.neighbourhood || a.suburb,
+                                    a.village || a.hamlet || a.locality,
+                              ].filter(Boolean);
+                              const address = addressParts.length > 0
+                                    ? addressParts.join(', ')
+                                    : (data.display_name?.split(',').slice(0, 4).join(', ') || '');
+
+                              // City — rural areas use village/town/hamlet
+                              const city = a.city || a.town || a.village || a.hamlet || a.county || '';
+
+                              // State — normalize to match STATES array exactly
+                              const rawState = a.state || '';
+                              const matchedState = STATES.find(
+                                    s => s.toLowerCase() === rawState.toLowerCase()
+                              ) || STATES.find(
+                                    s => rawState.toLowerCase().includes(s.toLowerCase())
+                              ) || rawState;
+
+                              const pincode = a.postcode || '';
+
                               setForm(p => ({
                                     ...p,
-                                    address: parts.join(', ') || data.display_name?.split(',').slice(0, 3).join(',') || '',
-                                    city: a.city || a.town || a.village || '',
-                                    state: a.state || '',
-                                    pincode: a.postcode || '',
+                                    nearbyLocation: address,
+                                    city,
+                                    state: matchedState,
+                                    pincode,
                                     latitude: String(latitude),
                                     longitude: String(longitude),
                               }));
-                              setErrors(p => ({ ...p, address: '', city: '', state: '' }));
+                              setErrors(p => ({ ...p, nearbyLocation: '', city: '', state: '' }));
                               setLocStatus(LOC.SUCCESS);
-                              toast.success('📍 Location detected!');
+                              toast.success(t('toastMessages.locationDetected'));
                         } catch {
                               setLocStatus(LOC.ERROR);
-                              toast.error('Could not fetch address. Enter manually.');
+                              toast.error(t('toastMessages.couldNotFetchAddress'));
                         }
                   },
                   (err) => {
                         setLocStatus(err.code === 1 ? LOC.DENIED : LOC.ERROR);
-                        toast.error(err.code === 1 ? 'Location permission denied.' : 'Location unavailable.');
+                        toast.error(err.code === 1 ? t('location.denied') : t('location.locationFailed'));
                   },
-                  { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+                  { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
       }, []);
 
@@ -135,8 +161,8 @@ export default function CitizenSignup() {
                   if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
             }
             if (s === 1) {
-                  if (!form.address.trim()) e.address = 'Address is required';
-                  if (!form.city.trim()) e.city = 'City is required';
+                  if (!form.completeAddress.trim()) e.completeAddress = 'Complete address is required';
+                  if (!form.city.trim()) e.city = 'City / Town is required';
                   if (!form.state) e.state = 'State is required';
             }
             if (s === 2) {
@@ -156,9 +182,9 @@ export default function CitizenSignup() {
             if (validateStep(step)) {
                   setStep(s => Math.min(s + 1, STEPS.length - 1));
             } else {
-                  if (step === 2 && !docVerified) toast.error('⚠️ Document verification is required!');
-                  else if (step === 3 && !livenessVerified) toast.error('⚠️ AI liveness verification is mandatory!');
-                  else toast.error('Please complete all required fields');
+                  if (step === 2 && !docVerified) toast.error(t('verification.documentRequired'));
+                  else if (step === 3 && !livenessVerified) toast.error(t('verification.livenessRequired'));
+                  else toast.error(t('validation.fillAllFields'));
             }
       };
       const prevStep = () => { setStep(s => Math.max(s - 1, 0)); setErrors({}); };
@@ -167,7 +193,7 @@ export default function CitizenSignup() {
       const handleSubmit = async (e) => {
             e.preventDefault();
             if (!validateStep(4)) return;
-            if (!livenessVerified) { toast.error('AI liveness verification is required!'); setStep(3); return; }
+            if (!livenessVerified) { toast.error(t('verification.livenessRequired')); setStep(3); return; }
 
             setLoading(true);
             try {
@@ -184,10 +210,10 @@ export default function CitizenSignup() {
                         fd.append('liveImage', blob, 'liveness.jpg');
                   }
                   const data = await register(fd);
-                  toast.success(data.message || 'Account created successfully!');
+                  toast.success(data.message || t('toast.success'));
                   navigate(getDashboardPath('citizen'), { replace: true });
             } catch (err) {
-                  const msg = err.response?.data?.message || 'Registration failed. Please try again.';
+                  const msg = err.response?.data?.message || t('signupValidationMessages.fieldRequired');
                   toast.error(msg);
                   setErrors({ general: msg });
             } finally {
@@ -251,12 +277,12 @@ export default function CitizenSignup() {
                                     disabled={locStatus === LOC.REQUESTING || locStatus === LOC.FETCHING}
                                     whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}
                                     className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-sm transition-all ${locStatus === LOC.SUCCESS
-                                                ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-200'
-                                                : locStatus === LOC.REQUESTING || locStatus === LOC.FETCHING
-                                                      ? 'bg-gradient-to-r from-blue-500 to-violet-500 text-white cursor-not-allowed'
-                                                      : locStatus === LOC.DENIED || locStatus === LOC.ERROR
-                                                            ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-                                                            : 'bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-xl shadow-blue-200'
+                                          ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-200'
+                                          : locStatus === LOC.REQUESTING || locStatus === LOC.FETCHING
+                                                ? 'bg-gradient-to-r from-blue-500 to-violet-500 text-white cursor-not-allowed'
+                                                : locStatus === LOC.DENIED || locStatus === LOC.ERROR
+                                                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                                                      : 'bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-xl shadow-blue-200'
                                           }`}>
                                     {locStatus === LOC.REQUESTING || locStatus === LOC.FETCHING ? (
                                           <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
@@ -289,14 +315,28 @@ export default function CitizenSignup() {
                                     <div className="flex-1 h-px bg-gray-200" />
                               </div>
 
-                              <Field label="Full Address" error={errors.address} required hint="House No., Street, Locality">
+                              <Field label="Nearby Location" hint="Auto-filled from GPS — shows your approximate area">
+                                    <div className="relative">
+                                          <MapPin className="absolute left-3.5 top-3.5 text-emerald-500 w-4 h-4" />
+                                          <textarea value={form.nearbyLocation} readOnly rows={2}
+                                                placeholder="Click 'Use Current Location' above to auto-detect"
+                                                className="w-full pl-10 pr-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm resize-none text-emerald-800 cursor-default focus:outline-none" />
+                                    </div>
+                                    {form.nearbyLocation && (
+                                          <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                                                <CheckCircle2 className="w-3 h-3" /> Auto-detected from GPS
+                                          </p>
+                                    )}
+                              </Field>
+
+                              <Field label="Complete Address" error={errors.completeAddress} required hint="House No., Street, Village, Landmark, etc.">
                                     <div className="relative">
                                           <MapPin className="absolute left-3.5 top-3.5 text-gray-400 w-4 h-4" />
-                                          <textarea value={form.address} onChange={e => set('address', e.target.value)} rows={2}
-                                                placeholder="House No., Street, Locality"
-                                                className={`w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm resize-none focus:outline-none focus:ring-2 transition-all ${errors.address ? 'border-red-300 focus:ring-red-200' : 'border-gray-200 focus:ring-blue-200 focus:border-blue-400'}`} />
+                                          <textarea value={form.completeAddress} onChange={e => set('completeAddress', e.target.value)} rows={3}
+                                                placeholder="e.g. House No. 24, Near Water Tank, Minal Gate 2, Bhopal"
+                                                className={`w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm resize-none focus:outline-none focus:ring-2 transition-all ${errors.completeAddress ? 'border-red-300 focus:ring-red-200' : 'border-gray-200 focus:ring-blue-200 focus:border-blue-400'}`} />
                                     </div>
-                                    {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
+                                    {errors.completeAddress && <p className="text-xs text-red-500 mt-1">{errors.completeAddress}</p>}
                               </Field>
                               <div className="grid sm:grid-cols-2 gap-4">
                                     <Field label="City / Town" error={errors.city} required>
@@ -324,6 +364,18 @@ export default function CitizenSignup() {
                                           {docVerified ? '✓ VERIFIED' : 'REQUIRED'}
                                     </span>
                               </div>
+
+                              {/* Auto-fill success banner */}
+                              {docVerified && form.govtIdType === 'aadhaar' && (form.dob || form.gender) && (
+                                    <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
+                                          className="flex items-center gap-2.5 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                                          <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                                          <p className="text-xs text-blue-700 font-medium">
+                                                ✅ Aadhaar details auto-filled in your registration form
+                                                {form.name ? ` — Name: ${form.name}` : ''}
+                                          </p>
+                                    </motion.div>
+                              )}
 
                               {!docVerified && (
                                     <div className="flex items-start gap-2.5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl">
@@ -355,6 +407,15 @@ export default function CitizenSignup() {
                                           setDocVerified(true);
                                           setGovtIdFile(data.file);
                                           if (data.extractedNumber) set('govtIdNumber', data.extractedNumber);
+
+                                          // Auto-fill form from Aadhaar OCR
+                                          if (data.selectedType === 'aadhaar' && data.aadhaarDetails) {
+                                                const { name, dob, gender } = data.aadhaarDetails;
+                                                if (name && !form.name.trim()) set('name', name);
+                                                if (dob) set('dob', dob);
+                                                if (gender) set('gender', gender);
+                                          }
+
                                           setErrors(p => ({ ...p, docVerified: '' }));
                                     }}
                                     onReset={() => { setDocVerified(false); setGovtIdFile(null); }}
@@ -500,7 +561,7 @@ export default function CitizenSignup() {
                         <div className="flex items-center gap-3 mb-4">
                               <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl border border-white/30">👤</div>
                               <div>
-                                    <h2 className="text-xl font-black text-white">Citizen Registration</h2>
+                                    <h2 className="text-xl font-black text-white">{t('citizenSignup.title')}</h2>
                                     <p className="text-blue-100 text-xs">AI-powered identity verification & signup</p>
                               </div>
                         </div>
@@ -525,8 +586,8 @@ export default function CitizenSignup() {
                                           whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(37,99,235,0.3)' }} whileTap={{ scale: 0.98 }}
                                           disabled={(step === 2 && !docVerified) || (step === 3 && !livenessVerified)}
                                           className={`flex items-center gap-2 px-6 py-3 font-bold rounded-xl text-sm shadow-lg transition-all ${(step === 2 && !docVerified) || (step === 3 && !livenessVerified)
-                                                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                                      : 'bg-gradient-to-r from-blue-600 to-violet-600 text-white'
+                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                                : 'bg-gradient-to-r from-blue-600 to-violet-600 text-white'
                                                 }`}>
                                           {step === 2 && !docVerified ? '⚠️ Verify Document First'
                                                 : step === 3 && !livenessVerified ? '⚠️ Complete Liveness First'

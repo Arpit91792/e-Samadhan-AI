@@ -56,6 +56,44 @@ const DOC_RULES = {
       },
 };
 
+// ── Aadhaar-specific detail extractor ────────────────────────────────────────
+const extractAadhaarDetails = (text) => {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+      // Aadhaar number — 4+4+4 digits with optional spaces
+      const aadhaarMatch = text.match(/\b\d{4}\s?\d{4}\s?\d{4}\b/);
+      const aadhaarNumber = aadhaarMatch ? aadhaarMatch[0].replace(/\s/g, '') : null;
+
+      // DOB — DD/MM/YYYY or DD-MM-YYYY or Year of Birth: YYYY
+      const dobMatch = text.match(/\b(\d{2}[\/\-]\d{2}[\/\-]\d{4})\b/)
+            || text.match(/(?:DOB|Date of Birth|Year of Birth)[:\s]+(\d{2}[\/\-]\d{2}[\/\-]\d{4}|\d{4})/i);
+      const dob = dobMatch ? dobMatch[1] || dobMatch[0] : null;
+
+      // Gender
+      const genderMatch = text.match(/\b(MALE|FEMALE|Male|Female|पुरुष|महिला)\b/);
+      const gender = genderMatch
+            ? (['male', 'पुरुष'].includes(genderMatch[0].toLowerCase()) ? 'Male' : 'Female')
+            : null;
+
+      // Name — heuristic: line after "Government of India" or before DOB line,
+      // not a keyword line, not all-caps header, min 3 chars, contains space
+      const skipPatterns = /government|india|uidai|aadhaar|आधार|unique|identification|authority|dob|date|birth|male|female|पुरुष|महिला|\d{4}/i;
+      let name = null;
+      for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            // Skip short lines, all-digit lines, keyword lines
+            if (line.length < 3) continue;
+            if (skipPatterns.test(line)) continue;
+            // Must contain at least one space (first + last name) or be a single proper name
+            if (/^[A-Za-z\s\.]+$/.test(line) && line.length >= 4) {
+                  name = line.replace(/\s+/g, ' ').trim();
+                  break;
+            }
+      }
+
+      return { aadhaarNumber, dob, gender, name };
+};
+
 const STATUS = { IDLE: 'idle', UPLOADING: 'uploading', SCANNING: 'scanning', SUCCESS: 'success', MISMATCH: 'mismatch', ERROR: 'error' };
 
 // ── Client-side OCR validation ────────────────────────────────────────────────
@@ -107,6 +145,7 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
       const [ocrText, setOcrText] = useState('');
       const [result, setResult] = useState(null);
       const [dragOver, setDragOver] = useState(false);
+      const [aadhaarDetails, setAadhaarDetails] = useState(null);
       const inputRef = useRef(null);
 
       const rules = DOC_RULES[selectedType];
@@ -118,6 +157,7 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
             setOcrProgress(0);
             setOcrText('');
             setResult(null);
+            setAadhaarDetails(null);
             onReset?.();
       };
 
@@ -167,6 +207,13 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
                   setOcrText(text);
                   setOcrProgress(100);
 
+                  // Extract Aadhaar-specific details if applicable
+                  let extracted = null;
+                  if (selectedType === 'aadhaar') {
+                        extracted = extractAadhaarDetails(text);
+                        setAadhaarDetails(extracted);
+                  }
+
                   // Validate locally first
                   const localResult = validateLocally(text, selectedType);
                   setResult(localResult);
@@ -185,13 +232,25 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
                         setResult({ valid: data.success, message: data.message, extractedNumber: data.extractedNumber });
                         setStatus(data.success ? STATUS.SUCCESS : STATUS.MISMATCH);
                         if (data.success) {
-                              onVerified?.({ file: f, ocrText: text, extractedNumber: data.extractedNumber, selectedType });
+                              onVerified?.({
+                                    file: f,
+                                    ocrText: text,
+                                    extractedNumber: data.extractedNumber,
+                                    selectedType,
+                                    aadhaarDetails: extracted,
+                              });
                         }
                   } catch {
                         // Backend unavailable — use local result
                         setStatus(localResult.valid ? STATUS.SUCCESS : STATUS.ERROR);
                         if (localResult.valid) {
-                              onVerified?.({ file: f, ocrText: text, extractedNumber: localResult.extractedNumber, selectedType });
+                              onVerified?.({
+                                    file: f,
+                                    ocrText: text,
+                                    extractedNumber: localResult.extractedNumber,
+                                    selectedType,
+                                    aadhaarDetails: extracted,
+                              });
                         }
                   }
             } catch (err) {
@@ -243,8 +302,8 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
                                           onDrop={handleDrop}
                                           onClick={() => inputRef.current?.click()}
                                           className={`relative flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-200 ${dragOver
-                                                      ? 'border-blue-500 bg-blue-50 scale-[1.01]'
-                                                      : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'
+                                                ? 'border-blue-500 bg-blue-50 scale-[1.01]'
+                                                : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'
                                                 }`}
                                     >
                                           <motion.div
@@ -337,6 +396,47 @@ export default function DocumentVerifier({ selectedType, onVerified, onReset }) 
                                                 )}
                                           </div>
                                     </div>
+
+                                    {/* Aadhaar extracted details card */}
+                                    {selectedType === 'aadhaar' && aadhaarDetails && (
+                                          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                                                className="p-4 bg-blue-50 border border-blue-200 rounded-xl space-y-2">
+                                                <p className="text-xs font-bold text-blue-800 flex items-center gap-1.5">
+                                                      🪪 Extracted from Aadhaar
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                                      {aadhaarDetails.name && (
+                                                            <div className="col-span-2">
+                                                                  <span className="text-gray-500">Name</span>
+                                                                  <p className="font-semibold text-gray-800">{aadhaarDetails.name}</p>
+                                                            </div>
+                                                      )}
+                                                      {aadhaarDetails.aadhaarNumber && (
+                                                            <div>
+                                                                  <span className="text-gray-500">Aadhaar No.</span>
+                                                                  <p className="font-mono font-semibold text-gray-800">
+                                                                        {aadhaarDetails.aadhaarNumber.replace(/(\d{4})(\d{4})(\d{4})/, '$1 $2 $3')}
+                                                                  </p>
+                                                            </div>
+                                                      )}
+                                                      {aadhaarDetails.dob && (
+                                                            <div>
+                                                                  <span className="text-gray-500">Date of Birth</span>
+                                                                  <p className="font-semibold text-gray-800">{aadhaarDetails.dob}</p>
+                                                            </div>
+                                                      )}
+                                                      {aadhaarDetails.gender && (
+                                                            <div>
+                                                                  <span className="text-gray-500">Gender</span>
+                                                                  <p className="font-semibold text-gray-800">{aadhaarDetails.gender}</p>
+                                                            </div>
+                                                      )}
+                                                </div>
+                                                <p className="text-[10px] text-blue-500 mt-1">
+                                                      ✅ Form fields auto-filled from Aadhaar
+                                                </p>
+                                          </motion.div>
+                                    )}
                                     <button type="button" onClick={reset}
                                           className="w-full py-2.5 text-sm text-gray-500 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
                                           <RefreshCw className="w-3.5 h-3.5" /> Upload Different Document

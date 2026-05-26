@@ -3,22 +3,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, Zap, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 import toast from 'react-hot-toast';
-
-const navLinks = [
-      { label: 'Home', href: '#home' },
-      { label: 'Features', href: '#features' },
-      { label: 'Departments', href: '#departments' },
-      { label: 'How It Works', href: '#how-it-works' },
-      { label: 'Analytics', href: '#analytics' },
-      { label: 'Contact', href: '#contact' },
-];
 
 export default function Navbar() {
       const [scrolled, setScrolled] = useState(false);
       const [mobileOpen, setMobileOpen] = useState(false);
       const { isAuthenticated, user, logout, getDashboardPath } = useAuth();
+      const { t } = useTranslation();
       const navigate = useNavigate();
+
+      // navLinks must be inside the component so t() is reactive to language changes
+      const navLinks = [
+            { label: t('nav.home'), href: '#home' },
+            { label: t('nav.features'), href: '#features' },
+            { label: t('nav.departments'), href: '#departments' },
+            { label: t('nav.howItWorks'), href: '#how-it-works' },
+            { label: t('nav.analytics'), href: '#analytics' },
+            { label: t('nav.contact'), href: '#contact' },
+      ];
 
       useEffect(() => {
             const onScroll = () => setScrolled(window.scrollY > 20);
@@ -28,7 +32,7 @@ export default function Navbar() {
 
       const handleLogout = async () => {
             await logout();
-            toast.success('Logged out successfully');
+            toast.success(t('toast.loggedOutSuccess'));
             navigate('/');
             setMobileOpen(false);
       };
@@ -74,6 +78,7 @@ export default function Navbar() {
 
                               {/* Desktop CTA */}
                               <div className="hidden lg:flex items-center gap-3">
+                                    <LanguageSwitcher variant="default" />
                                     {isAuthenticated ? (
                                           <>
                                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
@@ -82,7 +87,7 @@ export default function Navbar() {
                                                             className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-blue-600 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition-all duration-200"
                                                       >
                                                             <User className="w-4 h-4" />
-                                                            Dashboard
+                                                            {t('nav.dashboard')}
                                                       </Link>
                                                 </motion.div>
                                                 <motion.button
@@ -92,7 +97,7 @@ export default function Navbar() {
                                                       className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl shadow-lg transition-all duration-200"
                                                 >
                                                       <LogOut className="w-4 h-4" />
-                                                      Logout
+                                                      {t('nav.logout')}
                                                 </motion.button>
                                           </>
                                     ) : (
@@ -102,7 +107,7 @@ export default function Navbar() {
                                                             to="/login"
                                                             className="px-5 py-2.5 text-sm font-semibold text-blue-600 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 block"
                                                       >
-                                                            Login
+                                                            {t('nav.login')}
                                                       </Link>
                                                 </motion.div>
                                                 <motion.div
@@ -113,7 +118,7 @@ export default function Navbar() {
                                                             to="/signup"
                                                             className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-xl shadow-lg shadow-blue-200 transition-all duration-200 block"
                                                       >
-                                                            Sign Up Free
+                                                            {t('nav.signUpFree')}
                                                       </Link>
                                                 </motion.div>
                                           </>
@@ -154,6 +159,7 @@ export default function Navbar() {
                                           ))}
 
                                           <div className="pt-3 flex flex-col gap-2">
+                                                <LanguageSwitcher variant="sidebar" className="mb-1" />
                                                 {isAuthenticated ? (
                                                       <>
                                                             <Link
@@ -161,13 +167,13 @@ export default function Navbar() {
                                                                   onClick={() => setMobileOpen(false)}
                                                                   className="w-full py-3 text-sm font-semibold text-blue-600 border-2 border-blue-200 rounded-xl hover:bg-blue-50 transition-all text-center block"
                                                             >
-                                                                  Go to Dashboard
+                                                                  {t('nav.goToDashboard')}
                                                             </Link>
                                                             <button
                                                                   onClick={handleLogout}
                                                                   className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-red-500 to-rose-600 rounded-xl shadow-lg"
                                                             >
-                                                                  Logout
+                                                                  {t('nav.logout')}
                                                             </button>
                                                       </>
                                                 ) : (
@@ -177,14 +183,14 @@ export default function Navbar() {
                                                                   onClick={() => setMobileOpen(false)}
                                                                   className="w-full py-3 text-sm font-semibold text-blue-600 border-2 border-blue-200 rounded-xl hover:bg-blue-50 transition-all text-center block"
                                                             >
-                                                                  Login
+                                                                  {t('nav.login')}
                                                             </Link>
                                                             <Link
                                                                   to="/signup"
                                                                   onClick={() => setMobileOpen(false)}
                                                                   className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-xl shadow-lg text-center block"
                                                             >
-                                                                  Sign Up Free
+                                                                  {t('nav.signUpFree')}
                                                             </Link>
                                                       </>
                                                 )}

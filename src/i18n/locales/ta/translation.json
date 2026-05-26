@@ -1,0 +1,575 @@
+{
+  "appName": "ஈ-சமாதான் AI",
+  "tagline": "AI தளம்",
+  "smartGovernance": "ஸ்மார்ட் ஆட்சி",
+  "smartGovernancePlatform": "ஸ்மார்ட் ஆட்சி தளம்",
+  "govtInitiative": "இந்திய அரசின் முயற்சி",
+  "nav": {
+    "home": "முகப்பு",
+    "features": "அம்சங்கள்",
+    "departments": "துறைகள்",
+    "howItWorks": "இது எப்படி செயல்படுகிறது",
+    "analytics": "பகுப்பாய்வு",
+    "contact": "தொடர்பு",
+    "login": "உள்நுழைவு",
+    "signUpFree": "இலவச பதிவு",
+    "dashboard": "டாஷ்போர்டு",
+    "logout": "வெளியேறு",
+    "goToDashboard": "டாஷ்போர்டுக்கு செல்"
+  },
+  "auth": {
+    "welcomeBack": "மீண்டும் வரவேற்கிறோம்",
+    "signInSubtitle": "உங்கள் ஈ-சமாதான் AI கணக்கில் உள்நுழையுங்கள்",
+    "citizen": "குடிமகன்",
+    "officer": "அதிகாரி",
+    "admin": "நிர்வாகி",
+    "employeeId": "பணியாளர் ஐடி",
+    "department": "துறை",
+    "selectDepartment": "துறையை தேர்ந்தெடுக்கவும்",
+    "emailAddress": "மின்னஞ்சல் முகவரி",
+    "password": "கடவுச்சொல்",
+    "forgotPassword": "கடவுச்சொல் மறந்துவிட்டீர்களா?",
+    "rememberMe": "7 நாட்களுக்கு நினைவில் வைக்கவும்",
+    "signingIn": "உள்நுழைகிறது...",
+    "signIn": "உள்நுழைக",
+    "newToApp": "ஈ-சமாதான் AI-ல் புதியவரா?",
+    "createFreeAccount": "இலவச கணக்கை உருவாக்கவும்",
+    "firstTime": "முதல் முறையா?",
+    "registerAsOfficer": "அதிகாரியாக பதிவு செய்யுங்கள் →",
+    "demoCredentials": "டெமோ நற்சான்றிதழ்கள்",
+    "accessDenied": "🚫 அணுகல் மறுக்கப்பட்டது",
+    "accountBlocked": "உங்கள் அதிகாரி கணக்கு துறை நிர்வாகியால் தடுக்கப்பட்டுள்ளது.",
+    "contactAdmin": "அணுகலை மீட்டெடுக்க துறை நிர்வாகியை தொடர்பு கொள்ளுங்கள்.",
+    "whatThisMeans": "இதன் அர்த்தம்:",
+    "cannotLogin": "❌ அதிகாரி போர்டலில் உள்நுழைய முடியாது",
+    "cannotAccessDashboard": "❌ டாஷ்போர்டு அணுகல் இல்லை",
+    "cannotManageComplaints": "❌ புகார்களை புதுப்பிக்க அல்லது நிர்வகிக்க முடியாது",
+    "contactToUnblock": "✅ தடையை நீக்க துறை நிர்வாகியை தொடர்பு கொள்ளுங்கள்",
+    "createAccount": "உங்கள் கணக்கை உருவாக்கவும்",
+    "chooseAccountType": "உங்கள் கணக்கு வகையை தேர்ந்தெடுக்கவும்",
+    "chooseRoleDesc": "ஈ-சமாதான் AI-ல் தொடங்க உங்கள் பங்கை தேர்ந்தெடுக்கவும்.",
+    "citizenDesc": "குடிமக்கள் புகார்களை தாக்கல் செய்து கண்காணிக்கவும்",
+    "officerDesc": "துறை புகார்களை நிர்வகித்து தீர்க்கவும்",
+    "adminDesc": "துறைகள், பயனர்கள் மற்றும் பகுப்பாய்வை நிர்வகிக்கவும்",
+    "citizenAccount": "குடிமகன் கணக்கு",
+    "officerAccount": "அதிகாரி கணக்கு",
+    "adminAccount": "நிர்வாகி கணக்கு",
+    "getStarted": "தொடங்குங்கள் →",
+    "alreadyHaveAccount": "ஏற்கனவே கணக்கு உள்ளதா?",
+    "signIn2": "உள்நுழைக",
+    "backToRoleSelection": "பங்கு தேர்வுக்கு திரும்பவும்",
+    "verifiedCitizen": "✓ சரிபார்க்கப்பட்ட குடிமகன்",
+    "departmentAdmin": "துறை நிர்வாகி",
+    "officerPanel": "அதிகாரி பேனல்",
+    "citizenPortal": "குடிமகன் போர்டல்"
+  },
+  "validation": {
+    "emailRequired": "மின்னஞ்சல் தேவை",
+    "enterValidEmail": "சரியான மின்னஞ்சல் உள்ளிடவும்",
+    "employeeIdRequired": "பணியாளர் ஐடி தேவை",
+    "departmentRequired": "துறை தேவை",
+    "passwordRequired": "கடவுச்சொல் தேவை",
+    "passwordMinLength": "கடவுச்சொல் குறைந்தது 8 எழுத்துகள் இருக்க வேண்டும்",
+    "fillAllFields": "அனைத்து புலங்களையும் நிரப்பவும்"
+  },
+  "sidebar": {
+    "dashboardHome": "டாஷ்போர்டு முகப்பு",
+    "createComplaint": "புகார் தாக்கல்",
+    "trackComplaint": "புகார் கண்காணிப்பு",
+    "complaintHistory": "புகார் வரலாறு",
+    "emergency": "அவசரநிலை",
+    "notifications": "அறிவிப்புகள்",
+    "feedbackRating": "கருத்து மற்றும் மதிப்பீடு",
+    "profile": "சுயவிவரம்",
+    "settings": "அமைப்புகள்",
+    "logout": "வெளியேறு",
+    "dashboard": "டாஷ்போர்டு",
+    "complaints": "புகார்கள்",
+    "officers": "அதிகாரிகள்",
+    "analytics": "பகுப்பாய்வு"
+  },
+  "dashboard": {
+    "citizenDashboard": "குடிமகன் டாஷ்போர்டு",
+    "officerDashboard": "அதிகாரி டாஷ்போர்டு",
+    "adminPanel": "நிர்வாகி பேனல்",
+    "totalComplaints": "மொத்த புகார்கள்",
+    "pending": "நிலுவையில்",
+    "inProgress": "செயல்பாட்டில்",
+    "resolved": "தீர்க்கப்பட்டது",
+    "emergency": "அவசரநிலை",
+    "fileComplaint": "புகார் தாக்கல்",
+    "queue": "வரிசை",
+    "accepted": "ஏற்றுக்கொள்ளப்பட்டது",
+    "departmentQueue": "📥 துறை வரிசை",
+    "myComplaints": "📌 என் புகார்கள்",
+    "refresh": "புதுப்பி",
+    "queueEmpty": "வரிசை காலி",
+    "all": "அனைத்தும்",
+    "assigned": "ஒதுக்கப்பட்டது",
+    "rejected": "நிராகரிக்கப்பட்டது",
+    "emergencyWarning": "அவசர புகார்கள் அதிகாரிகளுக்கு விரைவாக அனுப்பப்படும். குற்றம், தீ, விபத்து அல்லது மருத்துவ அவசரநிலைக்கு மட்டும் பயன்படுத்தவும்."
+  },
+  "complaint": {
+    "createComplaint": "புகார் தாக்கல்",
+    "emergencyComplaint": "அவசர புகார்",
+    "complaintTitle": "புகாரின் தலைப்பு *",
+    "describeIssue": "சிக்கலை விரிவாக விவரிக்கவும் *",
+    "submitComplaint": "புகார் சமர்ப்பி",
+    "trackComplaint": "புகார் கண்காணி",
+    "track": "கண்காணி",
+    "acceptComplaint": "புகாரை ஏற்கவும்",
+    "accepting": "ஏற்கிறது...",
+    "markResolved": "✅ தீர்க்கப்பட்டதாக குறிக்கவும்",
+    "reject": "நிராகரி",
+    "addNote": "குறிப்பு சேர்",
+    "viewUpdate": "பார்க்கவும் மற்றும் புதுப்பிக்கவும்",
+    "emergency": "🚨 அவசரநிலை"
+  },
+  "notifications": {
+    "notifications": "அறிவிப்புகள்",
+    "markAllRead": "அனைத்தையும் படித்ததாக குறிக்கவும்",
+    "noNotifications": "இன்னும் அறிவிப்புகள் இல்லை",
+    "allMarkedRead": "அனைத்தும் படித்ததாக குறிக்கப்பட்டது"
+  },
+  "settings": {
+    "settings": "அமைப்புகள்",
+    "language": "மொழி",
+    "languageSaved": "மொழி விருப்பம் சேமிக்கப்பட்டது"
+  },
+  "departments": {
+    "electricity": "⚡ மின்சாரம்",
+    "water_supply": "💧 நீர் வழங்கல்",
+    "roads_transport": "🚗 சாலைகள் மற்றும் போக்குவரத்து",
+    "sanitation": "🗑️ சுகாதாரம்",
+    "police": "🛡️ காவல்துறை",
+    "healthcare": "❤️ சுகாதார சேவை",
+    "municipal": "🏛️ நகராட்சி சேவைகள்",
+    "education": "🎓 கல்வி"
+  },
+  "status": {
+    "pending": "நிலுவையில்",
+    "assigned": "ஒதுக்கப்பட்டது",
+    "in_progress": "செயல்பாட்டில்",
+    "resolved": "தீர்க்கப்பட்டது",
+    "rejected": "நிராகரிக்கப்பட்டது"
+  },
+  "priority": {
+    "emergency": "அவசரநிலை",
+    "high": "அதிக",
+    "medium": "நடுத்தர",
+    "low": "குறைந்த"
+  },
+  "toast": {
+    "loggedOut": "வெளியேறினீர்கள்",
+    "welcomeBack": "மீண்டும் வரவேற்கிறோம்!",
+    "loginFailed": "உள்நுழைவு தோல்வி. மீண்டும் முயற்சிக்கவும்.",
+    "complaintFiled": "புகார் தாக்கல் செய்யப்பட்டது!",
+    "allMarkedRead": "அனைத்தும் படித்ததாக குறிக்கப்பட்டது"
+  },
+  "forgotPassword": {
+    "title": "கடவுச்சொல் மறந்துவிட்டீர்களா?",
+    "subtitle": "கவலைப்படாதீர்கள், நாங்கள் உங்களுக்கு மீட்டமைப்பு வழிமுறைகளை அனுப்புவோம்",
+    "checkEmail": "உங்கள் மின்னஞ்சலை சரிபார்க்கவும்",
+    "sentTo": "நாங்கள் {{email}} க்கு மீட்டமைப்பு இணைப்பை அனுப்பினோம்",
+    "whatNext": "அடுத்து என்ன செய்வது:",
+    "step1": "{{email}} இல் உங்கள் இன்பாக்ஸை சரிபார்க்கவும்",
+    "step2": "மின்னஞ்சலில் மீட்டமைப்பு இணைப்பை கிளிக் செய்யவும்",
+    "step3": "புதிய வலுவான கடவுச்சொல்லை உருவாக்கவும்",
+    "didntReceive": "மின்னஞ்சல் கிடைக்கவில்லையா?",
+    "tryAgain": "மீண்டும் முயற்சிக்கவும்",
+    "backToLogin": "உள்நுழைவுக்கு திரும்பவும்",
+    "sending": "அனுப்புகிறது...",
+    "sendResetLink": "மீட்டமைப்பு இணைப்பை அனுப்பவும்",
+    "somethingWrong": "ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்."
+  },
+  "adminLogin": {
+    "signIn": "அதிகாரப்பூர்வ நிர்வாகி உள்நுழைவு",
+    "allRequired": "மின்னஞ்சல் · கடவுச்சொல் · துறை (அனைத்தும் தேவை)",
+    "verifying": "நற்சான்றிதழ்களை சரிபார்க்கிறது...",
+    "accessDashboard": "துறை டாஷ்போர்டை அணுகவும்",
+    "newAdmin": "புதிய துறை நிர்வாகியா?",
+    "register": "பதிவு செய்யுங்கள்",
+    "citizenOrOfficer": "குடிமகன் அல்லது அதிகாரியா?",
+    "standardLogin": "நிலையான உள்நுழைவு",
+    "invalidResponse": "சர்வரிலிருந்து தவறான உள்நுழைவு பதில்",
+    "unauthorized": "அங்கீகரிக்கப்படாத அணுகல்",
+    "sessionError": "அமர்வை சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+  },
+  "language": {
+    "selectLanguage": "மொழி",
+    "en": "English",
+    "hi": "हिंदी",
+    "mr": "मराठी",
+    "bn": "বাংলা",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "gu": "ગુજરાતી",
+    "pa": "ਪੰਜਾਬੀ"
+  },
+  "howItWorks": {
+    "badge": "எளிய 4-படி செயல்முறை",
+    "title": "ஈ-சமாதான் AI எப்படி செயல்படுகிறது",
+    "subtitle": "புகார் தாக்கல் முதல் தீர்வு வரை — எங்கள் AI இடையில் எல்லாவற்றையும் கையாளுகிறது.",
+    "step": "படி",
+    "cta": "உங்கள் முதல் புகாரை தாக்கல் செய்யுங்கள் →",
+    "steps": [
+      {
+        "title": "குடிமகன் புகார் தாக்கல் செய்கிறார்",
+        "desc": "குடிமக்கள் தங்கள் விருப்பமான மொழியில் புகைப்படங்கள் மற்றும் இடத்துடன் வலை, மொபைல் ஆப் அல்லது SMS மூலம் புகார்களை தாக்கல் செய்கிறார்கள்."
+      },
+      {
+        "title": "AI துறை மற்றும் முன்னுரிமையை கண்டறிகிறது",
+        "desc": "எங்கள் NLP இயந்திரம் புகாரை வகைப்படுத்தி, முன்னுரிமை நிலையை ஒதுக்கி, உடனடியாக சரியான துறைக்கு அனுப்புகிறது."
+      },
+      {
+        "title": "அதிகாரி உடனடியாக அறிவிப்பு பெறுகிறார்",
+        "desc": "நியமிக்கப்பட்ட அதிகாரி முழு புகார் விவரங்கள், இட வரைபடம் மற்றும் SLA காலக்கெடுவுடன் நிகழ்நேர எச்சரிக்கைகளை பெறுகிறார்."
+      },
+      {
+        "title": "சிக்கல் விரைவாக தீர்க்கப்படுகிறது",
+        "desc": "அதிகாரி சிக்கலை தீர்க்கிறார், சான்றுகளை பதிவேற்றுகிறார், குடிமகனுக்கு அறிவிக்கப்படுகிறது."
+      }
+    ]
+  },
+  "analytics": {
+    "badge": "நேரடி பகுப்பாய்வு",
+    "title": "நிகழ்நேர புகார் பகுப்பாய்வு",
+    "subtitle": "இந்தியா முழுவதும் AI-இயக்கப்படும் ஆட்சியின் தாக்கத்தை காட்டும் நேரடி டாஷ்போர்டு.",
+    "deptPerformance": "துறை செயல்திறன்",
+    "deptPerformanceSub": "துறை வாரியாக தீர்வு விகிதம் — கடந்த 30 நாட்கள்",
+    "liveData": "நேரடி தரவு",
+    "heatmapTitle": "புகார் வெப்பவரைபடம் — இந்தியா",
+    "heatmap": {
+      "low": "குறைவு",
+      "medium": "நடுத்தரம்",
+      "high": "அதிகம்",
+      "critical": "முக்கியமானது"
+    },
+    "stat0": {
+      "label": "மொத்த புகார்கள் தாக்கல்",
+      "sub": "இந்த மாதம் +12%"
+    },
+    "stat1": {
+      "label": "புகார்கள் தீர்க்கப்பட்டன",
+      "sub": "தேசிய சராசரிக்கு மேல்"
+    },
+    "stat2": {
+      "label": "சராசரி தீர்வு நேரம்",
+      "sub": "முன்பை விட 68% வேகமாக"
+    },
+    "stat3": {
+      "label": "அவசர வழக்குகள் கையாளப்பட்டன",
+      "sub": "100% பதில் விகிதம்"
+    }
+  },
+  "whyChooseUs": {
+    "badge": "ஏன் ஈ-சமாதான் AI?",
+    "title": "பழைய அமைப்பு vs ஈ-சமாதான் AI",
+    "subtitle": "ஏன் ஆயிரக்கணக்கான குடிமக்கள் மற்றும் அதிகாரிகள் எங்கள் AI-இயக்கப்படும் தளத்தை விரும்புகிறார்கள் என்று அறியுங்கள்.",
+    "featureCol": "அம்சம்",
+    "traditionalCol": "பாரம்பரிய அமைப்பு",
+    "modernCol": "ஈ-சமாதான் AI",
+    "rows": {
+      "complaintRouting": {
+        "feature": "புகார் வழிசெலுத்தல்",
+        "traditional": "கைமுறை, பிழை-நிறைந்த",
+        "modern": "AI நொடியில் தானாக அனுப்புகிறது"
+      },
+      "resolutionTime": {
+        "feature": "தீர்வு நேரம்",
+        "traditional": "சராசரி 15-30 நாட்கள்",
+        "modern": "சராசரி 4 மணி நேரத்திற்கும் குறைவாக"
+      },
+      "transparency": {
+        "feature": "வெளிப்படைத்தன்மை",
+        "traditional": "கண்காணிப்பு இல்லை",
+        "modern": "நிகழ்நேர நிலை மற்றும் அறிவிப்புகள்"
+      },
+      "escalation": {
+        "feature": "அதிகரிப்பு",
+        "traditional": "கைமுறை, பெரும்பாலும் புறக்கணிக்கப்படும்",
+        "modern": "SLA உடன் தானியங்கி அதிகரிப்பு"
+      },
+      "analytics": {
+        "feature": "பகுப்பாய்வு",
+        "traditional": "தரவு நுண்ணறிவு இல்லை",
+        "modern": "ஸ்மார்ட் டாஷ்போர்டுகள் மற்றும் அறிக்கைகள்"
+      },
+      "languageSupport": {
+        "feature": "மொழி ஆதரவு",
+        "traditional": "ஆங்கிலம்/இந்தி மட்டும்",
+        "modern": "22 இந்திய மொழிகள்"
+      },
+      "emergencyDetection": {
+        "feature": "அவசர கண்டறிதல்",
+        "traditional": "கிடைக்கவில்லை",
+        "modern": "AI உடனடியாக முக்கியமான வழக்குகளை கொடியிடுகிறது"
+      },
+      "citizenFeedback": {
+        "feature": "குடிமகன் கருத்து",
+        "traditional": "கருத்து வளையம் இல்லை",
+        "modern": "மதிப்பீடுகள், மதிப்புரைகள் மற்றும் சரிபார்ப்பு"
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "குடிமகன் கதைகள்",
+    "title": "மில்லியன் குடிமக்களின் நம்பிக்கை",
+    "subtitle": "ஈ-சமாதான் AI மூலம் நாகரிக சிக்கல்கள் தீர்க்கப்பட்ட உண்மையான மக்களின் உண்மையான கதைகள்.",
+    "badges": {
+      "appRating": "ஆப் ஸ்டோர் மதிப்பீடு",
+      "happyCitizens": "மகிழ்ச்சியான குடிமக்கள்",
+      "statesActive": "செயலில் உள்ள மாநிலங்கள்",
+      "satisfaction": "திருப்தி மதிப்பெண்"
+    },
+    "items": {
+      "priya": {
+        "name": "பிரியா சர்மா",
+        "role": "குடியிருப்பாளர், பெங்களூரு",
+        "text": "நான் ஒரு உடைந்த தெரு விளக்கு பற்றி புகார் தாக்கல் செய்தேன், 6 மணி நேரத்தில் சரி செய்யப்பட்டது!"
+      },
+      "rajesh": {
+        "name": "ராஜேஷ் குமார்",
+        "role": "கடை உரிமையாளர், டெல்லி",
+        "text": "என் கடைக்கு வெளியே குழி மாதக்கணக்கில் விபத்துகளை ஏற்படுத்தியது. ஈ-சமாதான் AI இல் தாக்கல் செய்த பிறகு 2 நாட்களில் சாலை துறை பதிலளித்தது."
+      },
+      "anita": {
+        "name": "அனிதா படேல்",
+        "role": "ஆசிரியர், அகமதாபாத்",
+        "text": "குஜராத்தியில் தாக்கல் செய்வது மிகவும் எளிதாக இருந்தது! AI என் புகாரை சரியாக புரிந்துகொண்டு சரியான துறைக்கு அனுப்பியது."
+      },
+      "irfan": {
+        "name": "முஹம்மது இர்பான்",
+        "role": "விவசாயி, ஹைதராபாத்",
+        "text": "எங்கள் கிராமத்தில் நீர் வழங்கல் சிக்கல் ஈ-சமாதானில் தாக்கல் செய்த 3 நாட்களுக்குப் பிறகு தீர்க்கப்பட்டது."
+      },
+      "sunita": {
+        "name": "சுனிதா தேவி",
+        "role": "இல்லத்தரசி, பட்னா",
+        "text": "எங்கள் பகுதியில் குப்பை சேகரிப்பு வாரக்கணக்கில் ஒழுங்கற்றதாக இருந்தது. ஒரு புகாரில் அட்டவணை நிரந்தரமாக சரி செய்யப்பட்டது."
+      },
+      "arjun": {
+        "name": "அர்ஜுன் நாயர்",
+        "role": "IT நிபுணர், சென்னை",
+        "text": "தொழில்நுட்பத்தில் இருப்பதால் AI வழிசெலுத்தல் மற்றும் பகுப்பாய்வை பாராட்டுகிறேன். தளம் நன்றாக வடிவமைக்கப்பட்டுள்ளது மற்றும் உண்மையில் செயல்படுகிறது."
+      }
+    }
+  },
+  "authLayout": {
+    "secureEncrypted": "பாதுகாப்பான மற்றும் குறியாக்கம் செய்யப்பட்டது",
+    "citizens": "2.4M+ குடிமக்கள்",
+    "analytics": "நிகழ்நேர பகுப்பாய்வு",
+    "aiPowered": "AI-இயக்கப்படும் வழிசெலுத்தல்",
+    "transformingTitle": "பொது",
+    "grievanceManagement": "குறை தீர்வு மேலாண்மை",
+    "withAI": "AI உடன் மாற்றுதல்",
+    "joinMillions": "மில்லியன் குடிமக்களுடன் சேருங்கள் - வேகமான, புத்திசாலித்தனமான மற்றும் வெளிப்படையான அரசு சேவைகளை அனுபவிக்கிறார்கள்.",
+    "statCitizens": "குடிமக்கள்",
+    "statResolved": "தீர்க்கப்பட்டது",
+    "statAvgTime": "சராசரி நேரம்"
+  },
+  "citizenSignup": {
+    "title": "Citizen Registration",
+    "subtitle": "AI-powered identity verification & signup",
+    "personalInfo": "👤 Personal Information",
+    "locationInfo": "📍 Location Information",
+    "govtIdVerification": "🪪 Government ID Verification",
+    "aiLivenessDetection": "🛡️ AI Liveness Detection",
+    "emailOtpVerification": "✉️ Email OTP Verification",
+    "createAccount": "Create Account",
+    "creating": "Creating...",
+    "back": "Back",
+    "geolocationNotSupported": "Geolocation not supported",
+    "locationDetected": "📍 Location detected!",
+    "couldNotFetchAddress": "Could not fetch address. Enter manually.",
+    "documentVerificationRequired": "Document Verification Required",
+    "documentVerificationDesc": "Upload your government ID. AI will scan and verify it automatically.",
+    "supportsFormats": "Supports JPG, PNG, WebP, PDF",
+    "uploadedDocument": "Document uploaded",
+    "fixErrorsBelow": "Please fix the errors below",
+    "registerAsOfficer": "Registering as officer instead?"
+  },
+  "officerSignup": {
+    "title": "Officer Registration",
+    "subtitle": "Government officer account with department access",
+    "personalInfo": "👤 Personal Information",
+    "emailOtpVerification": "✉️ Email OTP Verification",
+    "aiLivenessDetection": "🛡️ AI Liveness Detection",
+    "registrationSummary": "📋 Registration Summary",
+    "selfieCaptured": "Selfie captured!",
+    "fixErrorsBelow": "Please fix the errors below",
+    "completeRegistration": "Complete Registration",
+    "registering": "Registering...",
+    "back": "Back"
+  },
+  "adminSignup": {
+    "title": "Admin Registration",
+    "subtitle": "Department + secret key required",
+    "accountCreation": "Account Creation",
+    "createAdminAccount": "Create Admin Account",
+    "creating": "Creating...",
+    "back": "Back",
+    "departmentCode": "Department Code",
+    "secretKey": "Secret Key",
+    "fixErrorsBelow": "Please fix the errors below"
+  },
+  "documentVerifier": {
+    "title": "Document Verification",
+    "uploadId": "Upload your Government ID",
+    "aiScanning": "AI Scanning Document...",
+    "documentVerified": "Document Verified ✓",
+    "uploadDifferent": "Upload Different Document",
+    "wrongDocumentUploaded": "Wrong Document Uploaded",
+    "uploadCorrectDocument": "Upload Correct Document"
+  },
+  "faceVerifier": {
+    "title": "Face Verification",
+    "takePhoto": "Take Photo",
+    "retake": "Retake",
+    "cancel": "Cancel",
+    "verifyFace": "Verify Face with AI"
+  },
+  "livenessVerifier": {
+    "title": "AI Liveness Detection",
+    "subtitle": "Government eKYC — anti-spoof verification",
+    "startVerification": "Start Verification",
+    "verifying": "Verifying..."
+  },
+  "emailOtpVerification": {
+    "title": "Email Verification",
+    "emailVerified": "Email Verified Successfully!",
+    "otherMessages": "Verification in progress..."
+  },
+  "adminLoginPage": {
+    "governmentAdminPortal": "Government Admin Portal",
+    "copyright": "© e-Samadhan AI — Smart Governance"
+  },
+  "toastMessages": {
+    "locationDetected": "📍 Location detected!",
+    "selfieCapturing": "Selfie captured!",
+    "pleaseFixErrors": "Please fix the errors below",
+    "geolocationNotSupported": "Geolocation not supported",
+    "couldNotFetchAddress": "Could not fetch address. Enter manually.",
+    "alreadyRegistered": "Already registered. Please login.",
+    "accountBlocked": "Your account has been blocked by admin.",
+    "sendingOtp": "Sending OTP...",
+    "verifyingOtp": "Verifying OTP...",
+    "verifyingDocument": "Verifying document...",
+    "verifyingLiveness": "Verifying liveness...",
+    "success": "Success!",
+    "error": "Error",
+    "warning": "Warning",
+    "failedToLoadGeolocation": "Failed to load geolocation"
+  },
+  "cameraCaptureMessages": {
+    "allowCameraAccess": "Please allow camera access",
+    "photoNotCapturing": "Photo is not capturing properly",
+    "tryAgain": "Try Again",
+    "cameraNotAvailable": "Camera not available"
+  },
+  "livenessMessages": {
+    "keepHeadCentered": "Keep your head centered",
+    "lookAtCamera": "Look at the camera",
+    "blinkEyes": "Blink your eyes",
+    "turnHeadLeft": "Turn your head left",
+    "turnHeadRight": "Turn your head right",
+    "livenessCheckFailed": "Liveness check failed. Try again.",
+    "verifying": "Verifying..."
+  },
+  "signupValidationMessages": {
+    "emailAlreadyExists": "Email already exists",
+    "passwordTooWeak": "Password too weak",
+    "passwordsMustMatch": "Passwords must match",
+    "invalidPhoneNumber": "Invalid phone number",
+    "invalidPinCode": "Invalid PIN code",
+    "selectDepartment": "Please select a department",
+    "selectDocumentType": "Please select a document type",
+    "uploadDocument": "Please upload a document",
+    "fieldRequired": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidInput": "Invalid input"
+  },
+  "officerModal": {
+    "failedToLoad": "அதிகாரி விவரங்களை ஏற்ற முடியவில்லை",
+    "loadingDetails": "அதிகாரி விவரங்கள் ஏற்றப்படுகின்றன…",
+    "noLocationData": "இட தரவு இல்லை",
+    "openInOSM": "OpenStreetMap-ல் திற",
+    "description": "விளக்கம்",
+    "noDescription": "விளக்கம் இல்லை.",
+    "aiPriorityAnalysis": "AI முன்னுரிமை பகுப்பாய்வு",
+    "citizenDetails": "குடிமகன் விவரங்கள்",
+    "name": "பெயர்",
+    "mobile": "மொபைல்",
+    "email": "மின்னஞ்சல்",
+    "address": "முகவரி",
+    "location": "இடம்",
+    "evidence": "சான்று",
+    "department": "துறை",
+    "filedOn": "தாக்கல் தேதி",
+    "lastUpdated": "கடைசியாக புதுப்பிக்கப்பட்டது",
+    "resolvedOn": "தீர்வு தேதி",
+    "complaintTimeline": "புகார் காலவரிசை",
+    "accountBlocked": "கணக்கு தடுக்கப்பட்டது",
+    "blockedAt": "தடுக்கப்பட்ட நேரம்",
+    "blockReason": "தடுப்பு காரணம்",
+    "noReasonProvided": "காரணம் இல்லை",
+    "suspended": "இடைநிறுத்தப்பட்டது",
+    "blockedWarning": "இந்த அதிகாரி தடை நீக்கப்படும் வரை உள்நுழைய முடியாது.",
+    "performanceAnalytics": "செயல்திறன் பகுப்பாய்வு",
+    "totalAssigned": "மொத்தம் ஒதுக்கப்பட்டது",
+    "resolutionRate": "தீர்வு விகிதம்",
+    "avgResolution": "சராசரி தீர்வு",
+    "perfScore": "செயல்திறன் மதிப்பெண்",
+    "resolutionProgress": "தீர்வு முன்னேற்றம்",
+    "assignedComplaints": "ஒதுக்கப்பட்ட புகார்கள்",
+    "searchPlaceholder": "தேடுங்கள்…",
+    "noComplaintsFound": "புகார்கள் எதுவும் இல்லை",
+    "tryAdjustingFilters": "வடிகட்டிகளை மாற்றி பாருங்கள்",
+    "noComplaintsAssigned": "இன்னும் புகார்கள் இல்லை",
+    "colComplaint": "புகார்",
+    "colCitizen": "குடிமகன்",
+    "colPriority": "முன்னுரிமை",
+    "colLocation": "இடம்",
+    "busy": "பிஸி",
+    "offline": "ஆஃப்லைன்"
+  },
+  "adminDepartmentsPage": {
+    "title": "துறைகள்",
+    "total": "மொத்தம்",
+    "resolved": "தீர்வு",
+    "pending": "நிலுவை"
+  },
+  "chatbot": {
+    "title": "AI உதவியாளர்",
+    "greeting": "வணக்கம்! நான் ஈ-சமாதான் AI உதவியாளர். இன்று நான் உங்களுக்கு எப்படி உதவலாம்?",
+    "placeholder": "எதையும் கேளுங்கள்...",
+    "send": "அனுப்பு",
+    "replyElectricity": "மின்சார பிரச்சினைகளுக்கு: புகார் உருவாக்கு → மின்சார துறை தேர்ந்தெடு.",
+    "replyWater": "தண்ணீர் புகார்கள் நீர் வழங்கல் துறைக்கு செல்கின்றன.",
+    "replyPolice": "குற்றம் அல்லது பாதுகாப்புக்கு: அவசர புகார் அல்லது காவல் துறை பயன்படுத்துங்கள்.",
+    "replyTrack": "புகார் கண்காணி பக்கத்திற்கு சென்று ID உள்ளிடுங்கள்.",
+    "replyEmergency": "அவசர முறை தீ, விபத்து, மருத்துவ நெருக்கடிக்கானது.",
+    "replyDefault": "புகார் தாக்கல், நிலை கண்காணிப்பு அல்லது அவசர முறையில் உதவ முடியும்."
+  },
+  "timeline": {
+    "submitted": "தாக்கல் செய்யப்பட்டது",
+    "assignedToOfficer": "அதிகாரிக்கு ஒதுக்கப்பட்டது",
+    "inProgress": "செயல்பாட்டில்",
+    "resolved": "தீர்க்கப்பட்டது"
+  },
+  "pageLoader": {
+    "loading": "ஈ-சமாதான் AI ஏற்றப்படுகிறது...",
+    "takingLong": "இது எதிர்பார்த்ததை விட அதிக நேரம் எடுக்கிறது."
+  },
+  "errorPage": {
+    "reloadPage": "பக்கத்தை மீண்டும் ஏற்று"
+  },
+  "voiceComplaint": {
+    "title": "AI குரல் புகார்",
+    "instruction": "மைக்ரோஃபோனைக் கிளிக் செய்து உங்கள் புகாரை எந்த மொழியிலும் சொல்லுங்கள்",
+    "detectedVoice": "கண்டறிந்த குரல்:",
+    "analyzing": "AI புகாரை பகுப்பாய்வு செய்கிறது...",
+    "tryAgain": "மீண்டும் முயற்சி செய்யவும்",
+    "hearSummary": "சுருக்கத்தைக் கேளுங்கள்"
+  }
+}

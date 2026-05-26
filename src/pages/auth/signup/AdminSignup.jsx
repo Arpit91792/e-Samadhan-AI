@@ -6,6 +6,7 @@ import {
       User, Mail, Phone, Lock, Key, ShieldCheck, ArrowRight, Eye, EyeOff, Building2, ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import {
       Field, Input, PasswordInput, PasswordStrength, PasswordMatch,
       SubmitButton, SectionHeader, ErrorAlert, OTPSection
@@ -16,6 +17,7 @@ import { ADMIN_LOGIN_DEPARTMENTS, getAdminDashboardPath } from '../../../utils/d
 export default function AdminSignup() {
       const navigate = useNavigate();
       const { register, setSession } = useAuth();
+      const { t } = useTranslation();
       const otpHook = useOTP();
 
       const [form, setForm] = useState({
@@ -114,8 +116,8 @@ export default function AdminSignup() {
                         <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">👑</div>
                               <div>
-                                    <h2 className="text-xl font-black text-white">Admin Registration</h2>
-                                    <p className="text-amber-100 text-xs">Department + secret key required</p>
+                                    <h2 className="text-xl font-black text-white">{t('adminSignup.title')}</h2>
+                                    <p className="text-amber-100 text-xs">{t('adminSignup.subtitle')}</p>
                               </div>
                         </div>
                   </div>
@@ -281,7 +283,7 @@ export default function AdminSignup() {
                         />
 
                         <SubmitButton loading={loading} gradient="from-amber-500 to-orange-500">
-                              Create Admin Account <ArrowRight className="w-4 h-4" />
+                              {t('adminSignup.createAdminAccount')} <ArrowRight className="w-4 h-4" />
                         </SubmitButton>
 
                         <p className="text-center text-sm text-gray-500">

@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Home, RefreshCw, LayoutDashboard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ErrorPage({
-      title = 'Something went wrong',
-      message = 'We hit an unexpected problem while loading this page. You can reload or return home.',
+      title = null,
+      message = null,
       error = null,
       showDetails = false,
       onReload,
@@ -12,7 +13,11 @@ export default function ErrorPage({
       dashboardHref = null,
       variant = 'error',
 }) {
+      const { t } = useTranslation();
       const isConfig = variant === 'config';
+
+      const displayTitle = title ?? t('errors.serverError');
+      const displayMessage = message ?? t('errors.tryAgain');
 
       const handleReload = () => {
             if (onReload) onReload();
@@ -38,11 +43,10 @@ export default function ErrorPage({
                         <motion.div
                               animate={{ y: [0, -6, 0] }}
                               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                              className={`w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow-xl ${
-                                    isConfig
+                              className={`w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center shadow-xl ${isConfig
                                           ? 'bg-gradient-to-br from-amber-500 to-orange-600'
                                           : 'bg-gradient-to-br from-blue-600 to-violet-600'
-                              }`}
+                                    }`}
                         >
                               {isConfig ? (
                                     <AlertTriangle className="w-10 h-10 text-white" />
@@ -55,10 +59,10 @@ export default function ErrorPage({
                               e-Samadhan AI
                         </h1>
                         <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-3">
-                              {title}
+                              {displayTitle}
                         </h2>
                         <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">
-                              {message}
+                              {displayMessage}
                         </p>
 
                         {showDetails && error && (
@@ -84,7 +88,7 @@ export default function ErrorPage({
                                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
                               >
                                     <RefreshCw className="w-4 h-4" />
-                                    Reload Page
+                                    {t('errorPage.reloadPage')}
                               </button>
 
                               <button
@@ -93,7 +97,7 @@ export default function ErrorPage({
                                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all"
                               >
                                     <Home className="w-4 h-4" />
-                                    Go to Home
+                                    {t('errors.goHome')}
                               </button>
 
                               {dashboardHref && (
@@ -103,7 +107,7 @@ export default function ErrorPage({
                                           className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-600 hover:border-violet-300 dark:hover:border-violet-500 transition-all"
                                     >
                                           <LayoutDashboard className="w-4 h-4" />
-                                          Dashboard
+                                          {t('nav.dashboard')}
                                     </button>
                               )}
                         </motion.div>

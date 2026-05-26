@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Clock, CheckCircle2, Siren, Users, Mail, Phone, Calendar, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getAdminAnalytics, getAdminProfile } from '../../api/admin';
 import { deptLabel } from '../../utils/departmentMeta';
 import { useAuth } from '../../context/AuthContext';
 
 export default function AdminDashboardHome({ departmentName }) {
       const { user } = useAuth();
+      const { t } = useTranslation();
       const [data, setData] = useState(null);
       const [profile, setProfile] = useState(null);
       const [loading, setLoading] = useState(true);
@@ -39,35 +41,35 @@ export default function AdminDashboardHome({ departmentName }) {
       const cards = [
             {
                   key: 'total',
-                  label: 'Total Complaints',
+                  label: t('admin.totalComplaints'),
                   value: data?.totalComplaints,
                   icon: FileText,
                   gradient: 'from-blue-500 to-blue-600'
             },
             {
                   key: 'pending',
-                  label: 'Pending Complaints',
+                  label: t('admin.pendingComplaints'),
                   value: data?.pendingComplaints,
                   icon: Clock,
                   gradient: 'from-amber-500 to-orange-500'
             },
             {
                   key: 'solved',
-                  label: 'Resolved',
+                  label: t('dashboard.resolved'),
                   value: data?.resolvedComplaints,
                   icon: CheckCircle2,
                   gradient: 'from-emerald-500 to-teal-500'
             },
             {
                   key: 'rate',
-                  label: 'Resolution Rate',
+                  label: t('admin.resolutionRate'),
                   value: data?.resolutionRate ? `${data.resolutionRate}%` : '0%',
                   icon: Siren,
                   gradient: 'from-red-500 to-rose-600'
             },
             {
                   key: 'officers',
-                  label: 'Active Officers',
+                  label: t('admin.activeOfficers'),
                   value: data?.totalOfficers,
                   icon: Users,
                   gradient: 'from-indigo-500 to-violet-600'
@@ -78,10 +80,10 @@ export default function AdminDashboardHome({ departmentName }) {
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                   <div>
                         <h1 className="text-2xl font-black text-white">
-                              {departmentName} Dashboard
+                              {t('dashboard.adminDashboard', { dept: departmentName })}
                         </h1>
                         <p className="text-slate-400 text-sm">
-                              Department administration panel · {deptLabel(adminDept)}
+                              {t('dashboard.deptAdminPanel', { dept: deptLabel(adminDept) })}
                         </p>
                   </div>
 
@@ -95,39 +97,34 @@ export default function AdminDashboardHome({ departmentName }) {
                               <div className="flex items-start justify-between mb-4">
                                     <h2 className="font-bold text-white flex items-center gap-2">
                                           <Shield className="w-5 h-5 text-red-400" />
-                                          Admin Profile
+                                          {t('admin.adminProfile')}
                                     </h2>
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {/* Name */}
                                     <div className="space-y-1">
-                                          <p className="text-xs font-semibold text-slate-400 uppercase">Full Name</p>
+                                          <p className="text-xs font-semibold text-slate-400 uppercase">{t('admin.fullName')}</p>
                                           <p className="text-lg font-bold text-white">{profile.name}</p>
                                     </div>
-                                    {/* Department */}
                                     <div className="space-y-1">
-                                          <p className="text-xs font-semibold text-slate-400 uppercase">Department</p>
+                                          <p className="text-xs font-semibold text-slate-400 uppercase">{t('auth.department')}</p>
                                           <p className="text-lg font-bold text-white">{deptLabel(profile.department)}</p>
                                     </div>
-                                    {/* Registered Date */}
                                     <div className="space-y-1">
-                                          <p className="text-xs font-semibold text-slate-400 uppercase">Registered On</p>
+                                          <p className="text-xs font-semibold text-slate-400 uppercase">{t('admin.registeredOn')}</p>
                                           <p className="text-lg font-bold text-white flex items-center gap-2">
                                                 <Calendar className="w-4 h-4 text-amber-400" />
                                                 {formatDate(profile.createdAt)}
                                           </p>
                                     </div>
-                                    {/* Email */}
                                     <div className="space-y-1">
-                                          <p className="text-xs font-semibold text-slate-400 uppercase">Official Email</p>
+                                          <p className="text-xs font-semibold text-slate-400 uppercase">{t('admin.officialEmail')}</p>
                                           <p className="text-sm font-semibold text-white flex items-center gap-2">
                                                 <Mail className="w-4 h-4 text-blue-400" />
                                                 {profile.email}
                                           </p>
                                     </div>
-                                    {/* Mobile */}
                                     <div className="space-y-1">
-                                          <p className="text-xs font-semibold text-slate-400 uppercase">Mobile Number</p>
+                                          <p className="text-xs font-semibold text-slate-400 uppercase">{t('admin.mobileNumber')}</p>
                                           <p className="text-sm font-semibold text-white flex items-center gap-2">
                                                 <Phone className="w-4 h-4 text-green-400" />
                                                 {profile.mobile}
@@ -158,7 +155,7 @@ export default function AdminDashboardHome({ departmentName }) {
 
                   {!loading && !data && (
                         <div className="rounded-2xl bg-white/5 border border-white/10 p-8 text-center">
-                              <p className="text-slate-400">No analytics data available yet</p>
+                              <p className="text-slate-400">{t('dashboard.noAnalyticsData')}</p>
                         </div>
                   )}
             </motion.div>

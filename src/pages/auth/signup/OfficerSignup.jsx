@@ -5,6 +5,7 @@ import Webcam from 'react-webcam';
 import toast from 'react-hot-toast';
 import { User, Mail, Phone, Lock, Building2, CreditCard, Camera, Upload, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { registerOfficer } from '../../../api/officer';
 import {
       Field, Input, PasswordInput, PasswordStrength, PasswordMatch,
@@ -26,6 +27,7 @@ const DEPARTMENTS = [
 export default function OfficerSignup() {
       const navigate = useNavigate();
       const { setSession, getDashboardPath } = useAuth();
+      const { t } = useTranslation();
       const otpHook = useOTP();
 
       const [form, setForm] = useState({
@@ -48,12 +50,12 @@ export default function OfficerSignup() {
 
       const capture = useCallback(() => {
             const img = webcamRef.current?.getScreenshot();
-            if (img) { setLiveImage(img); setShowCam(false); toast.success('Selfie captured!'); }
+            if (img) { setLiveImage(img); setShowCam(false); toast.success(t('toastMessages.selfieCapturing')); }
       }, []);
 
       const validate = () => {
             const e = {};
-            if (!form.name.trim()) e.name = 'Full name is required';
+            if (!form.name.trim()) e.name = t('validation.fullNameRequired');
             if (!form.email) e.email = 'Official email is required';
             else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Invalid email';
             if (!form.phone) e.phone = 'Mobile number is required';
@@ -71,7 +73,7 @@ export default function OfficerSignup() {
 
       const handleSubmit = async (e) => {
             e.preventDefault();
-            if (!validate()) { toast.error('Please fix the errors below'); return; }
+            if (!validate()) { toast.error(t('toastMessages.pleaseFixErrors')); return; }
 
             setLoading(true);
             try {
@@ -104,7 +106,7 @@ export default function OfficerSignup() {
                         <div className="flex items-center gap-3">
                               <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl">🏛️</div>
                               <div>
-                                    <h2 className="text-xl font-black text-white">Officer Registration</h2>
+                                    <h2 className="text-xl font-black text-white">{t('officerSignup.title')}</h2>
                                     <p className="text-violet-100 text-xs">Government officer account with department access</p>
                               </div>
                         </div>

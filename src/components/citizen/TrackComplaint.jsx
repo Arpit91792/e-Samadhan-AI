@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { getComplaints, getComplaint } from '../../api/complaints';
 import { useSocket } from '../../hooks/useSocket';
 import StatusBadge from './StatusBadge';
@@ -10,6 +11,7 @@ import ComplaintMapView from '../maps/ComplaintMapView';
 import { deptLabel } from '../../utils/complaintConstants';
 
 export default function TrackComplaint({ initialId = '' }) {
+      const { t } = useTranslation();
       const [query, setQuery] = useState(initialId);
       const [complaint, setComplaint] = useState(null);
       const [loading, setLoading] = useState(false);
@@ -26,14 +28,14 @@ export default function TrackComplaint({ initialId = '' }) {
             onComplaintUpdate: (payload) => {
                   if (complaint && (payload.complaintId === complaint._id || payload.complaintRef === complaint.complaintId)) {
                         refreshComplaint(complaint._id);
-                        toast.success(`Status updated: ${payload.newStatus || payload.status}`);
+                        toast.success(`${t('toast.statusUpdated')}: ${payload.newStatus || payload.status}`);
                   }
             },
       });
 
       const search = async (e) => {
             e?.preventDefault();
-            if (!query.trim()) return toast.error('Enter complaint ID');
+            if (!query.trim()) return toast.error(t('trackComplaint.enterComplaintId'));
             setLoading(true);
             setComplaint(null);
             try {
@@ -42,10 +44,10 @@ export default function TrackComplaint({ initialId = '' }) {
                         const full = await getComplaint(list.complaints[0]._id);
                         setComplaint(full.data.complaint);
                   } else {
-                        toast.error('Complaint not found');
+                        toast.error(t('trackComplaint.complaintNotFound'));
                   }
             } catch {
-                  toast.error('Search failed');
+                  toast.error(t('trackComplaint.searchFailed'));
             } finally {
                   setLoading(false);
             }
@@ -57,17 +59,17 @@ export default function TrackComplaint({ initialId = '' }) {
 
       return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-3xl">
-                  <h1 className="text-2xl font-black text-slate-900">Track Complaint</h1>
+                  <h1 className="text-2xl font-black text-slate-900">{t('trackComplaint.title')}</h1>
                   <form onSubmit={search} className="flex gap-2">
                         <input
                               value={query}
                               onChange={(e) => setQuery(e.target.value)}
-                              placeholder="Enter complaint ID e.g. C-000001"
+                              placeholder={t('trackComplaint.placeholder')}
                               className="flex-1 px-4 py-3 border border-slate-200 rounded-xl text-sm"
                         />
                         <button type="submit" disabled={loading} className="px-5 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm flex items-center gap-2">
                               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                              Track
+                              {t('trackComplaint.track')}
                         </button>
                   </form>
 
@@ -84,7 +86,7 @@ export default function TrackComplaint({ initialId = '' }) {
                               <p className="text-sm text-slate-600">{complaint.description}</p>
                               {complaint.assignedOfficer && (
                                     <div className="p-3 bg-blue-50 rounded-xl text-sm">
-                                          <p className="font-bold text-blue-900">Assigned Officer</p>
+                                          <p className="font-bold text-blue-900">{t('trackComplaint.assignedOfficer')}</p>
                                           <p className="text-blue-700">{complaint.assignedOfficer.name} · {complaint.assignedOfficer.email}</p>
                                     </div>
                               )}

@@ -2,14 +2,36 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Shield, Zap, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const floatingBadges = [
-      { icon: Shield, label: 'Secure & Trusted', color: 'from-blue-500 to-blue-600' },
-      { icon: Zap, label: 'AI Powered', color: 'from-violet-500 to-violet-600' },
-      { icon: Globe, label: 'Pan India', color: 'from-emerald-500 to-emerald-600' },
+      { icon: Shield, titleKey: 'hero.badges.secure', color: 'from-blue-500 to-blue-600' },
+      { icon: Zap, titleKey: 'hero.badges.aiPowered', color: 'from-violet-500 to-violet-600' },
+      { icon: Globe, titleKey: 'hero.badges.panIndia', color: 'from-emerald-500 to-emerald-600' },
+];
+
+const stats = [
+      { value: '2.4M+', labelKey: 'hero.stats.complaints' },
+      { value: '98%', labelKey: 'hero.stats.satisfaction' },
+      { value: '28', labelKey: 'hero.stats.states' },
+];
+
+const progressItems = [
+      { deptKey: 'departments.roads_transport', pct: 87, color: 'from-blue-500 to-blue-600' },
+      { deptKey: 'departments.water_supply', pct: 72, color: 'from-cyan-500 to-cyan-600' },
+      { deptKey: 'departments.electricity', pct: 94, color: 'from-violet-500 to-violet-600' },
+      { deptKey: 'departments.sanitation', pct: 65, color: 'from-emerald-500 to-emerald-600' },
+];
+
+const activityItems = [
+      { id: '#C-4821', deptKey: 'departments.electricity', statusKey: 'status.resolved', color: 'text-emerald-600 bg-emerald-50' },
+      { id: '#C-4820', deptKey: 'departments.roads_transport', statusKey: 'status.in_progress', color: 'text-blue-600 bg-blue-50' },
+      { id: '#C-4819', deptKey: 'departments.water_supply', statusKey: 'status.pending', color: 'text-red-600 bg-red-50' },
 ];
 
 export default function Hero() {
+      const { t } = useTranslation();
+
       return (
             <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50">
 
@@ -64,7 +86,7 @@ export default function Hero() {
                                           className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 border border-blue-200 rounded-full mb-6"
                                     >
                                           <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                                          <span className="text-sm font-semibold text-blue-700">Government of India Initiative</span>
+                                          <span className="text-sm font-semibold text-blue-700">{t('govtInitiative')}</span>
                                     </motion.div>
 
                                     {/* Headline */}
@@ -74,9 +96,7 @@ export default function Hero() {
                                           transition={{ duration: 0.6, delay: 0.1 }}
                                           className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-gray-900 mb-6"
                                     >
-                                          AI-Powered{' '}
-                                          <span className="gradient-text">Smart Government</span>{' '}
-                                          Complaint Resolution Platform
+                                          {t('hero.title')}
                                     </motion.h1>
 
                                     {/* Subheading */}
@@ -86,8 +106,7 @@ export default function Hero() {
                                           transition={{ duration: 0.6, delay: 0.2 }}
                                           className="text-lg text-gray-600 leading-relaxed mb-8 max-w-xl"
                                     >
-                                          Report civic problems, track complaints in real time, and get faster resolutions
-                                          through AI-powered governance. Empowering every citizen of India.
+                                          {t('hero.subtitle')}
                                     </motion.p>
 
                                     {/* ── CTA Buttons — now use React Router Link ── */}
@@ -105,7 +124,7 @@ export default function Hero() {
                                                       to="/signup"
                                                       className="flex items-center gap-2 px-7 py-4 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 text-base transition-all"
                                                 >
-                                                      Register Complaint
+                                                      {t('hero.cta')}
                                                       <ArrowRight className="w-5 h-5" />
                                                 </Link>
                                           </motion.div>
@@ -119,7 +138,7 @@ export default function Hero() {
                                                       className="flex items-center gap-2 px-7 py-4 bg-white text-blue-600 font-bold rounded-2xl border-2 border-blue-200 hover:border-blue-400 shadow-lg text-base transition-all"
                                                 >
                                                       <Play className="w-5 h-5 fill-blue-600" />
-                                                      Track Complaint
+                                                      {t('hero.trackButton')}
                                                 </Link>
                                           </motion.div>
                                     </motion.div>
@@ -131,14 +150,10 @@ export default function Hero() {
                                           transition={{ duration: 0.6, delay: 0.4 }}
                                           className="flex flex-wrap gap-6"
                                     >
-                                          {[
-                                                { value: '2.4M+', label: 'Complaints Resolved' },
-                                                { value: '98%', label: 'Satisfaction Rate' },
-                                                { value: '28', label: 'States Covered' },
-                                          ].map((stat) => (
-                                                <div key={stat.label} className="flex flex-col">
+                                          {stats.map((stat) => (
+                                                <div key={stat.labelKey} className="flex flex-col">
                                                       <span className="text-2xl font-black gradient-text">{stat.value}</span>
-                                                      <span className="text-xs text-gray-500 font-medium">{stat.label}</span>
+                                                      <span className="text-xs text-gray-500 font-medium">{t(stat.labelKey)}</span>
                                                 </div>
                                           ))}
                                     </motion.div>
@@ -159,40 +174,35 @@ export default function Hero() {
                                           {/* Dashboard header */}
                                           <div className="flex items-center justify-between mb-5">
                                                 <div>
-                                                      <p className="text-xs text-gray-500 font-medium">e-Samadhan AI Dashboard</p>
-                                                      <p className="text-lg font-bold text-gray-800">Live Complaint Monitor</p>
+                                                      <p className="text-xs text-gray-500 font-medium">{t('hero.dashboardMock.title')}</p>
+                                                      <p className="text-lg font-bold text-gray-800">{t('hero.dashboardMock.subtitle')}</p>
                                                 </div>
                                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-100 rounded-full">
                                                       <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                                                      <span className="text-xs font-semibold text-emerald-700">Live</span>
+                                                      <span className="text-xs font-semibold text-emerald-700">{t('hero.dashboardMock.liveLabel')}</span>
                                                 </div>
                                           </div>
 
                                           {/* Stat cards */}
                                           <div className="grid grid-cols-3 gap-3 mb-5">
                                                 {[
-                                                      { label: 'Total', value: '12,847', color: 'bg-blue-50 border-blue-100', text: 'text-blue-600' },
-                                                      { label: 'Resolved', value: '11,203', color: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-600' },
-                                                      { label: 'Pending', value: '1,644', color: 'bg-amber-50 border-amber-100', text: 'text-amber-600' },
+                                                      { labelKey: 'hero.dashboardMock.stats.total', value: '12,847', color: 'bg-blue-50 border-blue-100', text: 'text-blue-600' },
+                                                      { labelKey: 'hero.dashboardMock.stats.resolved', value: '11,203', color: 'bg-emerald-50 border-emerald-100', text: 'text-emerald-600' },
+                                                      { labelKey: 'hero.dashboardMock.stats.pending', value: '1,644', color: 'bg-amber-50 border-amber-100', text: 'text-amber-600' },
                                                 ].map((s) => (
-                                                      <div key={s.label} className={`${s.color} border rounded-2xl p-3 text-center`}>
+                                                      <div key={s.labelKey} className={`${s.color} border rounded-2xl p-3 text-center`}>
                                                             <p className={`text-lg font-black ${s.text}`}>{s.value}</p>
-                                                            <p className="text-xs text-gray-500">{s.label}</p>
+                                                            <p className="text-xs text-gray-500">{t(s.labelKey)}</p>
                                                       </div>
                                                 ))}
                                           </div>
 
                                           {/* Progress bars */}
                                           <div className="space-y-3 mb-5">
-                                                {[
-                                                      { dept: 'Roads & Transport', pct: 87, color: 'from-blue-500 to-blue-600' },
-                                                      { dept: 'Water Supply', pct: 72, color: 'from-cyan-500 to-cyan-600' },
-                                                      { dept: 'Electricity', pct: 94, color: 'from-violet-500 to-violet-600' },
-                                                      { dept: 'Sanitation', pct: 65, color: 'from-emerald-500 to-emerald-600' },
-                                                ].map((item) => (
-                                                      <div key={item.dept}>
+                                                {progressItems.map((item) => (
+                                                      <div key={item.deptKey}>
                                                             <div className="flex justify-between text-xs mb-1">
-                                                                  <span className="text-gray-600 font-medium">{item.dept}</span>
+                                                                  <span className="text-gray-600 font-medium">{t(item.deptKey)}</span>
                                                                   <span className="text-gray-500">{item.pct}%</span>
                                                             </div>
                                                             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -200,8 +210,7 @@ export default function Hero() {
                                                                         initial={{ width: 0 }}
                                                                         animate={{ width: `${item.pct}%` }}
                                                                         transition={{ duration: 1.5, delay: 0.8, ease: 'easeOut' }}
-                                                                        className={`h-full bg-gradient-to-r ${item.color} rounded-full`}
-                                                                  />
+                                                                        className={`h-full bg-gradient-to-r ${item.color} rounded-full`} />
                                                             </div>
                                                       </div>
                                                 ))}
@@ -209,17 +218,13 @@ export default function Hero() {
 
                                           {/* Recent activity */}
                                           <div className="space-y-2">
-                                                {[
-                                                      { id: '#C-4821', dept: 'Electricity', status: 'Resolved', color: 'text-emerald-600 bg-emerald-50' },
-                                                      { id: '#C-4820', dept: 'Roads', status: 'In Progress', color: 'text-blue-600 bg-blue-50' },
-                                                      { id: '#C-4819', dept: 'Water', status: 'Escalated', color: 'text-red-600 bg-red-50' },
-                                                ].map((item) => (
+                                                {activityItems.map((item) => (
                                                       <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                                                             <div className="flex items-center gap-2">
                                                                   <span className="text-xs font-mono text-gray-400">{item.id}</span>
-                                                                  <span className="text-xs font-medium text-gray-700">{item.dept}</span>
+                                                                  <span className="text-xs font-medium text-gray-700">{t(item.deptKey)}</span>
                                                             </div>
-                                                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${item.color}`}>{item.status}</span>
+                                                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${item.color}`}>{t(item.statusKey)}</span>
                                                       </div>
                                                 ))}
                                           </div>
@@ -228,7 +233,7 @@ export default function Hero() {
                                     {/* Floating badges */}
                                     {floatingBadges.map((badge, i) => (
                                           <motion.div
-                                                key={badge.label}
+                                                key={badge.titleKey}
                                                 initial={{ opacity: 0, scale: 0.8 }}
                                                 animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
                                                 transition={{
@@ -244,7 +249,7 @@ export default function Hero() {
                                                 }}
                                           >
                                                 <badge.icon className="w-3.5 h-3.5" />
-                                                {badge.label}
+                                                {t(badge.titleKey)}
                                           </motion.div>
                                     ))}
                               </motion.div>

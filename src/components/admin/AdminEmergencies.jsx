@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Siren, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getEmergencyComplaints } from '../../api/admin';
 import StatusBadge from '../citizen/StatusBadge';
 import { deptLabel } from '../../utils/departmentMeta';
 
 export default function AdminEmergencies() {
+      const { t } = useTranslation();
       const [items, setItems] = useState([]);
       const [loading, setLoading] = useState(true);
 
@@ -18,12 +20,12 @@ export default function AdminEmergencies() {
       return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                   <h1 className="text-2xl font-black text-white flex items-center gap-2">
-                        <Siren className="w-6 h-6 text-red-400" /> Emergency Monitoring
+                        <Siren className="w-6 h-6 text-red-400" /> {t('adminEmergenciesPage.title')}
                   </h1>
                   {loading ? (
                         <Loader2 className="w-8 h-8 animate-spin text-red-400 mx-auto" />
                   ) : items.length === 0 ? (
-                        <p className="text-center text-slate-500 py-12">No active emergency complaints</p>
+                        <p className="text-center text-slate-500 py-12">{t('adminEmergenciesPage.noEmergencies')}</p>
                   ) : (
                         <div className="space-y-3">
                               {items.map((c) => (

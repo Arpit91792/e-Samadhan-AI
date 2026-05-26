@@ -35,6 +35,7 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
 import faceRoutes from './routes/faceRoutes.js';
 import livenessRoutes from './routes/livenessRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { initSocket } from './socket/index.js';
 
 // ── Register all Mongoose models ──────────────────────────────────────────────
@@ -134,6 +135,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/face', faceRoutes);
 app.use('/api/liveness', livenessRoutes);
+app.use('/api/ai', aiRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

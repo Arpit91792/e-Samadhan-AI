@@ -1,17 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Circle } from 'lucide-react';
-
-const STEPS = [
-      { key: 'pending', label: 'Submitted' },
-      { key: 'assigned', label: 'Assigned to Officer' },
-      { key: 'in_progress', label: 'In Progress' },
-      { key: 'resolved', label: 'Resolved' },
-];
+import { useTranslation } from 'react-i18next';
 
 const order = ['pending', 'assigned', 'in_progress', 'resolved', 'closed'];
 
 export default function ComplaintTimeline({ status, timeline = [] }) {
+      const { t } = useTranslation();
+
+      const STEPS = [
+            { key: 'pending', labelKey: 'timeline.submitted' },
+            { key: 'assigned', labelKey: 'timeline.assignedToOfficer' },
+            { key: 'in_progress', labelKey: 'timeline.inProgress' },
+            { key: 'resolved', labelKey: 'timeline.resolved' },
+      ];
+
       const idx = order.indexOf(status === 'closed' ? 'resolved' : status);
 
       return (
@@ -31,7 +34,7 @@ export default function ComplaintTimeline({ status, timeline = [] }) {
                                           )}
                                     </motion.div>
                                     <div className="pb-8">
-                                          <p className={`font-bold text-sm ${done ? 'text-slate-900' : 'text-slate-400'}`}>{step.label}</p>
+                                          <p className={`font-bold text-sm ${done ? 'text-slate-900' : 'text-slate-400'}`}>{t(step.labelKey)}</p>
                                           {note && <p className="text-xs text-slate-500 mt-0.5">{note}</p>}
                                     </div>
                               </div>

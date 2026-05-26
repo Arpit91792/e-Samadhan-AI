@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Star, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { getComplaints, submitFeedback } from '../../api/complaints';
 import StatusBadge from './StatusBadge';
 import { deptLabel } from '../../utils/complaintConstants';
 
 export default function ComplaintHistory({ onTrack }) {
+      const { t } = useTranslation();
       const [complaints, setComplaints] = useState([]);
       const [status, setStatus] = useState('');
       const [search, setSearch] = useState('');
@@ -19,7 +21,7 @@ export default function ComplaintHistory({ onTrack }) {
             setLoading(true);
             getComplaints({ status: status || undefined, search: search || undefined, limit: 50 })
                   .then(({ data }) => setComplaints(data.complaints || []))
-                  .catch(() => toast.error('Failed to load complaints'))
+                  .catch(() => toast.error(t('complaintHistory.failedToLoad')))
                   .finally(() => setLoading(false));
       };
 
@@ -28,17 +30,17 @@ export default function ComplaintHistory({ onTrack }) {
       const sendFeedback = async (id) => {
             try {
                   await submitFeedback(id, rating, comment);
-                  toast.success('Thank you for your feedback!');
+                  toast.success(t('complaintHistory.feedbackSuccess'));
                   setRatingId(null);
                   load();
             } catch (err) {
-                  toast.error(err.response?.data?.message || 'Feedback failed');
+                  toast.error(err.response?.data?.message || t('toast.feedbackFailed'));
             }
       };
 
       return (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                  <h1 className="text-2xl font-black text-slate-900">Complaint History</h1>
+                  <h1 className="text-2xl font-black text-slate-900">{t('complaintHistory.title')}</h1>
                   <div className="flex flex-col sm:flex-row gap-3">
                         <div className="relative flex-1">
                               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -46,15 +48,15 @@ export default function ComplaintHistory({ onTrack }) {
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && load()}
-                                    placeholder="Search complaints..."
+                                    placeholder={t('complaintHistory.searchPlaceholder')}
                                     className="w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm"
                               />
                         </div>
                         <select value={status} onChange={(e) => setStatus(e.target.value)} className="px-4 py-2.5 border rounded-xl text-sm">
-                              <option value="">All statuses</option>
-                              <option value="pending">Pending</option>
-                              <option value="in_progress">In Progress</option>
-                              <option value="resolved">Resolved</option>
+                              <option value="">{t('complaintHistory.allStatuses')}</option>
+                              <option value="pending">{t('status.pending')}</option>
+                              <option value="in_progress">{t('status.in_progress')}</option>
+                              <option value="resolved">{t('status.resolved')}</option>
                         </select>
                   </div>
 
@@ -82,11 +84,11 @@ export default function ComplaintHistory({ onTrack }) {
                                                                               </button>
                                                                         ))}
                                                                   </motion.div>
-                                                                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Comments..." className="w-full text-sm border rounded-lg p-2" rows={2} />
-                                                                  <button type="button" onClick={() => sendFeedback(c._id)} className="text-sm font-bold text-blue-600">Submit feedback</button>
+                                                                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder={t('complaintHistory.commentsPlaceholder')} className="w-full text-sm border rounded-lg p-2" rows={2} />
+                                                                  <button type="button" onClick={() => sendFeedback(c._id)} className="text-sm font-bold text-blue-600">{t('complaintHistory.submitFeedback')}</button>
                                                             </div>
                                                       ) : (
-                                                            <button type="button" onClick={() => setRatingId(c._id)} className="text-xs font-bold text-violet-600">Rate resolution →</button>
+                                                            <button type="button" onClick={() => setRatingId(c._id)} className="text-xs font-bold text-violet-600">{t('complaintHistory.rateResolution')}</button>
                                                       )}
                                                 </div>
                                           )}

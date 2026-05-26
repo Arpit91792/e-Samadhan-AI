@@ -1,0 +1,1215 @@
+{
+  "appName": "ई-समाधान AI",
+  "tagline": "AI प्लेटफॉर्म",
+  "smartGovernance": "स्मार्ट शासन",
+  "smartGovernancePlatform": "स्मार्ट शासन प्लेटफॉर्म",
+  "govtInitiative": "भारत सरकार की पहल",
+  "nav": {
+    "home": "होम",
+    "features": "विशेषताएं",
+    "departments": "विभाग",
+    "howItWorks": "यह कैसे काम करता है",
+    "analytics": "विश्लेषण",
+    "contact": "संपर्क",
+    "login": "लॉगिन",
+    "signUpFree": "मुफ्त साइन अप",
+    "dashboard": "डैशबोर्ड",
+    "logout": "लॉगआउट",
+    "goToDashboard": "डैशबोर्ड पर जाएं"
+  },
+  "auth": {
+    "welcomeBack": "वापस स्वागत है",
+    "signInSubtitle": "अपने ई-समाधान AI खाते में साइन इन करें",
+    "citizen": "नागरिक",
+    "officer": "अधिकारी",
+    "admin": "व्यवस्थापक",
+    "employeeId": "कर्मचारी आईडी",
+    "department": "विभाग",
+    "selectDepartment": "विभाग चुनें",
+    "emailAddress": "ईमेल पता",
+    "password": "पासवर्ड",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "rememberMe": "7 दिनों के लिए याद रखें",
+    "signingIn": "साइन इन हो रहा है...",
+    "signIn": "साइन इन करें",
+    "newToApp": "ई-समाधान AI में नए हैं?",
+    "createFreeAccount": "मुफ्त खाता बनाएं",
+    "firstTime": "पहली बार?",
+    "registerAsOfficer": "अधिकारी के रूप में पंजीकरण करें →",
+    "demoCredentials": "डेमो क्रेडेंशियल",
+    "accessDenied": "🚫 पहुंच अस्वीकृत",
+    "accessDeniedDesc": "आपको इस पृष्ठ तक पहुंचने की अनुमति नहीं है। यदि आप सोचते हैं कि यह त्रुटि है तो कृपया अपने व्यवस्थापक से संपर्क करें।",
+    "accountBlocked": "आपका अधिकारी खाता विभाग व्यवस्थापक द्वारा ब्लॉक किया गया है।",
+    "contactAdmin": "पहुंच बहाल करने के लिए अपने विभाग व्यवस्थापक से संपर्क करें।",
+    "whatThisMeans": "इसका मतलब:",
+    "cannotLogin": "❌ अधिकारी पोर्टल में लॉगिन नहीं कर सकते",
+    "cannotAccessDashboard": "❌ डैशबोर्ड तक पहुंच नहीं",
+    "cannotManageComplaints": "❌ शिकायतें अपडेट या प्रबंधित नहीं कर सकते",
+    "contactToUnblock": "✅ अनब्लॉक करने के लिए विभाग व्यवस्थापक से संपर्क करें",
+    "createAccount": "अपना खाता बनाएं",
+    "chooseAccountType": "अपना खाता प्रकार चुनें",
+    "chooseRoleDesc": "ई-समाधान AI के साथ शुरू करने के लिए अपनी भूमिका चुनें।",
+    "citizenDesc": "नागरिक शिकायतें दर्ज करें और ट्रैक करें",
+    "officerDesc": "विभाग की शिकायतें प्रबंधित करें और हल करें",
+    "adminDesc": "विभाग, उपयोगकर्ता और विश्लेषण प्रबंधित करें",
+    "citizenAccount": "नागरिक खाता",
+    "officerAccount": "अधिकारी खाता",
+    "adminAccount": "व्यवस्थापक खाता",
+    "getStarted": "शुरू करें →",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "signIn2": "साइन इन करें",
+    "agreeToTerms": "खाता बनाकर आप हमारी सहमति देते हैं",
+    "termsOfService": "सेवा की शर्तें",
+    "privacyPolicy": "गोपनीयता नीति",
+    "backToRoleSelection": "भूमिका चयन पर वापस जाएं",
+    "verifiedCitizen": "✓ सत्यापित नागरिक",
+    "departmentAdmin": "विभाग व्यवस्थापक",
+    "officerPanel": "अधिकारी पैनल",
+    "citizenPortal": "नागरिक पोर्टल"
+  },
+  "validation": {
+    "emailRequired": "ईमेल आवश्यक है",
+    "enterValidEmail": "वैध ईमेल दर्ज करें",
+    "employeeIdRequired": "कर्मचारी आईडी आवश्यक है",
+    "departmentRequired": "विभाग आवश्यक है",
+    "passwordRequired": "पासवर्ड आवश्यक है",
+    "passwordMinLength": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
+    "fillAllFields": "कृपया सभी फ़ील्ड भरें",
+    "fullNameRequired": "पूरा नाम आवश्यक है",
+    "mobileRequired": "मोबाइल नंबर आवश्यक है",
+    "mobileInvalid": "वैध 10-अंकीय मोबाइल नंबर दर्ज करें",
+    "addressRequired": "पता आवश्यक है",
+    "cityRequired": "शहर आवश्यक है",
+    "stateRequired": "राज्य आवश्यक है",
+    "pincodeRequired": "पिन कोड आवश्यक है",
+    "pincodeInvalid": "वैध 6-अंकीय पिन कोड दर्ज करें",
+    "confirmPasswordRequired": "पासवर्ड की पुष्टि करें",
+    "passwordMismatch": "पासवर्ड मेल नहीं खाते",
+    "documentTypeRequired": "दस्तावेज़ प्रकार आवश्यक है",
+    "documentUploadRequired": "कृपया सरकारी आईडी दस्तावेज़ अपलोड करें",
+    "livenessVerificationRequired": "लाइवनेस सत्यापन आवश्यक है"
+  },
+  "form": {
+    "labels": {
+      "fullName": "पूरा नाम",
+      "email": "ईमेल पता",
+      "mobile": "मोबाइल नंबर",
+      "password": "पासवर्ड",
+      "confirmPassword": "पासवर्ड की पुष्टि करें",
+      "address": "पूरा पता",
+      "city": "शहर / कस्बा",
+      "state": "राज्य",
+      "pincode": "पिन कोड",
+      "docType": "दस्तावेज़ प्रकार",
+      "governmentId": "सरकारी आईडी",
+      "pan": "पैन कार्ड",
+      "aadhar": "आधार कार्ड",
+      "voters": "मतदाता आईडी",
+      "license": "ड्राइविंग लाइसेंस",
+      "passport": "पासपोर्ट"
+    },
+    "placeholders": {
+      "email": "आप@उदाहरण.com",
+      "employeeId": "POL-2026-001",
+      "officerEmail": "अधिकारी@gov.in",
+      "fullName": "राजेश कुमार",
+      "phone": "9876543210",
+      "password": "न्यूनतम 8 अक्षर",
+      "confirmPassword": "पासवर्ड फिर से दर्ज करें",
+      "address": "घर न., सड़क, इलाका",
+      "city": "मुंबई",
+      "state": "राज्य चुनें",
+      "pincode": "400001"
+    },
+    "hints": {
+      "manual": "या मैन्युअल रूप से दर्ज करें",
+      "selectState": "राज्य चुनें",
+      "autoFilled": "GPS सटीकता: ±{accuracy}m — फील्ड स्वचालित रूप से भरे गए। आप उन्हें संपादित कर सकते हैं।",
+      "locationInstructions": "स्थान की अनुमति दें: ब्राउज़र पता बार में 🔒 क्लिक करें → स्थान की अनुमति दें → पुन: प्रयास करें।"
+    }
+  },
+  "signup": {
+    "sections": {
+      "personal": "👤 व्यक्तिगत जानकारी",
+      "location": "📍 स्थान जानकारी",
+      "govtId": "🪪 सरकारी आईडी सत्यापन",
+      "liveness": "🛡️ AI लाइवनेस डिटेक्शन",
+      "emailOtp": "✉️ ईमेल OTP सत्यापन"
+    },
+    "summary": "पंजीकरण सारांश",
+    "steps": {
+      "personal": "व्यक्तिगत विवरण",
+      "location": "स्थान",
+      "identity": "पहचान सत्यापन",
+      "liveness": "लाइवनेस चेक",
+      "otp": "ईमेल सत्यापन"
+    }
+  },
+  "location": {
+    "detected": "स्थान पाया गया — ताज़ा करने के लिए क्लिक करें",
+    "denied": "अनुमति अस्वीकृत — पुन: प्रयास करने के लिए क्लिक करें",
+    "accuracyInfo": "GPS सटीकता: ±{accuracy}m — फील्ड स्वचालित रूप से भरे गए। आप उन्हें संपादित कर सकते हैं।",
+    "instructions": "स्थान की अनुमति दें: ब्राउज़र पता बार में 🔒 क्लिक करें → स्थान की अनुमति दें → पुन: प्रयास करें।",
+    "useMyLocation": "मेरा वर्तमान स्थान उपयोग करें",
+    "enterManually": "मैन्युअल रूप से दर्ज करें",
+    "locationFailed": "स्थान का पता नहीं लगा सका",
+    "pleaseAllow": "कृपया स्थान तक पहुंच की अनुमति दें"
+  },
+  "verification": {
+    "documentRequired": "दस्तावेज़ सत्यापन आवश्यक है",
+    "documentDesc": "अपनी सरकारी आईडी अपलोड करें। AI स्वचालित रूप से इसे स्कैन और सत्यापित करेगा।",
+    "documentVerified": "दस्तावेज़ सत्यापित",
+    "livenessRequired": "लाइवनेस सत्यापन आवश्यक है",
+    "livenessSuccess": "लाइव उपस्थिति सत्यापित ✓",
+    "livenessScore": "लाइवनेस स्कोर: {livenessScore}% — OTP सत्यापन के लिए आगे बढ़ें।",
+    "livenessVerified": "लाइवनेस सत्यापित ({livenessScore}%)",
+    "emailTitle": "अपने ईमेल पते को सत्यापित करें",
+    "emailHint": "OTP {email} को भेजा जाएगा",
+    "otpSent": "OTP आपके ईमेल पर भेजा गया",
+    "otpExpired": "OTP समाप्त हो गया। एक नया अनुरोध करें।",
+    "otpInvalid": "अमान्य OTP। फिर से प्रयास करें।",
+    "resendOtp": "OTP फिर से भेजें",
+    "verifyEmail": "ईमेल सत्यापित करें",
+    "verifying": "सत्यापन जारी है...",
+    "verified": "सत्यापित ✓"
+  },
+  "errors": {
+    "accessDenied": "🚫 पहुंच अस्वीकृत",
+    "accessDeniedDesc": "आपको इस पृष्ठ तक पहुंचने की अनुमति नहीं है। कृपया अपने व्यवस्थापक से संपर्क करें।",
+    "notFound": "पृष्ठ नहीं मिला",
+    "serverError": "सर्वर त्रुटि",
+    "networkError": "नेटवर्क त्रुटि",
+    "tryAgain": "फिर से प्रयास करें",
+    "goHome": "होम पर जाएं"
+  },
+  "sidebar": {
+    "dashboardHome": "डैशबोर्ड होम",
+    "createComplaint": "शिकायत दर्ज करें",
+    "trackComplaint": "शिकायत ट्रैक करें",
+    "complaintHistory": "शिकायत इतिहास",
+    "emergency": "आपातकाल",
+    "notifications": "सूचनाएं",
+    "feedbackRating": "प्रतिक्रिया और रेटिंग",
+    "profile": "प्रोफ़ाइल",
+    "settings": "सेटिंग्स",
+    "logout": "लॉगआउट",
+    "dashboard": "डैशबोर्ड",
+    "complaints": "शिकायतें",
+    "officers": "अधिकारी",
+    "analytics": "विश्लेषण"
+  },
+  "dashboard": {
+    "citizenDashboard": "नागरिक डैशबोर्ड",
+    "officerDashboard": "अधिकारी डैशबोर्ड",
+    "adminPanel": "व्यवस्थापक पैनल",
+    "dashboardHome": "डैशबोर्ड होम",
+    "aiPoweredOverview": "AI-संचालित शिकायत अवलोकन",
+    "totalComplaints": "कुल शिकायतें",
+    "pending": "लंबित",
+    "inProgress": "प्रक्रिया में",
+    "resolved": "समाधान किया गया",
+    "emergency": "आपातकाल",
+    "recentActivity": "हाल की गतिविधि",
+    "noComplaintsYet": "अभी तक कोई शिकायत नहीं। अपनी पहली शिकायत दर्ज करें!",
+    "aiInsights": "AI अंतर्दृष्टि",
+    "aiInsight1": "• अधिकांश समस्याएं 5–7 कार्य दिवसों में हल हो जाती हैं",
+    "aiInsight2": "• अपराध, आग, या चिकित्सा संकट के लिए आपातकाल मोड का उपयोग करें",
+    "aiInsight3": "• AI स्वचालित रूप से शिकायतों को सही विभाग को भेजता है",
+    "aiInsight4": "• तेजी से समाधान के लिए स्पष्ट फोटो अपलोड करें",
+    "fileComplaint": "शिकायत दर्ज करें",
+    "realTimeManagement": "रीयल-टाइम शिकायत प्रबंधन",
+    "queue": "कतार",
+    "accepted": "स्वीकृत",
+    "resolutionRate": "समाधान दर:",
+    "avgResolution": "औसत समाधान:",
+    "departmentQueue": "📥 विभाग कतार",
+    "myComplaints": "📌 मेरी शिकायतें",
+    "myAssignedComplaints": "📌 मेरी सौंपी गई शिकायतें",
+    "unacceptedComplaints": "{{dept}} के लिए स्वीकृत नहीं शिकायतें — जो पहले स्वीकार करेंगे उन्हें स्वामित्व मिलेगा",
+    "complaintsResponsible": "शिकायतें जिन्हें आपने स्वीकार किया है और जिनके लिए आप जिम्मेदार हैं",
+    "refresh": "ताज़ा करें",
+    "queueEmpty": "कतार खाली है",
+    "noPendingComplaints": "अभी आपके विभाग में कोई लंबित शिकायत नहीं।",
+    "noComplaintsAssigned": "अभी तक कोई शिकायत सौंपी नहीं गई",
+    "acceptFromQueue": "शुरू करने के लिए विभाग कतार से शिकायतें स्वीकार करें।",
+    "goToDepartmentQueue": "विभाग कतार पर जाएं",
+    "all": "सभी",
+    "assigned": "सौंपा गया",
+    "rejected": "अस्वीकृत",
+    "emergencyWarning": "आपातकाल शिकायतें अधिकारियों को तेजी से भेजी जाती हैं। केवल अपराध, आग, दुर्घटना, या चिकित्सा आपातकाल के लिए उपयोग करें।",
+    "adminDashboard": "{{dept}} डैशबोर्ड",
+    "deptAdminPanel": "विभाग प्रशासन पैनल · {{dept}}",
+    "noAnalyticsData": "अभी कोई विश्लेषण डेटा उपलब्ध नहीं है",
+    "complaintStats": "शिकायत सांख्यिकी",
+    "departmentMetrics": "विभाग मेट्रिक्स",
+    "occupancyRate": "कब्जे की दर",
+    "averageResolutionTime": "औसत समाधान समय"
+  },
+  "complaint": {
+    "createComplaint": "शिकायत दर्ज करें",
+    "emergencyComplaint": "आपातकाल शिकायत",
+    "aiPriorityNote": "AI प्राथमिकता स्वचालित रूप से निर्धारित करता है — आप प्राथमिकता नहीं चुनते",
+    "complaintTitle": "शिकायत का शीर्षक *",
+    "describeIssue": "समस्या का विस्तार से वर्णन करें *",
+    "aiAnalysis": "AI विश्लेषण",
+    "department": "विभाग:",
+    "priority": "प्राथमिकता:",
+    "aiPriorityWarning": "प्राथमिकता AI द्वारा निर्दिष्ट की जाती है और मैन्युअल रूप से नहीं बदली जा सकती",
+    "departmentAiSuggested": "विभाग (यदि खाली हो तो AI द्वारा सुझाव)",
+    "complaintLocation": "शिकायत का स्थान *",
+    "useMyLocation": "मेरा वर्तमान स्थान उपयोग करें",
+    "address": "पता",
+    "city": "शहर",
+    "pin": "पिन",
+    "evidence": "साक्ष्य (तस्वीरें/वीडियो)",
+    "submitComplaint": "शिकायत जमा करें",
+    "submitEmergency": "आपातकाल शिकायत जमा करें",
+    "trackComplaint": "शिकायत ट्रैक करें",
+    "enterComplaintId": "शिकायत आईडी दर्ज करें जैसे C-000001",
+    "track": "ट्रैक",
+    "assignedOfficer": "सौंपा गया अधिकारी",
+    "complaintHistory": "शिकायत इतिहास",
+    "searchComplaints": "शिकायतें खोजें...",
+    "allStatuses": "सभी स्थितियां",
+    "rateResolution": "समाधान दर करें →",
+    "comments": "टिप्पणियां...",
+    "submitFeedback": "प्रतिक्रिया जमा करें",
+    "acceptComplaint": "शिकायत स्वीकार करें",
+    "accepting": "स्वीकार किया जा रहा है...",
+    "startWorking": "काम शुरू करें (प्रक्रिया में)",
+    "markResolved": "✅ समाधान किए गए के रूप में चिह्नित करें",
+    "reject": "अस्वीकार करें",
+    "addNote": "नोट जोड़ें",
+    "viewUpdate": "देखें और अपडेट करें",
+    "resolutionNotes": "समाधान नोट्स (वैकल्पिक)",
+    "noAddress": "कोई पता नहीं",
+    "emergency": "🚨 आपातकाल",
+    "details": "शिकायत विवरण",
+    "timeline": "समयरेखा",
+    "updates": "अपडेट",
+    "attachments": "संलग्नक"
+  },
+  "admin": {
+    "adminProfile": "व्यवस्थापक प्रोफ़ाइल",
+    "fullName": "पूरा नाम",
+    "registeredOn": "पंजीकृत",
+    "officialEmail": "आधिकारिक ईमेल",
+    "mobileNumber": "मोबाइल नंबर",
+    "totalComplaints": "कुल शिकायतें",
+    "pendingComplaints": "लंबित शिकायतें",
+    "resolutionRate": "समाधान दर",
+    "activeOfficers": "सक्रिय अधिकारी",
+    "complaintManagement": "शिकायत प्रबंधन",
+    "assignOfficer": "अधिकारी को सौंपें...",
+    "officerManagement": "अधिकारी प्रबंधन",
+    "createOfficer": "+ अधिकारी बनाएं",
+    "noOfficersYet": "अभी तक कोई अधिकारी नहीं",
+    "createFirstOfficer": "शुरू करने के लिए अपना पहला अधिकारी बनाएं",
+    "name": "नाम",
+    "employeeId": "कर्मचारी आईडी",
+    "departmentCol": "विभाग",
+    "assignedCol": "सौंपा गया",
+    "pendingCol": "लंबित",
+    "resolvedCol": "समाधान किया गया",
+    "resolutionPct": "समाधान %",
+    "lastActive": "अंतिम सक्रिय",
+    "status": "स्थिति",
+    "actions": "कार्य",
+    "blocked": "ब्लॉक किया गया",
+    "active": "सक्रिय",
+    "blockOfficer": "अधिकारी को ब्लॉक करें",
+    "unblockOfficer": "अधिकारी को अनब्लॉक करें",
+    "blockWillRevoke": "यह {{name}} की पहुंच को तुरंत रद्द कर देगा।",
+    "restoreAccess": "{{name}} के लिए पूर्ण पहुंच बहाल करें।",
+    "afterBlocking": "ब्लॉक करने के बाद:",
+    "afterUnblocking": "अनब्लॉक करने के बाद:",
+    "cannotLogin": "❌ अधिकारी लॉगिन नहीं कर सकते",
+    "sessionInvalidated": "❌ मौजूदा JWT सत्र तुरंत अमान्य हो गया",
+    "dashboardRevoked": "❌ डैशबोर्ड पहुंच रद्द",
+    "cannotManage": "❌ शिकायतें अपडेट या प्रबंधित नहीं कर सकते",
+    "canLoginNormally": "✅ अधिकारी सामान्य रूप से लॉगिन कर सकते हैं",
+    "dashboardRestored": "✅ डैशबोर्ड पहुंच बहाल",
+    "canManage": "✅ शिकायतों को प्रबंधित और अपडेट कर सकते हैं",
+    "blockReason": "ब्लॉक करने का कारण",
+    "optional": "(वैकल्पिक)",
+    "blockReasonPlaceholder": "जैसे। गलत आचरण, नीति उल्लंघन, जांच...",
+    "previousBlockReason": "पिछला ब्लॉक कारण:",
+    "cancel": "रद्द करें",
+    "blocking": "ब्लॉक किया जा रहा है...",
+    "unblocking": "अनब्लॉक किया जा रहा है...",
+    "createOfficerTitle": "अधिकारी बनाएं",
+    "autoGenerated": "कर्मचारी आईडी स्वचालित रूप से उत्पन्न · स्वागत ईमेल स्वचालित रूप से भेजा गया",
+    "officerCreated": "अधिकारी सफलतापूर्वक बनाया गया",
+    "copyEmployeeId": "कर्मचारी आईडी कॉपी करें",
+    "copied": "कॉपी किया गया!",
+    "welcomeEmailSent": "📧 पंजीकरण निर्देशों के साथ स्वागत ईमेल {{email}} पर भेजा गया। अधिकारी को सेटअप पूरा करने के लिए /officer/register पर जाना चाहिए।",
+    "createAnother": "दूसरा बनाएं",
+    "done": "हो गया",
+    "officerFullName": "पूरा नाम",
+    "officerEmail": "आधिकारिक ईमेल",
+    "officerMobile": "मोबाइल नंबर",
+    "officerNamePlaceholder": "अधिकारी का पूरा नाम",
+    "officerEmailPlaceholder": "अधिकारी@gov.in",
+    "officerMobilePlaceholder": "10-अंकीय मोबाइल",
+    "deptInherited": "ℹ️ विभाग आपके व्यवस्थापक खाते से विरासत में मिला है। कर्मचारी आईडी स्वचालित रूप से उत्पन्न (जैसे POL-2026-001)।",
+    "creating": "बनाया जा रहा है...",
+    "aiAnalytics": "AI विश्लेषण",
+    "avgResolution": "औसत समाधान: {{hours}} घंटे",
+    "complaints30Days": "शिकायतें (30 दिन)",
+    "byStatus": "स्थिति के अनुसार",
+    "byCategory": "श्रेणी के अनुसार"
+  },
+  "notifications": {
+    "notifications": "सूचनाएं",
+    "markAllRead": "सभी को पढ़ा गया चिह्नित करें",
+    "noNotifications": "अभी तक कोई सूचना नहीं",
+    "allMarkedRead": "सभी पढ़ा गया चिह्नित"
+  },
+  "profile": {
+    "profile": "प्रोफ़ाइल",
+    "verifiedCitizen": "सत्यापित नागरिक",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "saveChanges": "परिवर्तन सहेजें",
+    "changePassword": "पासवर्ड बदलें",
+    "currentPassword": "वर्तमान पासवर्ड",
+    "newPassword": "नया पासवर्ड",
+    "confirmNewPassword": "नया पासवर्ड की पुष्टि करें"
+  },
+  "settings": {
+    "settings": "सेटिंग्स",
+    "darkMode": "अंधेरी मोड",
+    "language": "भाषा",
+    "languageSaved": "भाषा वरीयता सहेजी गई",
+    "notifications": "सूचनाएं",
+    "emailNotifications": "ईमेल सूचनाएं",
+    "smsNotifications": "SMS सूचनाएं",
+    "pushNotifications": "पुश सूचनाएं",
+    "privacy": "गोपनीयता",
+    "accountSettings": "खाता सेटिंग्स",
+    "help": "सहायता और समर्थन"
+  },
+  "departments": {
+    "electricity": "⚡ बिजली",
+    "electricity_desc": "बिजली कटौती, मीटर समस्याएं, और बिलिंग समस्याएं रिपोर्ट करें",
+    "water_supply": "💧 जल आपूर्ति",
+    "water_supply_desc": "जल रिसाव, संदूषण, और आपूर्ति समस्याएं रिपोर्ट करें",
+    "roads_transport": "🚗 सड़कें और परिवहन",
+    "roads_transport_desc": "गड्ढे, क्षतिग्रस्त सड़कें, और ट्रैफिक समस्याएं रिपोर्ट करें",
+    "sanitation": "🗑️ स्वच्छता",
+    "sanitation_desc": "कचरा संग्रह और सफाई समस्याएं रिपोर्ट करें",
+    "police": "🛡️ पुलिस",
+    "police_desc": "अपराध और सुरक्षा चिंताएं रिपोर्ट करें",
+    "healthcare": "❤️ स्वास्थ्यसेवा",
+    "healthcare_desc": "स्वास्थ्यसेवा सुविधा और चिकित्सा समस्याएं रिपोर्ट करें",
+    "municipal": "🏛️ नगर पालिका सेवाएं",
+    "municipal_desc": "नगर पालिका निगम समस्याएं रिपोर्ट करें",
+    "education": "🎓 शिक्षा",
+    "education_desc": "स्कूल और शिक्षा सुविधा समस्याएं रिपोर्ट करें"
+  },
+  "status": {
+    "pending": "लंबित",
+    "assigned": "सौंपा गया",
+    "in_progress": "प्रक्रिया में",
+    "resolved": "समाधान किया गया",
+    "rejected": "अस्वीकृत",
+    "closed": "बंद"
+  },
+  "priority": {
+    "emergency": "आपातकाल",
+    "high": "उच्च",
+    "medium": "मध्यम",
+    "low": "कम"
+  },
+  "toast": {
+    "loggedOut": "लॉग आउट",
+    "loggedOutSuccess": "सफलतापूर्वक लॉग आउट",
+    "welcomeBack": "वापस स्वागत है!",
+    "loginFailed": "लॉगिन विफल। कृपया फिर से प्रयास करें।",
+    "complaintFiled": "शिकायत दर्ज!",
+    "failedToSubmit": "शिकायत जमा करने में विफल",
+    "locationDetected": "स्थान पाया गया",
+    "couldNotResolveAddress": "पता हल नहीं कर सका",
+    "locationDenied": "स्थान अनुमति अस्वीकृत",
+    "geolocationNotSupported": "भूगोलन समर्थित नहीं",
+    "enterComplaintId": "शिकायत आईडी दर्ज करें",
+    "complaintNotFound": "शिकायत नहीं मिली",
+    "searchFailed": "खोज विफल",
+    "feedbackSuccess": "आपकी प्रतिक्रिया के लिए धन्यवाद!",
+    "feedbackFailed": "प्रतिक्रिया विफल",
+    "failedToLoadComplaints": "शिकायतें लोड करने में विफल",
+    "officerAssigned": "अधिकारी सौंपा गया",
+    "statusUpdated": "स्थिति अपडेट",
+    "assignFailed": "असाइन विफल",
+    "updateFailed": "अपडेट विफल",
+    "complaintAccepted": "शिकायत स्वीकृत! मेरी शिकायतें टैब चेक करें।",
+    "failedToAccept": "शिकायत स्वीकार करने में विफल",
+    "noteAdded": "नोट जोड़ा गया",
+    "failedToAddNote": "नोट जोड़ने में विफल",
+    "failedToLoadQueue": "विभाग कतार लोड करने में विफल",
+    "failedToLoadMyComplaints": "आपकी शिकायतें लोड करने में विफल",
+    "newAlert": "नई चेतावनी",
+    "officerCreated": "अधिकारी बनाया गया — कर्मचारी आईडी उत्पन्न",
+    "failedToLoadOfficers": "अधिकारी लोड करने में विफल",
+    "blockFailed": "ब्लॉक विफल",
+    "unblockFailed": "अनब्लॉक विफल",
+    "createFailed": "बनाना विफल",
+    "allMarkedRead": "सभी पढ़ा गया चिह्नित",
+    "success": "सफलता",
+    "error": "त्रुटि",
+    "warning": "चेतावनी",
+    "info": "जानकारी"
+  },
+  "forgotPassword": {
+    "title": "पासवर्ड भूल गए?",
+    "subtitle": "चिंता न करें, हम आपको रीसेट निर्देश भेजेंगे",
+    "checkEmail": "अपना ईमेल जांचें",
+    "sentTo": "हमने {{email}} पर रीसेट लिंक भेजा है",
+    "whatNext": "आगे क्या करें:",
+    "step1": "{{email}} पर अपना इनबॉक्स जांचें",
+    "step2": "ईमेल में रीसेट लिंक पर क्लिक करें",
+    "step3": "नया मजबूत पासवर्ड बनाएं",
+    "didntReceive": "ईमेल नहीं मिला?",
+    "tryAgain": "फिर से प्रयास करें",
+    "backToLogin": "लॉगिन पर वापस जाएं",
+    "sending": "भेज रहा है...",
+    "sendResetLink": "रीसेट लिंक भेजें",
+    "somethingWrong": "कुछ गलत हुआ। कृपया पुनः प्रयास करें।"
+  },
+  "adminLogin": {
+    "signIn": "आधिकारिक व्यवस्थापक साइन इन",
+    "allRequired": "ईमेल · पासवर्ड · विभाग (सभी आवश्यक)",
+    "verifying": "क्रेडेंशियल सत्यापित हो रहे हैं...",
+    "accessDashboard": "विभाग डैशबोर्ड एक्सेस करें",
+    "newAdmin": "नए विभाग व्यवस्थापक?",
+    "register": "पंजीकरण करें",
+    "citizenOrOfficer": "नागरिक या अधिकारी?",
+    "standardLogin": "मानक लॉगिन",
+    "invalidResponse": "सर्वर से अमान्य लॉगिन प्रतिक्रिया",
+    "unauthorized": "अनधिकृत पहुंच",
+    "sessionError": "सत्र सहेजा नहीं जा सका। कृपया पुनः प्रयास करें।"
+  },
+  "language": {
+    "selectLanguage": "भाषा",
+    "en": "English",
+    "hi": "हिंदी",
+    "mr": "मराठी",
+    "bn": "বাংলা",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "gu": "ગુજરાતી",
+    "pa": "ਪੰਜਾਬੀ"
+  },
+  "hero": {
+    "title": "स्मार्ट शासन प्लेटफॉर्म",
+    "subtitle": "AI-संचालित सहायता के साथ नागरिक शिकायतें तुरंत दर्ज, ट्रैक और हल करें",
+    "cta": "मुफ्त शुरू करें",
+    "trackButton": "शिकायत ट्रैक करें",
+    "stats": {
+      "complaints": "2.4M+ शिकायतें",
+      "satisfaction": "98% संतुष्टि",
+      "states": "28 राज्य",
+      "resolution": "95% समाधान दर",
+      "days": "औसत 5-7 दिन",
+      "satisfied": "98% संतुष्ट उपयोगकर्ता"
+    },
+    "badges": {
+      "secure": "सुरक्षित",
+      "aiPowered": "AI संचालित",
+      "panIndia": "पूरे भारत में"
+    },
+    "dashboardMock": {
+      "title": "लाइव डैशबोर्ड",
+      "subtitle": "शिकायत अवलोकन",
+      "liveLabel": "लाइव",
+      "stats": {
+        "total": "कुल",
+        "resolved": "समाधान",
+        "pending": "लंबित"
+      }
+    }
+  },
+  "features": {
+    "aiRouting": {
+      "title": "स्मार्ट AI रूटिंग",
+      "description": "शिकायतें AI का उपयोग करके सही विभाग को स्वचालित रूप से भेजी जाती हैं"
+    },
+    "realtimeTracking": {
+      "title": "रीयल-टाइम ट्रैकिंग",
+      "description": "तत्काल अपडेट के साथ अपनी शिकायत स्थिति को लाइव ट्रैक करें"
+    },
+    "emergencyMode": {
+      "title": "आपातकाल मोड",
+      "description": "अपराध, आग और दुर्घटनाओं जैसे महत्वपूर्ण समस्याओं को तेजी से ट्रैक करें"
+    },
+    "multiLanguage": {
+      "title": "बहु-भाषा समर्थन",
+      "description": "क्षेत्रीय उपयोगकर्ताओं के लिए 8 भाषाओं में उपलब्ध"
+    },
+    "documentVerification": {
+      "title": "AI दस्तावेज़ स्कैनिंग",
+      "description": "उन्नत OCR तकनीक का उपयोग करके स्वचालित आईडी सत्यापन"
+    },
+    "analytics": {
+      "title": "उन्नत विश्लेषण",
+      "description": "शिकायत समाधान पर विस्तृत रिपोर्ट और अंतर्दृष्टि"
+    }
+  },
+  "footer": {
+    "about": "के बारे में",
+    "aboutDesc": "नागरिकों को शिकायतें रिपोर्ट और ट्रैक करने में मदद करने वाला स्मार्ट शासन प्लेटफॉर्म",
+    "quickLinks": "त्वरित लिंक",
+    "home": "होम",
+    "features": "विशेषताएं",
+    "contact": "हमसे संपर्क करें",
+    "legal": "कानूनी",
+    "privacyPolicy": "गोपनीयता नीति",
+    "termsOfService": "सेवा की शर्तें",
+    "cookiePolicy": "कुकी नीति",
+    "email": "support@e-samadhan.gov.in",
+    "phone": "+91 1800-SAMADHAN",
+    "address": "ई-समाधान AI, स्मार्ट शासन विभाग, नई दिल्ली, भारत",
+    "followUs": "हमारे साथ जुड़ें",
+    "copyright": "© 2026 ई-समाधान AI। सर्वाधिकार सुरक्षित।",
+    "govt": "भारत सरकार की एक पहल"
+  },
+  "buttons": {
+    "submit": "जमा करें",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "close": "बंद करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "update": "अपडेट",
+    "refresh": "ताज़ा करें",
+    "search": "खोजें",
+    "reset": "रीसेट",
+    "next": "अगला",
+    "previous": "पिछला",
+    "continue": "जारी रखें",
+    "finish": "समाप्त",
+    "back": "वापस"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "noData": "कोई डेटा उपलब्ध नहीं",
+    "error": "कुछ गलत हो गया",
+    "tryAgain": "फिर से प्रयास करें",
+    "or": "या",
+    "and": "और",
+    "from": "से",
+    "to": "को",
+    "date": "तारीख",
+    "time": "समय",
+    "fileName": "फ़ाइल का नाम",
+    "fileSize": "फ़ाइल का आकार",
+    "created": "बनाया गया",
+    "updated": "अपडेट",
+    "status": "स्थिति",
+    "action": "कार्य",
+    "view": "देखें",
+    "download": "डाउनलोड",
+    "upload": "अपलोड",
+    "more": "अधिक"
+  },
+  "cta": {
+    "badge": "डिजिटल शासन क्रांति में शामिल हों",
+    "title": "AI के साथ सार्वजनिक शिकायत प्रबंधन बदलें",
+    "subtitle": "24 लाख नागरिकों के साथ जुड़ें जिन्होंने तेज़, स्मार्ट और पारदर्शी सरकारी सेवाओं का अनुभव किया है।",
+    "getStartedFree": "मुफ्त शुरू करें",
+    "registerComplaint": "शिकायत दर्ज करें",
+    "free": "मुफ्त",
+    "freeDesc": "नागरिकों के लिए हमेशा मुफ्त",
+    "support": "24/7",
+    "supportDesc": "चौबीसों घंटे सहायता",
+    "secure": "100%",
+    "secureDesc": "सुरक्षित और एन्क्रिप्टेड"
+  },
+  "departmentsSection": {
+    "badge": "सरकारी विभाग",
+    "title": "सभी विभाग, एक प्लेटफॉर्म",
+    "subtitle": "सभी सरकारी विभागों में शिकायतें दर्ज करें। AI उन्हें तुरंत सही प्राधिकरण को भेजता है।",
+    "cases": "मामले",
+    "resolutionRate": "समाधान दर",
+    "electricity": {
+      "name": "बिजली",
+      "desc": "बिजली कटौती, बिलिंग समस्याएं, ट्रांसफार्मर खराबी"
+    },
+    "waterSupply": {
+      "name": "जल आपूर्ति",
+      "desc": "पानी की कमी, पाइपलाइन रिसाव, गुणवत्ता समस्याएं"
+    },
+    "roadsTransport": {
+      "name": "सड़कें और परिवहन",
+      "desc": "गड्ढे, ट्रैफिक सिग्नल, सड़क क्षति"
+    },
+    "sanitation": {
+      "name": "स्वच्छता",
+      "desc": "कचरा संग्रह, नाली, सफाई"
+    },
+    "police": {
+      "name": "पुलिस",
+      "desc": "सुरक्षा चिंताएं, शोर शिकायतें, कानून प्रवर्तन"
+    },
+    "healthcare": {
+      "name": "स्वास्थ्यसेवा",
+      "desc": "अस्पताल सेवाएं, एम्बुलेंस, चिकित्सा सुविधाएं"
+    },
+    "municipal": {
+      "name": "नगर पालिका सेवाएं",
+      "desc": "संपत्ति कर, भवन अनुमति, नागरिक सुविधाएं"
+    },
+    "education": {
+      "name": "शिक्षा",
+      "desc": "स्कूल सुविधाएं, शिक्षक समस्याएं, छात्रवृत्ति"
+    }
+  },
+  "officerRegister": {
+    "title": "अधिकारी पंजीकरण",
+    "subtitle": "अपने विभाग व्यवस्थापक द्वारा प्रदान की गई कर्मचारी आईडी का उपयोग करके पंजीकरण करें",
+    "howToRegister": "📋 पंजीकरण कैसे करें",
+    "howToRegisterDesc": "वह कर्मचारी आईडी और ईमेल दर्ज करें जो आपके विभाग व्यवस्थापक ने आपका खाता बनाते समय उपयोग किया था।",
+    "employeeId": "कर्मचारी आईडी",
+    "officialEmail": "आधिकारिक ईमेल",
+    "department": "विभाग",
+    "selectDepartment": "अपना विभाग चुनें",
+    "securityNote": "आपकी कर्मचारी आईडी, ईमेल और विभाग बिल्कुल वैसा ही होना चाहिए जैसा आपके व्यवस्थापक ने दर्ज किया था।",
+    "verifyIdentity": "पहचान सत्यापित करें",
+    "verifying": "सत्यापन जारी है...",
+    "alreadyRegistered": "पहले से पंजीकृत?",
+    "signIn": "साइन इन करें",
+    "otpSentTo": "OTP भेजा गया",
+    "checkSpam": "अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें",
+    "resendOtp": "OTP फिर से भेजें",
+    "back": "← वापस",
+    "verifyOtp": "OTP सत्यापित करें",
+    "verifyingOtp": "OTP सत्यापित हो रहा है...",
+    "emailVerified": "✅ ईमेल सत्यापित — अब अपने अधिकारी खाते के लिए एक मजबूत पासवर्ड सेट करें",
+    "password": "पासवर्ड",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "minChars": "न्यूनतम 8 अक्षर",
+    "reEnterPassword": "पासवर्ड फिर से दर्ज करें",
+    "stepLabels": {
+      "verifyIdentity": "पहचान सत्यापित करें",
+      "verifyEmail": "ईमेल सत्यापित करें",
+      "setPassword": "पासवर्ड सेट करें"
+    },
+    "strength": {
+      "weak": "कमजोर",
+      "fair": "ठीक",
+      "good": "अच्छा",
+      "strong": "मजबूत"
+    },
+    "completeRegistration": "पंजीकरण पूरा करें",
+    "registering": "पंजीकरण हो रहा है..."
+  },
+  "unauthorizedPage": {
+    "title": "पहुंच अस्वीकृत",
+    "message": "आपको इस पृष्ठ तक पहुंचने की अनुमति नहीं है। यदि आप सोचते हैं कि यह त्रुटि है तो कृपया अपने व्यवस्थापक से संपर्क करें।",
+    "goToDashboard": "डैशबोर्ड पर जाएं"
+  },
+  "feedbackPanel": {
+    "title": "प्रतिक्रिया और रेटिंग",
+    "subtitle": "शिकायतें हल होने के बाद अधिकारियों को रेट करें।",
+    "noPendingFeedback": "कोई लंबित प्रतिक्रिया नहीं। हल की गई शिकायतें यहां दिखाई देती हैं।",
+    "rateOfficer": "अधिकारी को रेट करें →",
+    "shareExperience": "अपना अनुभव साझा करें...",
+    "submit": "जमा करें",
+    "failedToLoad": "लोड करने में विफल"
+  },
+  "profilePage": {
+    "title": "प्रोफ़ाइल",
+    "verifiedCitizen": "सत्यापित नागरिक",
+    "id": "आईडी:"
+  },
+  "settingsPage": {
+    "title": "सेटिंग्स",
+    "darkMode": "अंधेरी मोड",
+    "language": "भाषा",
+    "languageSaved": "भाषा वरीयता सहेजी गई"
+  },
+  "complaintHistory": {
+    "title": "शिकायत इतिहास",
+    "searchPlaceholder": "शिकायतें खोजें...",
+    "allStatuses": "सभी स्थितियां",
+    "rateResolution": "समाधान दर करें →",
+    "commentsPlaceholder": "टिप्पणियां...",
+    "submitFeedback": "प्रतिक्रिया जमा करें",
+    "failedToLoad": "शिकायतें लोड करने में विफल",
+    "feedbackSuccess": "आपकी प्रतिक्रिया के लिए धन्यवाद!"
+  },
+  "trackComplaint": {
+    "title": "शिकायत ट्रैक करें",
+    "placeholder": "शिकायत आईडी दर्ज करें जैसे C-000001",
+    "track": "ट्रैक",
+    "assignedOfficer": "सौंपा गया अधिकारी",
+    "enterComplaintId": "शिकायत आईडी दर्ज करें",
+    "complaintNotFound": "शिकायत नहीं मिली",
+    "searchFailed": "खोज विफल"
+  },
+  "notificationsPanel": {
+    "title": "सूचनाएं",
+    "markAllRead": "सभी को पढ़ा गया चिह्नित करें",
+    "noNotifications": "अभी तक कोई सूचना नहीं",
+    "allMarkedRead": "सभी पढ़ा गया चिह्नित"
+  },
+  "adminComplaintsPage": {
+    "title": "शिकायत प्रबंधन",
+    "allStatuses": "सभी स्थितियां",
+    "pending": "लंबित",
+    "assigned": "सौंपा गया",
+    "inProgress": "प्रक्रिया में",
+    "resolved": "समाधान किया गया",
+    "assignOfficer": "अधिकारी को सौंपें...",
+    "failedToLoad": "शिकायतें लोड करने में विफल",
+    "officerAssigned": "अधिकारी सौंपा गया",
+    "statusUpdated": "स्थिति अपडेट",
+    "assignFailed": "असाइन विफल",
+    "updateFailed": "अपडेट विफल"
+  },
+  "adminOfficersPage": {
+    "title": "अधिकारी प्रबंधन",
+    "createOfficer": "+ अधिकारी बनाएं",
+    "noOfficers": "अभी तक कोई अधिकारी नहीं",
+    "noOfficersDesc": "शुरू करने के लिए अपना पहला अधिकारी बनाएं",
+    "tableHeaders": {
+      "name": "नाम",
+      "employeeId": "कर्मचारी आईडी",
+      "department": "विभाग",
+      "assigned": "सौंपा गया",
+      "pending": "लंबित",
+      "resolved": "समाधान",
+      "resolutionPct": "समाधान %",
+      "lastActive": "अंतिम सक्रिय",
+      "status": "स्थिति",
+      "actions": "कार्य"
+    },
+    "blocked": "ब्लॉक किया गया",
+    "pending": "लंबित",
+    "active": "सक्रिय",
+    "block": "ब्लॉक",
+    "unblock": "अनब्लॉक",
+    "cancel": "रद्द करें",
+    "blocking": "ब्लॉक किया जा रहा है...",
+    "unblocking": "अनब्लॉक किया जा रहा है...",
+    "createOfficerTitle": "अधिकारी बनाएं",
+    "autoGenerated": "कर्मचारी आईडी स्वचालित रूप से उत्पन्न · स्वागत ईमेल स्वचालित रूप से भेजा गया",
+    "officerCreated": "अधिकारी सफलतापूर्वक बनाया गया",
+    "copyEmployeeId": "कर्मचारी आईडी कॉपी करें",
+    "copied": "कॉपी किया गया!",
+    "creating": "बनाया जा रहा है...",
+    "fillAllFields": "कृपया सभी फ़ील्ड भरें",
+    "failedToLoad": "अधिकारी लोड करने में विफल",
+    "officerCreatedToast": "अधिकारी बनाया गया — कर्मचारी आईडी उत्पन्न"
+  },
+  "adminAnalyticsPage": {
+    "title": "AI विश्लेषण",
+    "avgResolution": "औसत समाधान: {{hours}} घंटे",
+    "complaints30Days": "शिकायतें (30 दिन)",
+    "byStatus": "स्थिति के अनुसार",
+    "byCategory": "श्रेणी के अनुसार"
+  },
+  "adminEmergenciesPage": {
+    "title": "आपातकाल निगरानी",
+    "noEmergencies": "कोई सक्रिय आपातकाल शिकायत नहीं"
+  },
+  "adminDashboardPage": {
+    "header": "{{dept}} · व्यवस्थापक पैनल",
+    "loggedOut": "लॉग आउट"
+  },
+  "howItWorks": {
+    "badge": "सरल 4-चरण प्रक्रिया",
+    "title": "ई-समाधान AI कैसे काम करता है",
+    "subtitle": "शिकायत दर्ज करने से समाधान तक — हमारा AI बीच में सब कुछ संभालता है।",
+    "step": "चरण",
+    "cta": "अपनी पहली शिकायत दर्ज करें →",
+    "steps": [
+      {
+        "title": "नागरिक शिकायत दर्ज करता है",
+        "desc": "नागरिक अपनी पसंदीदा भाषा में फोटो और स्थान के साथ वेब, मोबाइल ऐप या SMS के माध्यम से शिकायतें दर्ज करते हैं।"
+      },
+      {
+        "title": "AI विभाग और प्राथमिकता का पता लगाता है",
+        "desc": "हमारा NLP इंजन शिकायत को वर्गीकृत करता है, प्राथमिकता स्तर निर्दिष्ट करता है और इसे तुरंत सही विभाग को भेजता है।"
+      },
+      {
+        "title": "अधिकारी को तुरंत सूचना मिलती है",
+        "desc": "नियुक्त अधिकारी को पूर्ण शिकायत विवरण, स्थान मानचित्र और SLA समय सीमा के साथ रीयल-टाइम अलर्ट मिलता है।"
+      },
+      {
+        "title": "समस्या जल्दी हल होती है",
+        "desc": "अधिकारी समस्या हल करता है, प्रमाण अपलोड करता है और नागरिक को सूचित किया जाता है। फीडबैक लूप शिकायत बंद करता है।"
+      }
+    ]
+  },
+  "analytics": {
+    "badge": "लाइव विश्लेषण",
+    "title": "रीयल-टाइम शिकायत विश्लेषण",
+    "subtitle": "पूरे भारत में AI-संचालित शासन के प्रभाव को दर्शाने वाला लाइव डैशबोर्ड।",
+    "deptPerformance": "विभाग प्रदर्शन",
+    "deptPerformanceSub": "विभाग द्वारा समाधान दर — पिछले 30 दिन",
+    "liveData": "लाइव डेटा",
+    "heatmapTitle": "शिकायत हीटमैप — भारत",
+    "heatmap": {
+      "low": "कम",
+      "medium": "मध्यम",
+      "high": "उच्च",
+      "critical": "गंभीर"
+    },
+    "stat0": {
+      "label": "कुल शिकायतें दर्ज",
+      "sub": "इस महीने +12%"
+    },
+    "stat1": {
+      "label": "शिकायतें हल",
+      "sub": "राष्ट्रीय औसत से ऊपर"
+    },
+    "stat2": {
+      "label": "औसत समाधान समय",
+      "sub": "पहले से 68% तेज"
+    },
+    "stat3": {
+      "label": "आपातकाल मामले संभाले",
+      "sub": "100% प्रतिक्रिया दर"
+    }
+  },
+  "whyChooseUs": {
+    "badge": "ई-समाधान AI क्यों?",
+    "title": "पुरानी प्रणाली बनाम ई-समाधान AI",
+    "subtitle": "जानें क्यों हजारों नागरिक और अधिकारी हमारे AI-संचालित प्लेटफॉर्म को पसंद करते हैं।",
+    "featureCol": "विशेषता",
+    "traditionalCol": "पारंपरिक प्रणाली",
+    "modernCol": "ई-समाधान AI",
+    "rows": {
+      "complaintRouting": {
+        "feature": "शिकायत रूटिंग",
+        "traditional": "मैन्युअल, त्रुटि-प्रवण",
+        "modern": "AI सेकंड में स्वतः भेजता है"
+      },
+      "resolutionTime": {
+        "feature": "समाधान समय",
+        "traditional": "औसत 15–30 दिन",
+        "modern": "औसत 4 घंटे से कम"
+      },
+      "transparency": {
+        "feature": "पारदर्शिता",
+        "traditional": "कोई ट्रैकिंग नहीं",
+        "modern": "रीयल-टाइम स्थिति और सूचनाएं"
+      },
+      "escalation": {
+        "feature": "एस्केलेशन",
+        "traditional": "मैन्युअल, अक्सर अनदेखा",
+        "modern": "SLA के साथ स्वतः एस्केलेशन"
+      },
+      "analytics": {
+        "feature": "विश्लेषण",
+        "traditional": "कोई डेटा अंतर्दृष्टि नहीं",
+        "modern": "स्मार्ट डैशबोर्ड और रिपोर्ट"
+      },
+      "languageSupport": {
+        "feature": "भाषा समर्थन",
+        "traditional": "केवल अंग्रेजी/हिंदी",
+        "modern": "22 भारतीय भाषाएं"
+      },
+      "emergencyDetection": {
+        "feature": "आपातकाल पहचान",
+        "traditional": "उपलब्ध नहीं",
+        "modern": "AI तुरंत गंभीर मामले चिह्नित करता है"
+      },
+      "citizenFeedback": {
+        "feature": "नागरिक प्रतिक्रिया",
+        "traditional": "कोई फीडबैक लूप नहीं",
+        "modern": "रेटिंग, समीक्षाएं और सत्यापन"
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "नागरिक कहानियां",
+    "title": "लाखों नागरिकों का विश्वास",
+    "subtitle": "वास्तविक लोगों की वास्तविक कहानियां जिनकी नागरिक समस्याएं ई-समाधान AI के माध्यम से हल हुईं।",
+    "badges": {
+      "appRating": "ऐप स्टोर रेटिंग",
+      "happyCitizens": "खुश नागरिक",
+      "statesActive": "सक्रिय राज्य",
+      "satisfaction": "संतुष्टि स्कोर"
+    },
+    "items": {
+      "priya": {
+        "name": "प्रिया शर्मा",
+        "role": "निवासी, बेंगलुरु",
+        "text": "मैंने टूटी स्ट्रीटलाइट की शिकायत दर्ज की और 6 घंटे में ठीक हो गई! रीयल-टाइम ट्रैकिंग ने मुझे हर कदम पर सूचित रखा।"
+      },
+      "rajesh": {
+        "name": "राजेश कुमार",
+        "role": "दुकानदार, दिल्ली",
+        "text": "मेरी दुकान के बाहर गड्ढा महीनों से दुर्घटनाएं करा रहा था। ई-समाधान AI पर दर्ज करने के बाद 2 दिन में सड़क विभाग ने जवाब दिया।"
+      },
+      "anita": {
+        "name": "अनिता पटेल",
+        "role": "शिक्षक, अहमदाबाद",
+        "text": "गुजराती में दर्ज करना बहुत आसान था! AI ने मेरी शिकायत को सही विभाग को भेजा। यही डिजिटल इंडिया होना चाहिए।"
+      },
+      "irfan": {
+        "name": "मोहम्मद इरफान",
+        "role": "किसान, हैदराबाद",
+        "text": "हमारे गांव में पानी की समस्या ई-समाधान पर दर्ज करने के 3 दिन बाद हल हो गई। अधिकारी ने खुद फोन किया।"
+      },
+      "sunita": {
+        "name": "सुनीता देवी",
+        "role": "गृहिणी, पटना",
+        "text": "हमारे क्षेत्र में कचरा संग्रह हफ्तों से अनियमित था। एक शिकायत पर शेड्यूल स्थायी रूप से ठीक हो गया।"
+      },
+      "arjun": {
+        "name": "अर्जुन नायर",
+        "role": "IT पेशेवर, चेन्नई",
+        "text": "तकनीक में होने के नाते AI रूटिंग और विश्लेषण की सराहना करता हूं। प्लेटफॉर्म अच्छी तरह डिज़ाइन किया गया है और वास्तव में काम करता है।"
+      }
+    }
+  },
+  "authLayout": {
+    "secureEncrypted": "सुरक्षित और एन्क्रिप्टेड",
+    "citizens": "2.4M+ नागरिक",
+    "analytics": "रीयल-टाइम विश्लेषण",
+    "aiPowered": "AI-संचालित रूटिंग",
+    "transformingTitle": "सार्वजनिक",
+    "grievanceManagement": "शिकायत प्रबंधन",
+    "withAI": "AI के साथ बदलना",
+    "joinMillions": "लाखों नागरिकों के साथ जुड़ें जो तेज़, स्मार्ट और पारदर्शी सरकारी सेवाओं का अनुभव कर रहे हैं।",
+    "statCitizens": "नागरिक",
+    "statResolved": "समाधान",
+    "statAvgTime": "औसत समय"
+  },
+  "officerDashboardPage": {
+    "queueEmpty": "कतार खाली है",
+    "queueEmptyDesc": "अभी आपके विभाग में कोई लंबित शिकायत नहीं।",
+    "noComplaintsAssigned": "अभी तक कोई शिकायत सौंपी नहीं गई",
+    "noComplaintsAssignedDesc": "शुरू करने के लिए विभाग कतार से शिकायतें स्वीकार करें।",
+    "goToQueue": "विभाग कतार पर जाएं",
+    "accepting": "स्वीकार किया जा रहा है...",
+    "acceptComplaint": "शिकायत स्वीकार करें",
+    "viewUpdate": "देखें और अपडेट करें",
+    "startWorking": "काम शुरू करें (प्रक्रिया में)",
+    "markResolved": "✅ समाधान किए गए के रूप में चिह्नित करें",
+    "reject": "अस्वीकार करें",
+    "addNote": "नोट जोड़ें",
+    "resolutionNotes": "समाधान नोट्स (वैकल्पिक)",
+    "noAddress": "कोई पता नहीं",
+    "statusUpdatedTo": "स्थिति अपडेट: {{status}}",
+    "noteAdded": "नोट जोड़ा गया",
+    "failedToAddNote": "नोट जोड़ने में विफल",
+    "updateFailed": "अपडेट विफल",
+    "failedToAccept": "शिकायत स्वीकार करने में विफल",
+    "complaintAccepted": "शिकायत स्वीकृत! मेरी शिकायतें टैब चेक करें।",
+    "failedToLoadQueue": "विभाग कतार लोड करने में विफल",
+    "failedToLoadMyComplaints": "आपकी शिकायतें लोड करने में विफल",
+    "myAssignedComplaints": "📌 मेरी सौंपी गई शिकायतें",
+    "complaintsResponsible": "शिकायतें जिन्हें आपने स्वीकार किया है",
+    "noFilterComplaints": "कोई {{filter}} शिकायत नहीं",
+    "tryDifferentFilter": "एक अलग फ़िल्टर आज़माएं।",
+    "all": "सभी",
+    "refresh": "ताज़ा करें"
+  },
+  "citizenSignup": {
+    "title": "नागरिक पंजीकरण",
+    "subtitle": "AI द्वारा संचालित पहचान सत्यापन और साइन अप",
+    "personalInfo": "👤 व्यक्तिगत जानकारी",
+    "locationInfo": "📍 स्थान की जानकारी",
+    "govtIdVerification": "🪪 सरकारी आईडी सत्यापन",
+    "aiLivenessDetection": "🛡️ AI जीवंतता पहचान",
+    "emailOtpVerification": "✉️ ईमेल OTP सत्यापन",
+    "createAccount": "खाता बनाएं",
+    "creating": "बनाया जा रहा है...",
+    "back": "वापस",
+    "geolocationNotSupported": "भू-स्थान समर्थित नहीं है",
+    "locationDetected": "📍 स्थान का पता चला!",
+    "couldNotFetchAddress": "पता प्राप्त नहीं कर सके। मैन्युअल रूप से दर्ज करें।",
+    "documentVerificationRequired": "दस्तावेज़ सत्यापन आवश्यक है",
+    "documentVerificationDesc": "अपनी सरकारी आईडी अपलोड करें। AI इसे स्वचालित रूप से स्कैन और सत्यापित करेगा।",
+    "supportsFormats": "JPG, PNG, WebP, PDF का समर्थन करता है",
+    "uploadedDocument": "दस्तावेज़ अपलोड किया गया",
+    "fixErrorsBelow": "कृपया नीचे त्रुटियों को ठीक करें",
+    "registerAsOfficer": "इसके बजाय अधिकारी के रूप में पंजीकरण कर रहे हैं?"
+  },
+  "officerSignup": {
+    "title": "अधिकारी पंजीकरण",
+    "subtitle": "विभाग पहुंच के साथ सरकारी अधिकारी खाता",
+    "personalInfo": "👤 व्यक्तिगत जानकारी",
+    "emailOtpVerification": "✉️ ईमेल OTP सत्यापन",
+    "aiLivenessDetection": "🛡️ AI जीवंतता पहचान",
+    "registrationSummary": "📋 पंजीकरण सारांश",
+    "selfieCaptured": "सेल्फी कैप्चर की गई!",
+    "fixErrorsBelow": "कृपया नीचे त्रुटियों को ठीक करें",
+    "completeRegistration": "पंजीकरण पूरा करें",
+    "registering": "पंजीकरण हो रहा है...",
+    "back": "वापस"
+  },
+  "adminSignup": {
+    "title": "व्यवस्थापक पंजीकरण",
+    "subtitle": "विभाग + गुप्त कुंजी आवश्यक",
+    "accountCreation": "खाता निर्माण",
+    "createAdminAccount": "प्रशासक खाता बनाएं",
+    "creating": "बनाया जा रहा है...",
+    "back": "वापस",
+    "departmentCode": "विभाग कोड",
+    "secretKey": "गुप्त कुंजी",
+    "fixErrorsBelow": "कृपया नीचे त्रुटियों को ठीक करें"
+  },
+  "documentVerifier": {
+    "title": "दस्तावेज़ सत्यापन",
+    "uploadId": "अपनी सरकारी आईडी अपलोड करें",
+    "aiScanning": "दस्तावेज़ स्कैन किया जा रहा है...",
+    "documentVerified": "दस्तावेज़ सत्यापित ✓",
+    "uploadDifferent": "अलग दस्तावेज़ अपलोड करें",
+    "wrongDocumentUploaded": "गलत दस्तावेज़ अपलोड किया गया",
+    "uploadCorrectDocument": "सही दस्तावेज़ अपलोड करें"
+  },
+  "faceVerifier": {
+    "title": "चेहरा सत्यापन",
+    "takePhoto": "फोटो लें",
+    "retake": "फिर से लें",
+    "cancel": "रद्द करें",
+    "verifyFace": "AI के साथ चेहरा सत्यापित करें"
+  },
+  "livenessVerifier": {
+    "title": "AI जीवंतता पहचान",
+    "subtitle": "सरकार eKYC — एंटी-स्पूफ सत्यापन",
+    "startVerification": "सत्यापन शुरू करें",
+    "verifying": "सत्यापन हो रहा है..."
+  },
+  "emailOtpVerification": {
+    "title": "ईमेल सत्यापन",
+    "emailVerified": "ईमेल सफलतापूर्वक सत्यापित!",
+    "otherMessages": "सत्यापन प्रगति में है..."
+  },
+  "adminLoginPage": {
+    "governmentAdminPortal": "सरकारी प्रशासक पोर्टल",
+    "copyright": "© ई-समाधान AI — स्मार्ट शासन"
+  },
+  "toastMessages": {
+    "locationDetected": "📍 स्थान का पता चला!",
+    "selfieCapturing": "सेल्फी कैप्चर की गई!",
+    "pleaseFixErrors": "कृपया नीचे त्रुटियों को ठीक करें",
+    "geolocationNotSupported": "भू-स्थान समर्थित नहीं है",
+    "couldNotFetchAddress": "पता प्राप्त नहीं कर सके। मैन्युअल रूप से दर्ज करें।",
+    "alreadyRegistered": "पहले से पंजीकृत। कृपया लॉगिन करें।",
+    "accountBlocked": "आपका खाता व्यवस्थापक द्वारा ब्लॉक किया गया है।",
+    "sendingOtp": "OTP भेजा जा रहा है...",
+    "verifyingOtp": "OTP सत्यापन हो रहा है...",
+    "verifyingDocument": "दस्तावेज़ सत्यापन हो रहा है...",
+    "verifyingLiveness": "जीवंतता सत्यापन हो रहा है...",
+    "success": "सफलता!",
+    "error": "त्रुटि",
+    "warning": "चेतावनी",
+    "failedToLoadGeolocation": "भू-स्थान लोड करने में विफल"
+  },
+  "cameraCaptureMessages": {
+    "allowCameraAccess": "कृपया कैमरा पहुंच की अनुमति दें",
+    "photoNotCapturing": "फोटो सही तरीके से कैप्चर नहीं हो रही है",
+    "tryAgain": "फिर से कोशिश करें",
+    "cameraNotAvailable": "कैमरा उपलब्ध नहीं है"
+  },
+  "livenessMessages": {
+    "keepHeadCentered": "अपने सिर को केंद्रित रखें",
+    "lookAtCamera": "कैमरे को देखें",
+    "blinkEyes": "अपनी आंखों को झपकाएं",
+    "turnHeadLeft": "अपने सिर को बाईं ओर मोड़ें",
+    "turnHeadRight": "अपने सिर को दाईं ओर मोड़ें",
+    "livenessCheckFailed": "जीवंतता जांच विफल। फिर से कोशिश करें।",
+    "verifying": "सत्यापन हो रहा है..."
+  },
+  "signupValidationMessages": {
+    "emailAlreadyExists": "ईमेल पहले से मौजूद है",
+    "passwordTooWeak": "पासवर्ड बहुत कमजोर है",
+    "passwordsMustMatch": "पासवर्ड मेल खाने चाहिए",
+    "invalidPhoneNumber": "अमान्य फोन नंबर",
+    "invalidPinCode": "अमान्य PIN कोड",
+    "selectDepartment": "कृपया एक विभाग चुनें",
+    "selectDocumentType": "कृपया दस्तावेज़ प्रकार चुनें",
+    "uploadDocument": "कृपया दस्तावेज़ अपलोड करें",
+    "fieldRequired": "यह फील्ड आवश्यक है",
+    "invalidEmail": "अमान्य ईमेल पता",
+    "invalidInput": "अमान्य इनपुट"
+  },
+  "officerModal": {
+    "failedToLoad": "अधिकारी विवरण लोड करने में विफल",
+    "loadingDetails": "अधिकारी विवरण लोड हो रहा है…",
+    "noLocationData": "कोई स्थान डेटा नहीं",
+    "openInOSM": "OpenStreetMap में खोलें",
+    "description": "विवरण",
+    "noDescription": "कोई विवरण नहीं।",
+    "aiPriorityAnalysis": "AI प्राथमिकता विश्लेषण",
+    "citizenDetails": "नागरिक विवरण",
+    "name": "नाम",
+    "mobile": "मोबाइल",
+    "email": "ईमेल",
+    "address": "पता",
+    "location": "स्थान",
+    "evidence": "साक्ष्य",
+    "department": "विभाग",
+    "filedOn": "दर्ज तिथि",
+    "lastUpdated": "अंतिम अपडेट",
+    "resolvedOn": "समाधान तिथि",
+    "complaintTimeline": "शिकायत समयरेखा",
+    "accountBlocked": "खाता ब्लॉक किया गया",
+    "blockedAt": "ब्लॉक समय",
+    "blockReason": "ब्लॉक कारण",
+    "noReasonProvided": "कोई कारण नहीं",
+    "suspended": "निलंबित",
+    "blockedWarning": "यह अधिकारी अनब्लॉक होने तक लॉगिन या डैशबोर्ड एक्सेस नहीं कर सकते।",
+    "performanceAnalytics": "प्रदर्शन विश्लेषण",
+    "totalAssigned": "कुल सौंपे गए",
+    "resolutionRate": "समाधान दर",
+    "avgResolution": "औसत समाधान",
+    "perfScore": "प्रदर्शन स्कोर",
+    "resolutionProgress": "समाधान प्रगति",
+    "assignedComplaints": "सौंपी गई शिकायतें",
+    "searchPlaceholder": "खोजें…",
+    "noComplaintsFound": "कोई शिकायत नहीं मिली",
+    "tryAdjustingFilters": "फ़िल्टर बदलकर देखें",
+    "noComplaintsAssigned": "अभी तक कोई शिकायत नहीं",
+    "colComplaint": "शिकायत",
+    "colCitizen": "नागरिक",
+    "colPriority": "प्राथमिकता",
+    "colLocation": "स्थान",
+    "busy": "व्यस्त",
+    "offline": "ऑफलाइन"
+  },
+  "adminDepartmentsPage": {
+    "title": "विभाग",
+    "total": "कुल",
+    "resolved": "समाधान",
+    "pending": "लंबित"
+  },
+  "chatbot": {
+    "title": "AI सहायक",
+    "greeting": "नमस्ते! मैं ई-समाधान AI सहायक हूं। आज मैं आपकी कैसे मदद कर सकता हूं?",
+    "placeholder": "कुछ भी पूछें...",
+    "send": "भेजें",
+    "replyElectricity": "बिजली समस्या के लिए: शिकायत बनाएं → बिजली विभाग चुनें, स्थान बताएं, फोटो जोड़ें।",
+    "replyWater": "पानी की शिकायत जल आपूर्ति विभाग को जाती है। बाढ़ हो तो आपातकाल टॉगल करें।",
+    "replyPolice": "अपराध या सुरक्षा के लिए: सबसे तेज़ प्रतिक्रिया के लिए आपातकाल शिकायत या पुलिस विभाग।",
+    "replyTrack": "शिकायत ट्रैक करें पर जाएं और लाइव टाइमलाइन देखने के लिए अपनी ID दर्ज करें।",
+    "replyEmergency": "आपातकाल मोड आग, दुर्घटना, चिकित्सा संकट के लिए है। यह अधिकारियों को तुरंत सूचित करता है।",
+    "replyDefault": "मैं शिकायत दर्ज करने, स्थिति ट्रैक करने या आपातकाल मोड में मदद कर सकता हूं।"
+  },
+  "timeline": {
+    "submitted": "दर्ज किया गया",
+    "assignedToOfficer": "अधिकारी को सौंपा गया",
+    "inProgress": "प्रक्रिया में",
+    "resolved": "समाधान किया गया"
+  },
+  "pageLoader": {
+    "loading": "ई-समाधान AI लोड हो रहा है...",
+    "takingLong": "इसमें अपेक्षा से अधिक समय लग रहा है। सर्वर शुरू हो रहा होगा।"
+  },
+  "errorPage": {
+    "reloadPage": "पृष्ठ पुनः लोड करें"
+  },
+  "voiceComplaint": {
+    "title": "एआई वॉयस शिकायत",
+    "instruction": "माइक्रोफोन पर क्लिक करें और अपनी शिकायत किसी भी भाषा में बोलें",
+    "detectedVoice": "पहचानी गई आवाज़:",
+    "analyzing": "एआई शिकायत का विश्लेषण कर रहा है...",
+    "tryAgain": "फिर से कोशिश करें",
+    "hearSummary": "सारांश सुनें"
+  }
+}

@@ -14,9 +14,16 @@ const userSchema = new mongoose.Schema(
             phone: { type: String, trim: true },
 
             // ── Citizen fields ──────────────────────────────────────────────────────
-            address: { type: String, trim: true },
+            nearbyLocation: { type: String, trim: true },
+            completeAddress: { type: String, trim: true },
+            address: { type: String, trim: true },        // legacy fallback
             city: { type: String, trim: true },
             state: { type: String, trim: true },
+            pincode: { type: String, trim: true },
+            latitude: { type: String, trim: true },
+            longitude: { type: String, trim: true },
+            dob: { type: String, trim: true },
+            gender: { type: String, trim: true },
             govtIdType: { type: String, enum: ['aadhaar', 'pan', 'voter_id', 'driving_license', 'passport', ''], default: '' },
             govtIdNumber: { type: String, trim: true, select: false },
             govtIdImage: { type: String, default: null },

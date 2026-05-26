@@ -8,18 +8,17 @@ export default defineConfig({
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5002',
         changeOrigin: true,
         secure: false,
         configure: (proxy) => {
           proxy.on('error', (err) => {
-            // Silently ignore proxy errors when backend is not running
             console.warn('[proxy] Backend not available:', err.message)
           })
         },
       },
       '/uploads': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5002',
         changeOrigin: true,
         secure: false,
         configure: (proxy) => {

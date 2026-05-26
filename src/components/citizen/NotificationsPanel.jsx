@@ -2,28 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Loader2, CheckCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../../api/notifications';
 
 export default function NotificationsPanel() {
+      const { t } = useTranslation();
       const [items, setItems] = useState([]);
       const [loading, setLoading] = useState(true);
 
       const load = () => {
             getNotifications({ limit: 30 })
                   .then(({ data }) => setItems(data.notifications || []))
-                  .catch(() => {})
+                  .catch(() => { })
                   .finally(() => setLoading(false));
       };
 
       useEffect(() => {
             load();
-            const t = setInterval(load, 30000);
-            return () => clearInterval(t);
+            const timer = setInterval(load, 30000);
+            return () => clearInterval(timer);
       }, []);
 
       const markAll = async () => {
             await markAllNotificationsRead();
-            toast.success('All marked as read');
+            toast.success(t('notificationsPanel.allMarkedRead'));
             load();
       };
 
@@ -36,16 +38,16 @@ export default function NotificationsPanel() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 max-w-2xl">
                   <div className="flex items-center justify-between">
                         <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
-                              <Bell className="w-6 h-6" /> Notifications
+                              <Bell className="w-6 h-6" /> {t('notificationsPanel.title')}
                         </h1>
                         <button type="button" onClick={markAll} className="text-sm font-bold text-blue-600 flex items-center gap-1">
-                              <CheckCheck className="w-4 h-4" /> Mark all read
+                              <CheckCheck className="w-4 h-4" /> {t('notificationsPanel.markAllRead')}
                         </button>
                   </div>
                   {loading ? (
                         <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto" />
                   ) : items.length === 0 ? (
-                        <p className="text-center text-slate-500 py-12">No notifications yet</p>
+                        <p className="text-center text-slate-500 py-12">{t('notificationsPanel.noNotifications')}</p>
                   ) : (
                         <div className="space-y-2">
                               {items.map((n) => (

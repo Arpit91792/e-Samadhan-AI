@@ -1,0 +1,575 @@
+{
+  "appName": "ই-সমাধান AI",
+  "tagline": "AI প্ল্যাটফর্ম",
+  "smartGovernance": "স্মার্ট গভর্ন্যান্স",
+  "smartGovernancePlatform": "স্মার্ট গভর্ন্যান্স প্ল্যাটফর্ম",
+  "govtInitiative": "ভারত সরকারের উদ্যোগ",
+  "nav": {
+    "home": "হোম",
+    "features": "বৈশিষ্ট্য",
+    "departments": "বিভাগ",
+    "howItWorks": "এটি কীভাবে কাজ করে",
+    "analytics": "বিশ্লেষণ",
+    "contact": "যোগাযোগ",
+    "login": "লগইন",
+    "signUpFree": "বিনামূল্যে সাইন আপ",
+    "dashboard": "ড্যাশবোর্ড",
+    "logout": "লগআউট",
+    "goToDashboard": "ড্যাশবোর্ডে যান"
+  },
+  "auth": {
+    "welcomeBack": "আবার স্বাগতম",
+    "signInSubtitle": "আপনার ই-সমাধান AI অ্যাকাউন্টে সাইন ইন করুন",
+    "citizen": "নাগরিক",
+    "officer": "কর্মকর্তা",
+    "admin": "প্রশাসক",
+    "employeeId": "কর্মচারী আইডি",
+    "department": "বিভাগ",
+    "selectDepartment": "বিভাগ নির্বাচন করুন",
+    "emailAddress": "ইমেইল ঠিকানা",
+    "password": "পাসওয়ার্ড",
+    "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
+    "rememberMe": "৭ দিনের জন্য মনে রাখুন",
+    "signingIn": "সাইন ইন হচ্ছে...",
+    "signIn": "সাইন ইন করুন",
+    "newToApp": "ই-সমাধান AI-তে নতুন?",
+    "createFreeAccount": "বিনামূল্যে অ্যাকাউন্ট তৈরি করুন",
+    "firstTime": "প্রথমবার?",
+    "registerAsOfficer": "কর্মকর্তা হিসেবে নিবন্ধন করুন →",
+    "demoCredentials": "ডেমো ক্রেডেনশিয়াল",
+    "accessDenied": "🚫 প্রবেশ অস্বীকৃত",
+    "accountBlocked": "আপনার কর্মকর্তা অ্যাকাউন্ট বিভাগ প্রশাসক দ্বারা ব্লক করা হয়েছে।",
+    "contactAdmin": "অ্যাক্সেস পুনরুদ্ধার করতে বিভাগ প্রশাসকের সাথে যোগাযোগ করুন।",
+    "whatThisMeans": "এর মানে:",
+    "cannotLogin": "❌ কর্মকর্তা পোর্টালে লগইন করা যাবে না",
+    "cannotAccessDashboard": "❌ ড্যাশবোর্ডে প্রবেশ নেই",
+    "cannotManageComplaints": "❌ অভিযোগ আপডেট বা পরিচালনা করা যাবে না",
+    "contactToUnblock": "✅ আনব্লক করতে বিভাগ প্রশাসকের সাথে যোগাযোগ করুন",
+    "createAccount": "আপনার অ্যাকাউন্ট তৈরি করুন",
+    "chooseAccountType": "আপনার অ্যাকাউন্টের ধরন বেছে নিন",
+    "chooseRoleDesc": "ই-সমাধান AI দিয়ে শুরু করতে আপনার ভূমিকা নির্বাচন করুন।",
+    "citizenDesc": "নাগরিক অভিযোগ দাখিল করুন এবং ট্র্যাক করুন",
+    "officerDesc": "বিভাগের অভিযোগ পরিচালনা করুন এবং সমাধান করুন",
+    "adminDesc": "বিভাগ, ব্যবহারকারী এবং বিশ্লেষণ পরিচালনা করুন",
+    "citizenAccount": "নাগরিক অ্যাকাউন্ট",
+    "officerAccount": "কর্মকর্তা অ্যাকাউন্ট",
+    "adminAccount": "প্রশাসক অ্যাকাউন্ট",
+    "getStarted": "শুরু করুন →",
+    "alreadyHaveAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+    "signIn2": "সাইন ইন করুন",
+    "backToRoleSelection": "ভূমিকা নির্বাচনে ফিরে যান",
+    "verifiedCitizen": "✓ যাচাইকৃত নাগরিক",
+    "departmentAdmin": "বিভাগ প্রশাসক",
+    "officerPanel": "কর্মকর্তা প্যানেল",
+    "citizenPortal": "নাগরিক পোর্টাল"
+  },
+  "validation": {
+    "emailRequired": "ইমেইল প্রয়োজন",
+    "enterValidEmail": "বৈধ ইমেইল লিখুন",
+    "employeeIdRequired": "কর্মচারী আইডি প্রয়োজন",
+    "departmentRequired": "বিভাগ প্রয়োজন",
+    "passwordRequired": "পাসওয়ার্ড প্রয়োজন",
+    "passwordMinLength": "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে",
+    "fillAllFields": "অনুগ্রহ করে সব ক্ষেত্র পূরণ করুন"
+  },
+  "sidebar": {
+    "dashboardHome": "ড্যাশবোর্ড হোম",
+    "createComplaint": "অভিযোগ দাখিল করুন",
+    "trackComplaint": "অভিযোগ ট্র্যাক করুন",
+    "complaintHistory": "অভিযোগের ইতিহাস",
+    "emergency": "জরুরি",
+    "notifications": "বিজ্ঞপ্তি",
+    "feedbackRating": "মতামত ও রেটিং",
+    "profile": "প্রোফাইল",
+    "settings": "সেটিংস",
+    "logout": "লগআউট",
+    "dashboard": "ড্যাশবোর্ড",
+    "complaints": "অভিযোগ",
+    "officers": "কর্মকর্তা",
+    "analytics": "বিশ্লেষণ"
+  },
+  "dashboard": {
+    "citizenDashboard": "নাগরিক ড্যাশবোর্ড",
+    "officerDashboard": "কর্মকর্তা ড্যাশবোর্ড",
+    "adminPanel": "প্রশাসক প্যানেল",
+    "totalComplaints": "মোট অভিযোগ",
+    "pending": "মুলতুবি",
+    "inProgress": "চলমান",
+    "resolved": "সমাধান হয়েছে",
+    "emergency": "জরুরি",
+    "fileComplaint": "অভিযোগ দাখিল করুন",
+    "queue": "সারি",
+    "accepted": "গৃহীত",
+    "departmentQueue": "📥 বিভাগ সারি",
+    "myComplaints": "📌 আমার অভিযোগ",
+    "refresh": "রিফ্রেশ",
+    "queueEmpty": "সারি খালি",
+    "all": "সব",
+    "assigned": "নিযুক্ত",
+    "rejected": "প্রত্যাখ্যাত",
+    "emergencyWarning": "জরুরি অভিযোগ কর্মকর্তাদের কাছে দ্রুত পাঠানো হয়। শুধুমাত্র অপরাধ, আগুন, দুর্ঘটনা বা চিকিৎসা জরুরি অবস্থার জন্য ব্যবহার করুন।"
+  },
+  "complaint": {
+    "createComplaint": "অভিযোগ দাখিল করুন",
+    "emergencyComplaint": "জরুরি অভিযোগ",
+    "complaintTitle": "অভিযোগের শিরোনাম *",
+    "describeIssue": "সমস্যাটি বিস্তারিত বর্ণনা করুন *",
+    "submitComplaint": "অভিযোগ জমা দিন",
+    "trackComplaint": "অভিযোগ ট্র্যাক করুন",
+    "track": "ট্র্যাক করুন",
+    "acceptComplaint": "অভিযোগ গ্রহণ করুন",
+    "accepting": "গ্রহণ করা হচ্ছে...",
+    "markResolved": "✅ সমাধান হিসেবে চিহ্নিত করুন",
+    "reject": "প্রত্যাখ্যান করুন",
+    "addNote": "নোট যোগ করুন",
+    "viewUpdate": "দেখুন ও আপডেট করুন",
+    "emergency": "🚨 জরুরি"
+  },
+  "notifications": {
+    "notifications": "বিজ্ঞপ্তি",
+    "markAllRead": "সব পঠিত হিসেবে চিহ্নিত করুন",
+    "noNotifications": "এখনো কোনো বিজ্ঞপ্তি নেই",
+    "allMarkedRead": "সব পঠিত হিসেবে চিহ্নিত"
+  },
+  "settings": {
+    "settings": "সেটিংস",
+    "language": "ভাষা",
+    "languageSaved": "ভাষা পছন্দ সংরক্ষিত"
+  },
+  "departments": {
+    "electricity": "⚡ বিদ্যুৎ",
+    "water_supply": "💧 জল সরবরাহ",
+    "roads_transport": "🚗 রাস্তা ও পরিবহন",
+    "sanitation": "🗑️ স্বাস্থ্যবিধি",
+    "police": "🛡️ পুলিশ",
+    "healthcare": "❤️ স্বাস্থ্যসেবা",
+    "municipal": "🏛️ পৌর সেবা",
+    "education": "🎓 শিক্ষা"
+  },
+  "status": {
+    "pending": "মুলতুবি",
+    "assigned": "নিযুক্ত",
+    "in_progress": "চলমান",
+    "resolved": "সমাধান হয়েছে",
+    "rejected": "প্রত্যাখ্যাত"
+  },
+  "priority": {
+    "emergency": "জরুরি",
+    "high": "উচ্চ",
+    "medium": "মাঝারি",
+    "low": "কম"
+  },
+  "toast": {
+    "loggedOut": "লগআউট হয়েছে",
+    "welcomeBack": "আবার স্বাগতম!",
+    "loginFailed": "লগইন ব্যর্থ। আবার চেষ্টা করুন।",
+    "complaintFiled": "অভিযোগ দাখিল হয়েছে!",
+    "allMarkedRead": "সব পঠিত হিসেবে চিহ্নিত"
+  },
+  "forgotPassword": {
+    "title": "পাসওয়ার্ড ভুলে গেছেন?",
+    "subtitle": "চিন্তা করবেন না, আমরা আপনাকে রিসেট নির্দেশনা পাঠাব",
+    "checkEmail": "আপনার ইমেইল চেক করুন",
+    "sentTo": "আমরা {{email}} এ রিসেট লিঙ্ক পাঠিয়েছি",
+    "whatNext": "পরবর্তী কী করবেন:",
+    "step1": "{{email}} এ আপনার ইনবক্স চেক করুন",
+    "step2": "ইমেইলে রিসেট লিঙ্কে ক্লিক করুন",
+    "step3": "নতুন শক্তিশালী পাসওয়ার্ড তৈরি করুন",
+    "didntReceive": "ইমেইল পাননি?",
+    "tryAgain": "আবার চেষ্টা করুন",
+    "backToLogin": "লগইনে ফিরে যান",
+    "sending": "পাঠানো হচ্ছে...",
+    "sendResetLink": "রিসেট লিঙ্ক পাঠান",
+    "somethingWrong": "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।"
+  },
+  "adminLogin": {
+    "signIn": "অফিসিয়াল অ্যাডমিন সাইন ইন",
+    "allRequired": "ইমেইল · পাসওয়ার্ড · বিভাগ (সব প্রয়োজন)",
+    "verifying": "ক্রেডেনশিয়াল যাচাই হচ্ছে...",
+    "accessDashboard": "বিভাগ ড্যাশবোর্ড অ্যাক্সেস করুন",
+    "newAdmin": "নতুন বিভাগ প্রশাসক?",
+    "register": "নিবন্ধন করুন",
+    "citizenOrOfficer": "নাগরিক বা কর্মকর্তা?",
+    "standardLogin": "স্ট্যান্ডার্ড লগইন",
+    "invalidResponse": "সার্ভার থেকে অবৈধ লগইন প্রতিক্রিয়া",
+    "unauthorized": "অননুমোদিত অ্যাক্সেস",
+    "sessionError": "সেশন সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।"
+  },
+  "language": {
+    "selectLanguage": "ভাষা",
+    "en": "English",
+    "hi": "हिंदी",
+    "mr": "मराठी",
+    "bn": "বাংলা",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "gu": "ગુજરાતી",
+    "pa": "ਪੰਜਾਬੀ"
+  },
+  "howItWorks": {
+    "badge": "সহজ ৪-ধাপ প্রক্রিয়া",
+    "title": "ই-সমাধান AI কীভাবে কাজ করে",
+    "subtitle": "অভিযোগ দাখিল থেকে সমাধান পর্যন্ত — আমাদের AI মাঝখানে সব কিছু পরিচালনা করে।",
+    "step": "ধাপ",
+    "cta": "আপনার প্রথম অভিযোগ দাখিল করুন →",
+    "steps": [
+      {
+        "title": "নাগরিক অভিযোগ দাখিল করেন",
+        "desc": "নাগরিকরা তাদের পছন্দের ভাষায় ছবি ও অবস্থান সহ ওয়েব, মোবাইল অ্যাপ বা SMS এর মাধ্যমে অভিযোগ দাখিল করেন।"
+      },
+      {
+        "title": "AI বিভাগ ও অগ্রাধিকার নির্ধারণ করে",
+        "desc": "আমাদের NLP ইঞ্জিন অভিযোগ শ্রেণীবদ্ধ করে, অগ্রাধিকার স্তর নির্ধারণ করে এবং তাৎক্ষণিকভাবে সঠিক বিভাগে পাঠায়।"
+      },
+      {
+        "title": "কর্মকর্তা তাৎক্ষণিক বিজ্ঞপ্তি পান",
+        "desc": "নিযুক্ত কর্মকর্তা সম্পূর্ণ অভিযোগ বিবরণ, অবস্থান মানচিত্র এবং SLA সময়সীমা সহ রিয়েল-টাইম সতর্কতা পান।"
+      },
+      {
+        "title": "সমস্যা দ্রুত সমাধান হয়",
+        "desc": "কর্মকর্তা সমস্যা সমাধান করেন, প্রমাণ আপলোড করেন এবং নাগরিককে জানানো হয়।"
+      }
+    ]
+  },
+  "analytics": {
+    "badge": "লাইভ বিশ্লেষণ",
+    "title": "রিয়েল-টাইম অভিযোগ বিশ্লেষণ",
+    "subtitle": "সারা ভারতে AI-চালিত শাসনের প্রভাব দেখানো লাইভ ড্যাশবোর্ড।",
+    "deptPerformance": "বিভাগ কর্মক্ষমতা",
+    "deptPerformanceSub": "বিভাগ অনুযায়ী সমাধান হার — গত ৩০ দিন",
+    "liveData": "লাইভ ডেটা",
+    "heatmapTitle": "অভিযোগ হিটম্যাপ — ভারত",
+    "heatmap": {
+      "low": "কম",
+      "medium": "মাঝারি",
+      "high": "উচ্চ",
+      "critical": "গুরুতর"
+    },
+    "stat0": {
+      "label": "মোট অভিযোগ দাখিল",
+      "sub": "এই মাসে +১২%"
+    },
+    "stat1": {
+      "label": "অভিযোগ সমাধান",
+      "sub": "জাতীয় গড়ের উপরে"
+    },
+    "stat2": {
+      "label": "গড় সমাধান সময়",
+      "sub": "আগের চেয়ে ৬৮% দ্রুত"
+    },
+    "stat3": {
+      "label": "জরুরি মামলা পরিচালিত",
+      "sub": "১০০% প্রতিক্রিয়া হার"
+    }
+  },
+  "whyChooseUs": {
+    "badge": "কেন ই-সমাধান AI?",
+    "title": "পুরানো সিস্টেম বনাম ই-সমাধান AI",
+    "subtitle": "জানুন কেন হাজার হাজার নাগরিক ও কর্মকর্তা আমাদের AI-চালিত প্ল্যাটফর্ম পছন্দ করেন।",
+    "featureCol": "বৈশিষ্ট্য",
+    "traditionalCol": "ঐতিহ্যবাহী সিস্টেম",
+    "modernCol": "ই-সমাধান AI",
+    "rows": {
+      "complaintRouting": {
+        "feature": "অভিযোগ রাউটিং",
+        "traditional": "ম্যানুয়াল, ত্রুটিপ্রবণ",
+        "modern": "AI সেকেন্ডে স্বয়ংক্রিয়ভাবে পাঠায়"
+      },
+      "resolutionTime": {
+        "feature": "সমাধান সময়",
+        "traditional": "গড় ১৫-৩০ দিন",
+        "modern": "গড় ৪ ঘণ্টার কম"
+      },
+      "transparency": {
+        "feature": "স্বচ্ছতা",
+        "traditional": "কোনো ট্র্যাকিং নেই",
+        "modern": "রিয়েল-টাইম স্ট্যাটাস ও বিজ্ঞপ্তি"
+      },
+      "escalation": {
+        "feature": "এস্কেলেশন",
+        "traditional": "ম্যানুয়াল, প্রায়ই উপেক্ষিত",
+        "modern": "SLA সহ স্বয়ংক্রিয় এস্কেলেশন"
+      },
+      "analytics": {
+        "feature": "বিশ্লেষণ",
+        "traditional": "কোনো ডেটা অন্তর্দৃষ্টি নেই",
+        "modern": "স্মার্ট ড্যাশবোর্ড ও রিপোর্ট"
+      },
+      "languageSupport": {
+        "feature": "ভাষা সমর্থন",
+        "traditional": "শুধু ইংরেজি/হিন্দি",
+        "modern": "২২টি ভারতীয় ভাষা"
+      },
+      "emergencyDetection": {
+        "feature": "জরুরি সনাক্তকরণ",
+        "traditional": "উপলব্ধ নয়",
+        "modern": "AI তাৎক্ষণিকভাবে গুরুতর মামলা চিহ্নিত করে"
+      },
+      "citizenFeedback": {
+        "feature": "নাগরিক প্রতিক্রিয়া",
+        "traditional": "কোনো ফিডব্যাক লুপ নেই",
+        "modern": "রেটিং, পর্যালোচনা ও যাচাইকরণ"
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "নাগরিক গল্প",
+    "title": "লক্ষ লক্ষ নাগরিকের বিশ্বাস",
+    "subtitle": "বাস্তব মানুষের বাস্তব গল্প যাদের নাগরিক সমস্যা ই-সমাধান AI এর মাধ্যমে সমাধান হয়েছে।",
+    "badges": {
+      "appRating": "অ্যাপ স্টোর রেটিং",
+      "happyCitizens": "সুখী নাগরিক",
+      "statesActive": "সক্রিয় রাজ্য",
+      "satisfaction": "সন্তুষ্টি স্কোর"
+    },
+    "items": {
+      "priya": {
+        "name": "প্রিয়া শর্মা",
+        "role": "বাসিন্দা, বেঙ্গালুরু",
+        "text": "আমি একটি ভাঙা স্ট্রিটলাইটের অভিযোগ দাখিল করেছিলাম এবং ৬ ঘণ্টার মধ্যে ঠিক হয়ে গেল!"
+      },
+      "rajesh": {
+        "name": "রাজেশ কুমার",
+        "role": "দোকানদার, দিল্লি",
+        "text": "আমার দোকানের বাইরের গর্ত মাসের পর মাস দুর্ঘটনা ঘটাচ্ছিল। ই-সমাধান AI তে দাখিল করার পর ২ দিনে সড়ক বিভাগ সাড়া দিল।"
+      },
+      "anita": {
+        "name": "অনিতা পটেল",
+        "role": "শিক্ষক, আহমেদাবাদ",
+        "text": "গুজরাটিতে দাখিল করা এত সহজ ছিল! AI আমার অভিযোগ নিখুঁতভাবে বুঝে সঠিক বিভাগে পাঠিয়ে দিল।"
+      },
+      "irfan": {
+        "name": "মোহাম্মদ ইরফান",
+        "role": "কৃষক, হায়দরাবাদ",
+        "text": "আমাদের গ্রামে পানি সরবরাহের সমস্যা ই-সমাধানে দাখিল করার ৩ দিন পরে সমাধান হয়ে গেল।"
+      },
+      "sunita": {
+        "name": "সুনিতা দেবী",
+        "role": "গৃহিণী, পাটনা",
+        "text": "আমাদের এলাকায় আবর্জনা সংগ্রহ সপ্তাহের পর সপ্তাহ অনিয়মিত ছিল। একটি অভিযোগে সময়সূচি স্থায়ীভাবে ঠিক হয়ে গেল।"
+      },
+      "arjun": {
+        "name": "অর্জুন নায়ার",
+        "role": "IT পেশাদার, চেন্নাই",
+        "text": "প্রযুক্তিতে থাকার কারণে AI রাউটিং ও বিশ্লেষণের প্রশংসা করি। প্ল্যাটফর্মটি ভালোভাবে ডিজাইন করা এবং সত্যিই কাজ করে।"
+      }
+    }
+  },
+  "authLayout": {
+    "secureEncrypted": "নিরাপদ ও এনক্রিপ্টেড",
+    "citizens": "২.৪M+ নাগরিক",
+    "analytics": "রিয়েল-টাইম বিশ্লেষণ",
+    "aiPowered": "AI-চালিত রাউটিং",
+    "transformingTitle": "সরকারি",
+    "grievanceManagement": "অভিযোগ ব্যবস্থাপনা",
+    "withAI": "AI দিয়ে রূপান্তর",
+    "joinMillions": "লক্ষ লক্ষ নাগরিকের সাথে যোগ দিন যারা দ্রুত, স্মার্ট এবং আরও স্বচ্ছ সরকারি সেবা অনুভব করছেন।",
+    "statCitizens": "নাগরিক",
+    "statResolved": "সমাধান",
+    "statAvgTime": "গড় সময়"
+  },
+  "citizenSignup": {
+    "title": "Citizen Registration",
+    "subtitle": "AI-powered identity verification & signup",
+    "personalInfo": "👤 Personal Information",
+    "locationInfo": "📍 Location Information",
+    "govtIdVerification": "🪪 Government ID Verification",
+    "aiLivenessDetection": "🛡️ AI Liveness Detection",
+    "emailOtpVerification": "✉️ Email OTP Verification",
+    "createAccount": "Create Account",
+    "creating": "Creating...",
+    "back": "Back",
+    "geolocationNotSupported": "Geolocation not supported",
+    "locationDetected": "📍 Location detected!",
+    "couldNotFetchAddress": "Could not fetch address. Enter manually.",
+    "documentVerificationRequired": "Document Verification Required",
+    "documentVerificationDesc": "Upload your government ID. AI will scan and verify it automatically.",
+    "supportsFormats": "Supports JPG, PNG, WebP, PDF",
+    "uploadedDocument": "Document uploaded",
+    "fixErrorsBelow": "Please fix the errors below",
+    "registerAsOfficer": "Registering as officer instead?"
+  },
+  "officerSignup": {
+    "title": "Officer Registration",
+    "subtitle": "Government officer account with department access",
+    "personalInfo": "👤 Personal Information",
+    "emailOtpVerification": "✉️ Email OTP Verification",
+    "aiLivenessDetection": "🛡️ AI Liveness Detection",
+    "registrationSummary": "📋 Registration Summary",
+    "selfieCaptured": "Selfie captured!",
+    "fixErrorsBelow": "Please fix the errors below",
+    "completeRegistration": "Complete Registration",
+    "registering": "Registering...",
+    "back": "Back"
+  },
+  "adminSignup": {
+    "title": "Admin Registration",
+    "subtitle": "Department + secret key required",
+    "accountCreation": "Account Creation",
+    "createAdminAccount": "Create Admin Account",
+    "creating": "Creating...",
+    "back": "Back",
+    "departmentCode": "Department Code",
+    "secretKey": "Secret Key",
+    "fixErrorsBelow": "Please fix the errors below"
+  },
+  "documentVerifier": {
+    "title": "Document Verification",
+    "uploadId": "Upload your Government ID",
+    "aiScanning": "AI Scanning Document...",
+    "documentVerified": "Document Verified ✓",
+    "uploadDifferent": "Upload Different Document",
+    "wrongDocumentUploaded": "Wrong Document Uploaded",
+    "uploadCorrectDocument": "Upload Correct Document"
+  },
+  "faceVerifier": {
+    "title": "Face Verification",
+    "takePhoto": "Take Photo",
+    "retake": "Retake",
+    "cancel": "Cancel",
+    "verifyFace": "Verify Face with AI"
+  },
+  "livenessVerifier": {
+    "title": "AI Liveness Detection",
+    "subtitle": "Government eKYC — anti-spoof verification",
+    "startVerification": "Start Verification",
+    "verifying": "Verifying..."
+  },
+  "emailOtpVerification": {
+    "title": "Email Verification",
+    "emailVerified": "Email Verified Successfully!",
+    "otherMessages": "Verification in progress..."
+  },
+  "adminLoginPage": {
+    "governmentAdminPortal": "Government Admin Portal",
+    "copyright": "© e-Samadhan AI — Smart Governance"
+  },
+  "toastMessages": {
+    "locationDetected": "📍 Location detected!",
+    "selfieCapturing": "Selfie captured!",
+    "pleaseFixErrors": "Please fix the errors below",
+    "geolocationNotSupported": "Geolocation not supported",
+    "couldNotFetchAddress": "Could not fetch address. Enter manually.",
+    "alreadyRegistered": "Already registered. Please login.",
+    "accountBlocked": "Your account has been blocked by admin.",
+    "sendingOtp": "Sending OTP...",
+    "verifyingOtp": "Verifying OTP...",
+    "verifyingDocument": "Verifying document...",
+    "verifyingLiveness": "Verifying liveness...",
+    "success": "Success!",
+    "error": "Error",
+    "warning": "Warning",
+    "failedToLoadGeolocation": "Failed to load geolocation"
+  },
+  "cameraCaptureMessages": {
+    "allowCameraAccess": "Please allow camera access",
+    "photoNotCapturing": "Photo is not capturing properly",
+    "tryAgain": "Try Again",
+    "cameraNotAvailable": "Camera not available"
+  },
+  "livenessMessages": {
+    "keepHeadCentered": "Keep your head centered",
+    "lookAtCamera": "Look at the camera",
+    "blinkEyes": "Blink your eyes",
+    "turnHeadLeft": "Turn your head left",
+    "turnHeadRight": "Turn your head right",
+    "livenessCheckFailed": "Liveness check failed. Try again.",
+    "verifying": "Verifying..."
+  },
+  "signupValidationMessages": {
+    "emailAlreadyExists": "Email already exists",
+    "passwordTooWeak": "Password too weak",
+    "passwordsMustMatch": "Passwords must match",
+    "invalidPhoneNumber": "Invalid phone number",
+    "invalidPinCode": "Invalid PIN code",
+    "selectDepartment": "Please select a department",
+    "selectDocumentType": "Please select a document type",
+    "uploadDocument": "Please upload a document",
+    "fieldRequired": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidInput": "Invalid input"
+  },
+  "officerModal": {
+    "failedToLoad": "অফিসারের বিবরণ লোড করতে ব্যর্থ",
+    "loadingDetails": "অফিসারের বিবরণ লোড হচ্ছে…",
+    "noLocationData": "কোনো অবস্থান ডেটা নেই",
+    "openInOSM": "OpenStreetMap-এ খুলুন",
+    "description": "বিবরণ",
+    "noDescription": "কোনো বিবরণ নেই।",
+    "aiPriorityAnalysis": "AI অগ্রাধিকার বিশ্লেষণ",
+    "citizenDetails": "নাগরিকের বিবরণ",
+    "name": "নাম",
+    "mobile": "মোবাইল",
+    "email": "ইমেইল",
+    "address": "ঠিকানা",
+    "location": "অবস্থান",
+    "evidence": "প্রমাণ",
+    "department": "বিভাগ",
+    "filedOn": "দাখিলের তারিখ",
+    "lastUpdated": "সর্বশেষ আপডেট",
+    "resolvedOn": "সমাধানের তারিখ",
+    "complaintTimeline": "অভিযোগ টাইমলাইন",
+    "accountBlocked": "অ্যাকাউন্ট ব্লক করা হয়েছে",
+    "blockedAt": "ব্লক সময়",
+    "blockReason": "ব্লকের কারণ",
+    "noReasonProvided": "কোনো কারণ নেই",
+    "suspended": "স্থগিত",
+    "blockedWarning": "এই অফিসার আনব্লক না হওয়া পর্যন্ত লগইন বা ড্যাশবোর্ড অ্যাক্সেস করতে পারবেন না।",
+    "performanceAnalytics": "কর্মক্ষমতা বিশ্লেষণ",
+    "totalAssigned": "মোট নিযুক্ত",
+    "resolutionRate": "সমাধানের হার",
+    "avgResolution": "গড় সমাধান",
+    "perfScore": "কর্মক্ষমতা স্কোর",
+    "resolutionProgress": "সমাধান অগ্রগতি",
+    "assignedComplaints": "নিযুক্ত অভিযোগ",
+    "searchPlaceholder": "খুঁজুন…",
+    "noComplaintsFound": "কোনো অভিযোগ পাওয়া যায়নি",
+    "tryAdjustingFilters": "ফিল্টার পরিবর্তন করে দেখুন",
+    "noComplaintsAssigned": "এখনো কোনো অভিযোগ নেই",
+    "colComplaint": "অভিযোগ",
+    "colCitizen": "নাগরিক",
+    "colPriority": "অগ্রাধিকার",
+    "colLocation": "অবস্থান",
+    "busy": "ব্যস্ত",
+    "offline": "অফলাইন"
+  },
+  "adminDepartmentsPage": {
+    "title": "বিভাগসমূহ",
+    "total": "মোট",
+    "resolved": "সমাধান",
+    "pending": "মুলতুবি"
+  },
+  "chatbot": {
+    "title": "AI সহকারী",
+    "greeting": "হ্যালো! আমি ই-সমাধান AI সহকারী। আজ আমি আপনাকে কীভাবে সাহায্য করতে পারি?",
+    "placeholder": "যেকোনো কিছু জিজ্ঞেস করুন...",
+    "send": "পাঠান",
+    "replyElectricity": "বিদ্যুৎ সমস্যার জন্য: অভিযোগ তৈরি করুন → বিদ্যুৎ বিভাগ নির্বাচন করুন।",
+    "replyWater": "পানির অভিযোগ জল সরবরাহ বিভাগে যায়।",
+    "replyPolice": "অপরাধ বা নিরাপত্তার জন্য: জরুরি অভিযোগ বা পুলিশ বিভাগ ব্যবহার করুন।",
+    "replyTrack": "অভিযোগ ট্র্যাক করুন-এ যান এবং লাইভ টাইমলাইন দেখতে ID দিন।",
+    "replyEmergency": "জরুরি মোড আগুন, দুর্ঘটনা, চিকিৎসা সংকটের জন্য।",
+    "replyDefault": "আমি অভিযোগ দাখিল, স্ট্যাটাস ট্র্যাক বা জরুরি মোডে সাহায্য করতে পারি।"
+  },
+  "timeline": {
+    "submitted": "দাখিল করা হয়েছে",
+    "assignedToOfficer": "অফিসারকে নিযুক্ত",
+    "inProgress": "প্রক্রিয়াধীন",
+    "resolved": "সমাধান হয়েছে"
+  },
+  "pageLoader": {
+    "loading": "ই-সমাধান AI লোড হচ্ছে...",
+    "takingLong": "এটি প্রত্যাশার চেয়ে বেশি সময় নিচ্ছে।"
+  },
+  "errorPage": {
+    "reloadPage": "পৃষ্ঠা পুনরায় লোড করুন"
+  },
+  "voiceComplaint": {
+    "title": "এআই ভয়েস অভিযোগ",
+    "instruction": "মাইক্রোফোনে ক্লিক করুন এবং যেকোনো ভাষায় আপনার অভিযোগ বলুন",
+    "detectedVoice": "সনাক্ত করা ভয়েস:",
+    "analyzing": "এআই অভিযোগ বিশ্লেষণ করছে...",
+    "tryAgain": "আবার চেষ্টা করুন",
+    "hearSummary": "সারাংশ শুনুন"
+  }
+}

@@ -7,24 +7,25 @@ import {
       TrendingUp, Star, Timer, FileText, Image as ImageIcon,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { getOfficerDetail } from '../../api/admin';
 import { deptLabel } from '../../utils/departmentMeta';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const PRIORITY_CONFIG = {
-      emergency: { label: 'Emergency', bg: 'bg-red-500/20', text: 'text-red-400', dot: 'bg-red-500' },
-      high: { label: 'High', bg: 'bg-orange-500/20', text: 'text-orange-400', dot: 'bg-orange-500' },
-      medium: { label: 'Medium', bg: 'bg-amber-500/20', text: 'text-amber-400', dot: 'bg-amber-500' },
-      low: { label: 'Low', bg: 'bg-blue-500/20', text: 'text-blue-400', dot: 'bg-blue-500' },
+      emergency: { labelKey: 'priority.emergency', bg: 'bg-red-500/20', text: 'text-red-400', dot: 'bg-red-500' },
+      high: { labelKey: 'priority.high', bg: 'bg-orange-500/20', text: 'text-orange-400', dot: 'bg-orange-500' },
+      medium: { labelKey: 'priority.medium', bg: 'bg-amber-500/20', text: 'text-amber-400', dot: 'bg-amber-500' },
+      low: { labelKey: 'priority.low', bg: 'bg-blue-500/20', text: 'text-blue-400', dot: 'bg-blue-500' },
 };
 
 const STATUS_CONFIG = {
-      pending: { label: 'Pending', bg: 'bg-slate-500/20', text: 'text-slate-300' },
-      assigned: { label: 'Assigned', bg: 'bg-blue-500/20', text: 'text-blue-400' },
-      in_progress: { label: 'In Progress', bg: 'bg-violet-500/20', text: 'text-violet-400' },
-      resolved: { label: 'Resolved', bg: 'bg-emerald-500/20', text: 'text-emerald-400' },
-      closed: { label: 'Closed', bg: 'bg-slate-600/20', text: 'text-slate-400' },
-      rejected: { label: 'Rejected', bg: 'bg-rose-500/20', text: 'text-rose-400' },
+      pending: { labelKey: 'status.pending', bg: 'bg-slate-500/20', text: 'text-slate-300' },
+      assigned: { labelKey: 'status.assigned', bg: 'bg-blue-500/20', text: 'text-blue-400' },
+      in_progress: { labelKey: 'status.in_progress', bg: 'bg-violet-500/20', text: 'text-violet-400' },
+      resolved: { labelKey: 'status.resolved', bg: 'bg-emerald-500/20', text: 'text-emerald-400' },
+      closed: { labelKey: 'status.closed', bg: 'bg-slate-600/20', text: 'text-slate-400' },
+      rejected: { labelKey: 'status.rejected', bg: 'bg-rose-500/20', text: 'text-rose-400' },
 };
 
 const TIMELINE_ICONS = {
@@ -41,32 +42,35 @@ const fmt = (d) => d ? new Date(d).toLocaleString('en-IN', { day: '2-digit', mon
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
 function PriorityBadge({ priority }) {
+      const { t } = useTranslation();
       const c = PRIORITY_CONFIG[priority] || PRIORITY_CONFIG.medium;
       return (
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
-                  {c.label}
+                  {t(c.labelKey)}
             </span>
       );
 }
 
 function StatusBadge({ status }) {
+      const { t } = useTranslation();
       const c = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
       return (
             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
-                  {c.label}
+                  {t(c.labelKey)}
             </span>
       );
 }
 
 // ── OpenStreetMap embed (no API key needed) ───────────────────────────────────
 function ComplaintMap({ lat, lng, title }) {
+      const { t } = useTranslation();
       if (!lat || !lng) {
             return (
                   <div className="w-full h-40 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
                         <div className="text-center">
                               <MapPin className="w-6 h-6 text-slate-500 mx-auto mb-1" />
-                              <p className="text-xs text-slate-500">No location data</p>
+                              <p className="text-xs text-slate-500">{t('officerModal.noLocationData')}</p>
                         </div>
                   </div>
             );
@@ -90,7 +94,7 @@ function ComplaintMap({ lat, lng, title }) {
                         rel="noreferrer"
                         className="flex items-center justify-center gap-1.5 py-2 bg-white/5 hover:bg-white/10 text-xs text-blue-400 transition-colors"
                   >
-                        <MapPin className="w-3 h-3" /> Open in OpenStreetMap
+                        <MapPin className="w-3 h-3" /> {t('officerModal.openInOSM')}
                   </a>
             </div>
       );
@@ -98,6 +102,7 @@ function ComplaintMap({ lat, lng, title }) {
 
 // ── Complaint Detail Modal (nested) ──────────────────────────────────────────
 function ComplaintDetailModal({ complaint, onClose }) {
+      const { t } = useTranslation();
       if (!complaint) return null;
       const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -144,9 +149,9 @@ function ComplaintDetailModal({ complaint, onClose }) {
                         <div className="p-6 space-y-6">
                               {/* Description */}
                               <div>
-                                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Description</h3>
+                                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">{t('officerModal.description')}</h3>
                                     <p className="text-sm text-slate-300 leading-relaxed bg-white/5 rounded-xl p-4">
-                                          {complaint.description || 'No description provided.'}
+                                          {complaint.description || t('officerModal.noDescription')}
                                     </p>
                               </div>
 
@@ -155,7 +160,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
                                     <div className="flex items-start gap-3 p-4 bg-violet-500/10 border border-violet-500/20 rounded-xl">
                                           <Zap className="w-4 h-4 text-violet-400 flex-shrink-0 mt-0.5" />
                                           <div>
-                                                <p className="text-xs font-semibold text-violet-400 mb-0.5">AI Priority Analysis</p>
+                                                <p className="text-xs font-semibold text-violet-400 mb-0.5">{t('officerModal.aiPriorityAnalysis')}</p>
                                                 <p className="text-sm text-slate-300">{complaint.aiPriorityReason}</p>
                                           </div>
                                     </div>
@@ -163,13 +168,13 @@ function ComplaintDetailModal({ complaint, onClose }) {
 
                               {/* Citizen Info */}
                               <div>
-                                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Citizen Details</h3>
+                                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">{t('officerModal.citizenDetails')}</h3>
                                     <div className="grid grid-cols-2 gap-3">
                                           {[
-                                                { icon: User, label: 'Name', value: complaint.citizen?.name || '—' },
-                                                { icon: Phone, label: 'Mobile', value: complaint.citizen?.phone || '—' },
-                                                { icon: Mail, label: 'Email', value: complaint.citizen?.email || '—' },
-                                                { icon: MapPin, label: 'Address', value: complaint.citizen?.address || complaint.location?.address || '—' },
+                                                { icon: User, label: t('officerModal.name'), value: complaint.citizen?.name || '—' },
+                                                { icon: Phone, label: t('officerModal.mobile'), value: complaint.citizen?.phone || '—' },
+                                                { icon: Mail, label: t('officerModal.email'), value: complaint.citizen?.email || '—' },
+                                                { icon: MapPin, label: t('officerModal.address'), value: complaint.citizen?.address || complaint.location?.address || '—' },
                                           ].map(({ icon: Icon, label, value }) => (
                                                 <div key={label} className="bg-white/5 rounded-xl p-3">
                                                       <div className="flex items-center gap-2 mb-1">
@@ -184,7 +189,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
 
                               {/* Location + Map */}
                               <div>
-                                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Location</h3>
+                                    <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">{t('officerModal.location')}</h3>
                                     <div className="space-y-2 mb-3">
                                           {complaint.location?.address && (
                                                 <p className="text-sm text-slate-300 flex items-start gap-2">
@@ -212,7 +217,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
                               {complaint.attachments?.length > 0 && (
                                     <div>
                                           <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
-                                                Evidence ({complaint.attachments.length})
+                                                {t('officerModal.evidence')} ({complaint.attachments.length})
                                           </h3>
                                           <div className="grid grid-cols-3 gap-2">
                                                 {complaint.attachments.map((att, i) => {
@@ -238,20 +243,20 @@ function ComplaintDetailModal({ complaint, onClose }) {
                               {/* Meta */}
                               <div className="grid grid-cols-2 gap-3 text-sm">
                                     <div className="bg-white/5 rounded-xl p-3">
-                                          <p className="text-xs text-slate-400 mb-1">Department</p>
+                                          <p className="text-xs text-slate-400 mb-1">{t('officerModal.department')}</p>
                                           <p className="text-white font-medium">{deptLabel(complaint.category)}</p>
                                     </div>
                                     <div className="bg-white/5 rounded-xl p-3">
-                                          <p className="text-xs text-slate-400 mb-1">Filed On</p>
+                                          <p className="text-xs text-slate-400 mb-1">{t('officerModal.filedOn')}</p>
                                           <p className="text-white font-medium">{fmtDate(complaint.createdAt)}</p>
                                     </div>
                                     <div className="bg-white/5 rounded-xl p-3">
-                                          <p className="text-xs text-slate-400 mb-1">Last Updated</p>
+                                          <p className="text-xs text-slate-400 mb-1">{t('officerModal.lastUpdated')}</p>
                                           <p className="text-white font-medium">{fmt(complaint.updatedAt)}</p>
                                     </div>
                                     {complaint.resolvedAt && (
                                           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3">
-                                                <p className="text-xs text-emerald-400 mb-1">Resolved On</p>
+                                                <p className="text-xs text-emerald-400 mb-1">{t('officerModal.resolvedOn')}</p>
                                                 <p className="text-emerald-300 font-medium">{fmt(complaint.resolvedAt)}</p>
                                           </div>
                                     )}
@@ -261,7 +266,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
                               {complaint.timeline?.length > 0 && (
                                     <div>
                                           <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
-                                                Complaint Timeline
+                                                {t('officerModal.complaintTimeline')}
                                           </h3>
                                           <div className="relative">
                                                 <div className="absolute left-4 top-0 bottom-0 w-px bg-white/10" />
@@ -292,6 +297,7 @@ function ComplaintDetailModal({ complaint, onClose }) {
 
 // ── Main OfficerDetailModal ───────────────────────────────────────────────────
 export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }) {
+      const { t } = useTranslation();
       const [data, setData] = useState(null);
       const [loading, setLoading] = useState(true);
       const [selectedComplaint, setSelectedComplaint] = useState(null);
@@ -305,12 +311,12 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                   const res = await getOfficerDetail(officerId);
                   setData(res.data?.data || res.data);
             } catch (err) {
-                  toast.error(err?.response?.data?.message || 'Failed to load officer details');
+                  toast.error(err?.response?.data?.message || t('officerModal.failedToLoad'));
                   onClose();
             } finally {
                   setLoading(false);
             }
-      }, [officerId, onClose]);
+      }, [officerId, onClose, t]);
 
       useEffect(() => { load(); }, [load]);
 
@@ -326,12 +332,12 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
       const officer = data;
 
       const statusDot = officer?.isBlocked
-            ? { color: 'bg-rose-500', label: 'Blocked' }
+            ? { color: 'bg-rose-500', labelKey: 'adminOfficersPage.blocked' }
             : officer?.status === 'active'
-                  ? { color: 'bg-emerald-500', label: 'Active' }
+                  ? { color: 'bg-emerald-500', labelKey: 'adminOfficersPage.active' }
                   : officer?.status === 'busy'
-                        ? { color: 'bg-amber-500', label: 'Busy' }
-                        : { color: 'bg-slate-500', label: officer?.status || 'Offline' };
+                        ? { color: 'bg-amber-500', labelKey: 'officerModal.busy' }
+                        : { color: 'bg-slate-500', labelKey: 'officerModal.offline' };
 
       return (
             <>
@@ -354,7 +360,7 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                     <div className="flex-1 flex items-center justify-center py-24">
                                           <div className="text-center">
                                                 <Loader2 className="w-10 h-10 animate-spin text-blue-400 mx-auto mb-3" />
-                                                <p className="text-slate-400 text-sm">Loading officer details…</p>
+                                                <p className="text-slate-400 text-sm">{t('officerModal.loadingDetails')}</p>
                                           </div>
                                     </div>
                               ) : !officer ? null : (
@@ -387,7 +393,7 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                                         </span>
                                                                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${officer.isBlocked ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'
                                                                               }`}>
-                                                                              {statusDot.label}
+                                                                              {t(statusDot.labelKey)}
                                                                         </span>
                                                                   </div>
                                                             </div>
@@ -402,8 +408,8 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                                               }`}
                                                                   >
                                                                         {officer.isBlocked
-                                                                              ? <><ShieldCheck className="w-3.5 h-3.5" /> Unblock Officer</>
-                                                                              : <><ShieldOff className="w-3.5 h-3.5" /> Block Officer</>
+                                                                              ? <><ShieldCheck className="w-3.5 h-3.5" /> {t('adminOfficersPage.unblockOfficer')}</>
+                                                                              : <><ShieldOff className="w-3.5 h-3.5" /> {t('adminOfficersPage.blockOfficer')}</>
                                                                         }
                                                                   </button>
                                                             )}
@@ -416,15 +422,15 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
 
                                                 <div className="relative mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
                                                       {[
-                                                            { icon: Mail, label: 'Email', value: officer.email },
-                                                            { icon: Phone, label: 'Mobile', value: officer.mobile || '—' },
-                                                            { icon: Calendar, label: 'Joined', value: fmtDate(officer.createdAt) },
-                                                            { icon: Clock, label: 'Last Active', value: officer.lastActive ? fmt(officer.lastActive) : '—' },
-                                                      ].map(({ icon: Icon, label, value }) => (
-                                                            <div key={label} className="bg-white/5 rounded-xl px-3 py-2">
+                                                            { icon: Mail, labelKey: 'officerModal.email', value: officer.email },
+                                                            { icon: Phone, labelKey: 'officerModal.mobile', value: officer.mobile || '—' },
+                                                            { icon: Calendar, labelKey: 'officerModal.joined', value: fmtDate(officer.createdAt) },
+                                                            { icon: Clock, labelKey: 'officerModal.lastActive', value: officer.lastActive ? fmt(officer.lastActive) : '—' },
+                                                      ].map(({ icon: Icon, labelKey, value }) => (
+                                                            <div key={labelKey} className="bg-white/5 rounded-xl px-3 py-2">
                                                                   <div className="flex items-center gap-1.5 mb-0.5">
                                                                         <Icon className="w-3 h-3 text-slate-400" />
-                                                                        <span className="text-xs text-slate-400">{label}</span>
+                                                                        <span className="text-xs text-slate-400">{t(labelKey)}</span>
                                                                   </div>
                                                                   <p className="text-xs text-white font-medium truncate">{value}</p>
                                                             </div>
@@ -436,24 +442,24 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                       <div className="relative mt-4 p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl">
                                                             <div className="flex items-center gap-2 mb-2">
                                                                   <ShieldOff className="w-4 h-4 text-rose-400" />
-                                                                  <span className="text-rose-400 font-bold text-sm">Account Blocked</span>
+                                                                  <span className="text-rose-400 font-bold text-sm">{t('officerModal.accountBlocked')}</span>
                                                             </div>
                                                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                                                                   <div className="bg-white/5 rounded-lg px-3 py-2">
-                                                                        <p className="text-slate-500 mb-0.5">Blocked At</p>
+                                                                        <p className="text-slate-500 mb-0.5">{t('officerModal.blockedAt')}</p>
                                                                         <p className="text-rose-300 font-medium">{officer.blockedAt ? fmt(officer.blockedAt) : '—'}</p>
                                                                   </div>
                                                                   <div className="bg-white/5 rounded-lg px-3 py-2">
-                                                                        <p className="text-slate-500 mb-0.5">Block Reason</p>
-                                                                        <p className="text-rose-300 font-medium">{officer.blockReason || 'No reason provided'}</p>
+                                                                        <p className="text-slate-500 mb-0.5">{t('officerModal.blockReason')}</p>
+                                                                        <p className="text-rose-300 font-medium">{officer.blockReason || t('officerModal.noReasonProvided')}</p>
                                                                   </div>
                                                                   <div className="bg-white/5 rounded-lg px-3 py-2">
-                                                                        <p className="text-slate-500 mb-0.5">Status</p>
-                                                                        <p className="text-rose-300 font-medium capitalize">{officer.status || 'suspended'}</p>
+                                                                        <p className="text-slate-500 mb-0.5">{t('common.status')}</p>
+                                                                        <p className="text-rose-300 font-medium capitalize">{officer.status || t('officerModal.suspended')}</p>
                                                                   </div>
                                                             </div>
                                                             <p className="mt-2 text-xs text-rose-400/70">
-                                                                  This officer cannot login or access the dashboard until unblocked.
+                                                                  {t('officerModal.blockedWarning')}
                                                             </p>
                                                       </div>
                                                 )}
@@ -461,38 +467,38 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
 
                                           {/* ANALYTICS */}
                                           <div className="p-6 border-b border-white/10">
-                                                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Performance Analytics</h3>
+                                                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">{t('officerModal.performanceAnalytics')}</h3>
                                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                                                       {[
-                                                            { icon: ClipboardList, label: 'Total Assigned', value: officer.complaintsAssigned ?? 0, color: 'text-blue-400', bg: 'from-blue-500/10 to-blue-600/5', border: 'border-blue-500/20' },
-                                                            { icon: AlertTriangle, label: 'Pending', value: officer.complaintsPending ?? 0, color: 'text-amber-400', bg: 'from-amber-500/10 to-amber-600/5', border: 'border-amber-500/20' },
-                                                            { icon: Activity, label: 'In Progress', value: officer.complaintsInProgress ?? 0, color: 'text-violet-400', bg: 'from-violet-500/10 to-violet-600/5', border: 'border-violet-500/20' },
-                                                            { icon: CheckCircle2, label: 'Resolved', value: officer.complaintsSolved ?? 0, color: 'text-emerald-400', bg: 'from-emerald-500/10 to-emerald-600/5', border: 'border-emerald-500/20' },
-                                                      ].map(({ icon: Icon, label, value, color, bg, border }) => (
-                                                            <div key={label} className={`bg-gradient-to-br ${bg} border ${border} rounded-2xl p-4`}>
+                                                            { icon: ClipboardList, labelKey: 'officerModal.totalAssigned', value: officer.complaintsAssigned ?? 0, color: 'text-blue-400', bg: 'from-blue-500/10 to-blue-600/5', border: 'border-blue-500/20' },
+                                                            { icon: AlertTriangle, labelKey: 'status.pending', value: officer.complaintsPending ?? 0, color: 'text-amber-400', bg: 'from-amber-500/10 to-amber-600/5', border: 'border-amber-500/20' },
+                                                            { icon: Activity, labelKey: 'status.in_progress', value: officer.complaintsInProgress ?? 0, color: 'text-violet-400', bg: 'from-violet-500/10 to-violet-600/5', border: 'border-violet-500/20' },
+                                                            { icon: CheckCircle2, labelKey: 'status.resolved', value: officer.complaintsSolved ?? 0, color: 'text-emerald-400', bg: 'from-emerald-500/10 to-emerald-600/5', border: 'border-emerald-500/20' },
+                                                      ].map(({ icon: Icon, labelKey, value, color, bg, border }) => (
+                                                            <div key={labelKey} className={`bg-gradient-to-br ${bg} border ${border} rounded-2xl p-4`}>
                                                                   <Icon className={`w-5 h-5 ${color} mb-2`} />
                                                                   <p className={`text-2xl font-black ${color}`}>{value}</p>
-                                                                  <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+                                                                  <p className="text-xs text-slate-400 mt-0.5">{t(labelKey)}</p>
                                                             </div>
                                                       ))}
                                                 </div>
                                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                                       {[
-                                                            { icon: TrendingUp, label: 'Resolution Rate', value: `${officer.resolutionRate ?? 0}%`, color: 'text-cyan-400' },
-                                                            { icon: Timer, label: 'Avg Resolution', value: `${officer.avgResolutionHrs ?? 0}h`, color: 'text-indigo-400' },
-                                                            { icon: AlertTriangle, label: 'Emergency', value: officer.emergencyCount ?? 0, color: 'text-red-400' },
-                                                            { icon: Star, label: 'Perf. Score', value: `${officer.performanceScore ?? 0}/100`, color: 'text-yellow-400' },
-                                                      ].map(({ icon: Icon, label, value, color }) => (
-                                                            <div key={label} className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                                                            { icon: TrendingUp, labelKey: 'officerModal.resolutionRate', value: `${officer.resolutionRate ?? 0}%`, color: 'text-cyan-400' },
+                                                            { icon: Timer, labelKey: 'officerModal.avgResolution', value: `${officer.avgResolutionHrs ?? 0}h`, color: 'text-indigo-400' },
+                                                            { icon: AlertTriangle, labelKey: 'priority.emergency', value: officer.emergencyCount ?? 0, color: 'text-red-400' },
+                                                            { icon: Star, labelKey: 'officerModal.perfScore', value: `${officer.performanceScore ?? 0}/100`, color: 'text-yellow-400' },
+                                                      ].map(({ icon: Icon, labelKey, value, color }) => (
+                                                            <div key={labelKey} className="bg-white/5 border border-white/10 rounded-2xl p-4">
                                                                   <Icon className={`w-4 h-4 ${color} mb-2`} />
                                                                   <p className={`text-xl font-black ${color}`}>{value}</p>
-                                                                  <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+                                                                  <p className="text-xs text-slate-400 mt-0.5">{t(labelKey)}</p>
                                                             </div>
                                                       ))}
                                                 </div>
                                                 <div className="mt-4 bg-white/5 rounded-xl p-4">
                                                       <div className="flex items-center justify-between mb-2">
-                                                            <span className="text-xs text-slate-400">Resolution Progress</span>
+                                                            <span className="text-xs text-slate-400">{t('officerModal.resolutionProgress')}</span>
                                                             <span className="text-xs font-bold text-emerald-400">{officer.resolutionRate ?? 0}%</span>
                                                       </div>
                                                       <div className="h-2 bg-white/10 rounded-full overflow-hidden">
@@ -510,12 +516,12 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                           <div className="p-6">
                                                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
                                                       <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                                                            Assigned Complaints ({complaints.length})
+                                                            {t('officerModal.assignedComplaints')} ({complaints.length})
                                                       </h3>
                                                       <div className="flex items-center gap-2 flex-wrap">
                                                             <input
                                                                   type="text"
-                                                                  placeholder="Search…"
+                                                                  placeholder={t('officerModal.searchPlaceholder')}
                                                                   value={searchQ}
                                                                   onChange={(e) => setSearchQ(e.target.value)}
                                                                   className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50 w-36"
@@ -525,12 +531,12 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                                   onChange={(e) => setStatusFilter(e.target.value)}
                                                                   className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-white text-xs focus:outline-none focus:ring-1 focus:ring-blue-500/50"
                                                             >
-                                                                  <option value="">All Status</option>
-                                                                  <option value="pending">Pending</option>
-                                                                  <option value="assigned">Assigned</option>
-                                                                  <option value="in_progress">In Progress</option>
-                                                                  <option value="resolved">Resolved</option>
-                                                                  <option value="rejected">Rejected</option>
+                                                                  <option value="">{t('complaint.allStatuses')}</option>
+                                                                  <option value="pending">{t('status.pending')}</option>
+                                                                  <option value="assigned">{t('status.assigned')}</option>
+                                                                  <option value="in_progress">{t('status.in_progress')}</option>
+                                                                  <option value="resolved">{t('status.resolved')}</option>
+                                                                  <option value="rejected">{t('status.rejected')}</option>
                                                             </select>
                                                       </div>
                                                 </div>
@@ -538,9 +544,9 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                 {complaints.length === 0 ? (
                                                       <div className="text-center py-12 bg-white/5 rounded-2xl border border-white/10">
                                                             <ClipboardList className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-                                                            <p className="text-slate-400 font-semibold">No complaints found</p>
+                                                            <p className="text-slate-400 font-semibold">{t('officerModal.noComplaintsFound')}</p>
                                                             <p className="text-slate-500 text-sm mt-1">
-                                                                  {statusFilter || searchQ ? 'Try adjusting your filters' : 'No complaints assigned yet'}
+                                                                  {statusFilter || searchQ ? t('officerModal.tryAdjustingFilters') : t('officerModal.noComplaintsAssigned')}
                                                             </p>
                                                       </div>
                                                 ) : (
@@ -549,13 +555,13 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                                   <table className="min-w-full text-sm">
                                                                         <thead>
                                                                               <tr className="bg-white/5 text-left text-slate-400 text-xs border-b border-white/10">
-                                                                                    <th className="px-4 py-3 font-semibold">Complaint</th>
-                                                                                    <th className="px-4 py-3 font-semibold">Citizen</th>
-                                                                                    <th className="px-4 py-3 font-semibold">Priority</th>
-                                                                                    <th className="px-4 py-3 font-semibold">Status</th>
-                                                                                    <th className="px-4 py-3 font-semibold">Location</th>
-                                                                                    <th className="px-4 py-3 font-semibold">Date</th>
-                                                                                    <th className="px-4 py-3 font-semibold">Action</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('officerModal.colComplaint')}</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('officerModal.colCitizen')}</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('officerModal.colPriority')}</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('common.status')}</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('officerModal.colLocation')}</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('common.date')}</th>
+                                                                                    <th className="px-4 py-3 font-semibold">{t('common.action')}</th>
                                                                               </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -592,7 +598,7 @@ export default function OfficerDetailModal({ officerId, onClose, onToggleBlock }
                                                                                                       onClick={(e) => { e.stopPropagation(); setSelectedComplaint(c); }}
                                                                                                       className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-xs font-semibold transition-colors"
                                                                                                 >
-                                                                                                      <Eye className="w-3.5 h-3.5" /> View
+                                                                                                      <Eye className="w-3.5 h-3.5" /> {t('common.view')}
                                                                                                 </button>
                                                                                           </td>
                                                                                     </tr>

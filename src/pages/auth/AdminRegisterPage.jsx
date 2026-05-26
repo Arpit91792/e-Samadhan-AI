@@ -6,6 +6,7 @@ import {
       User, Phone,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import useOTP from '../auth/signup/useOTP';
 import { OTPSection } from '../auth/signup/shared.jsx';
 import { registerAdmin } from '../../api/admin';
@@ -21,6 +22,7 @@ const fieldVariants = {
 export default function AdminRegisterPage() {
       const navigate = useNavigate();
       const { setAdminSession } = useAuth();
+      const { t } = useTranslation();
       const [form, setForm] = useState({
             name: '', email: '', mobile: '', password: '', confirmPassword: '', department: '',
       });
@@ -32,18 +34,18 @@ export default function AdminRegisterPage() {
 
       const validate = () => {
             const e = {};
-            if (!form.name.trim() || form.name.trim().length < 2) e.name = 'Enter your full name';
-            if (!form.email.trim()) e.email = 'Official email is required';
-            else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = 'Enter a valid email address';
-            if (!form.mobile.trim()) e.mobile = 'Mobile number is required';
+            if (!form.name.trim() || form.name.trim().length < 2) e.name = t('validation.fullNameRequired');
+            if (!form.email.trim()) e.email = t('validation.emailRequired');
+            else if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = t('validation.enterValidEmail');
+            if (!form.mobile.trim()) e.mobile = t('validation.mobileRequired');
             else if (!/^[6-9]\d{9}$/.test(form.mobile.replace(/\D/g, '').slice(-10))) {
-                  e.mobile = 'Enter a valid 10-digit Indian mobile number';
+                  e.mobile = t('validation.mobileInvalid');
             }
-            if (!form.password) e.password = 'Password is required';
-            else if (form.password.length < 8) e.password = 'Password must be at least 8 characters';
-            if (form.password !== form.confirmPassword) e.confirmPassword = 'Passwords do not match';
-            if (!form.department) e.department = 'Please select department';
-            if (!otpHook.otpVerified) e.otp = 'Please verify your email with OTP';
+            if (!form.password) e.password = t('validation.passwordRequired');
+            else if (form.password.length < 8) e.password = t('validation.passwordMinLength');
+            if (form.password !== form.confirmPassword) e.confirmPassword = t('validation.passwordMismatch');
+            if (!form.department) e.department = t('validation.departmentRequired');
+            if (!otpHook.otpVerified) e.otp = t('verification.emailTitle');
             setErrors(e);
             return Object.keys(e).length === 0;
       };
@@ -51,11 +53,11 @@ export default function AdminRegisterPage() {
       const handleSubmit = async (ev) => {
             ev.preventDefault();
             if (!validate()) {
-                  toast.error('Please fix the form errors');
+                  toast.error(t('validation.fillAllFields'));
                   return;
             }
             if (!otpHook.otpVerified) {
-                  toast.error('Please verify your email before registering');
+                  toast.error(t('verification.emailTitle'));
                   return;
             }
 
@@ -76,7 +78,7 @@ export default function AdminRegisterPage() {
 
                   const adminUser = data.admin || data.user;
                   if (!data.token || !adminUser) {
-                        toast.error('Invalid registration response from server');
+                        toast.error(t('adminLogin.invalidResponse'));
                         return;
                   }
                   const adminWithDept = {
@@ -87,7 +89,7 @@ export default function AdminRegisterPage() {
                   };
                   const ok = setAdminSession(data.token, adminWithDept);
                   if (!ok || !hasValidAdminSession()) {
-                        toast.error('Could not save session. Please try again.');
+                        toast.error(t('adminLogin.sessionError'));
                         return;
                   }
 
@@ -99,17 +101,14 @@ export default function AdminRegisterPage() {
                   const code = err.response?.data?.code;
 
                   if (code === 'DUPLICATE_EMAIL') {
-                        toast.error('This email is already registered');
-                        setErrors({ email: 'An account with this email already exists' });
+                        toast.error(msg);
+                        setErrors({ email: msg });
                   } else if (code === 'DEPARTMENT_REQUIRED') {
-                        toast.error('Please select department');
-                        setErrors({ department: 'Please select department' });
+                        toast.error(t('validation.departmentRequired'));
+                        setErrors({ department: t('validation.departmentRequired') });
                   } else if (code === 'INVALID_DEPARTMENT') {
-                        toast.error('Invalid department');
-                        setErrors({ department: 'Invalid department selected' });
-                  } else if (code === 'INVALID_REGISTER_SECRET') {
-                        toast.error('Invalid registration key');
-                        setErrors({ registerSecret: 'Invalid registration key' });
+                        toast.error(msg);
+                        setErrors({ department: msg });
                   } else {
                         toast.error(msg);
                         setErrors({ general: msg });
@@ -121,6 +120,7 @@ export default function AdminRegisterPage() {
 
       return (
             <div className="min-h-screen flex bg-gradient-to-br from-slate-950 via-slate-900 to-violet-950">
+                  {/* Left panel */}
                   <motion.div
                         initial={{ opacity: 0, x: -16 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -134,19 +134,20 @@ export default function AdminRegisterPage() {
                                     </div>
                                     <div>
                                           <p className="font-black text-white text-lg">e-Samadhan AI</p>
-                                          <p className="text-violet-200 text-xs font-semibold">Department Admin Onboarding</p>
+                                          <p className="text-violet-200 text-xs font-semibold">{t('auth.departmentAdmin')}</p>
                                     </div>
                               </div>
                               <h1 className="text-3xl font-black text-white leading-tight mb-4">
-                                    Register your<br />department access
+                                    {t('auth.adminAccount')}
                               </h1>
                               <p className="text-violet-100/80 text-sm leading-relaxed max-w-sm">
-                                    Your selected department is saved permanently and used at login and in the dashboard. You will only manage complaints and officers for that department.
+                                    {t('auth.adminDesc')}
                               </p>
                         </div>
                         <p className="relative z-10 text-xs text-violet-200/60">© e-Samadhan AI</p>
                   </motion.div>
 
+                  {/* Right panel */}
                   <div className="flex-1 flex items-center justify-center p-6 sm:p-10 overflow-y-auto">
                         <motion.div
                               initial={{ opacity: 0, y: 20 }}
@@ -154,29 +155,27 @@ export default function AdminRegisterPage() {
                               className="w-full max-w-md py-8"
                         >
                               <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8 shadow-2xl">
-                                    <h2 className="text-2xl font-black text-white mb-1">Admin Registration</h2>
-                                    <p className="text-slate-400 text-sm mb-6">Official credentials + department</p>
+                                    <h2 className="text-2xl font-black text-white mb-1">{t('auth.adminAccount')}</h2>
+                                    <p className="text-slate-400 text-sm mb-6">{t('adminLogin.allRequired')}</p>
 
                                     <AnimatePresence>
                                           {errors.general && (
-                                                <motion.div
-                                                      initial={{ opacity: 0 }}
-                                                      animate={{ opacity: 1 }}
-                                                      className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-300"
-                                                >
+                                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                                                      className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-300">
                                                       {errors.general}
                                                 </motion.div>
                                           )}
                                     </AnimatePresence>
 
                                     <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
+                                          {/* Full Name */}
                                           <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="visible">
-                                                <label className="block text-xs font-bold text-slate-300 mb-1">Full name *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1">{t('form.labels.fullName')} *</label>
                                                 <div className="relative">
                                                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                                       <input
                                                             className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white text-sm outline-none focus:ring-2 focus:ring-violet-500/40 ${errors.name ? 'border-red-500/60' : 'border-white/10'}`}
-                                                            placeholder="Raj Sharma"
+                                                            placeholder={t('form.placeholders.fullName')}
                                                             value={form.name}
                                                             onChange={(e) => setForm({ ...form, name: e.target.value })}
                                                       />
@@ -184,15 +183,15 @@ export default function AdminRegisterPage() {
                                                 {errors.name && <p className="text-xs text-red-400 mt-0.5">{errors.name}</p>}
                                           </motion.div>
 
+                                          {/* Email */}
                                           <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="visible">
-                                                <label className="block text-xs font-bold text-slate-300 mb-1">Official email *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1">{t('form.labels.email')} *</label>
                                                 <div className="relative">
                                                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                                       <input
-                                                            type="email"
-                                                            autoComplete="email"
+                                                            type="email" autoComplete="email"
                                                             className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white text-sm outline-none focus:ring-2 focus:ring-violet-500/40 ${errors.email ? 'border-red-500/60' : 'border-white/10'}`}
-                                                            placeholder="admin@department.gov.in"
+                                                            placeholder={t('admin.officerEmailPlaceholder')}
                                                             value={form.email}
                                                             onChange={(e) => setForm({ ...form, email: e.target.value })}
                                                       />
@@ -200,6 +199,7 @@ export default function AdminRegisterPage() {
                                                 {errors.email && <p className="text-xs text-red-400 mt-0.5">{errors.email}</p>}
                                           </motion.div>
 
+                                          {/* OTP */}
                                           <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="visible">
                                                 <OTPSection
                                                       email={form.email}
@@ -216,15 +216,15 @@ export default function AdminRegisterPage() {
                                                 {errors.otp && <p className="text-xs text-red-400 mt-0.5">{errors.otp}</p>}
                                           </motion.div>
 
+                                          {/* Mobile */}
                                           <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="visible">
-                                                <label className="block text-xs font-bold text-slate-300 mb-1">Mobile number *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1">{t('form.labels.mobile')} *</label>
                                                 <div className="relative">
                                                       <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                                       <input
-                                                            type="tel"
-                                                            autoComplete="tel"
+                                                            type="tel" autoComplete="tel"
                                                             className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white text-sm outline-none focus:ring-2 focus:ring-violet-500/40 ${errors.mobile ? 'border-red-500/60' : 'border-white/10'}`}
-                                                            placeholder="9876543210"
+                                                            placeholder={t('form.placeholders.phone')}
                                                             value={form.mobile}
                                                             onChange={(e) => setForm({ ...form, mobile: e.target.value })}
                                                       />
@@ -232,17 +232,17 @@ export default function AdminRegisterPage() {
                                                 {errors.mobile && <p className="text-xs text-red-400 mt-0.5">{errors.mobile}</p>}
                                           </motion.div>
 
+                                          {/* Department */}
                                           <motion.div custom={3} variants={fieldVariants} initial="hidden" animate="visible">
-                                                <label className="block text-xs font-bold text-slate-300 mb-1">Department *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1">{t('auth.department')} *</label>
                                                 <div className="relative">
                                                       <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
                                                       <select
-                                                            required
-                                                            value={form.department}
+                                                            required value={form.department}
                                                             onChange={(e) => setForm({ ...form, department: e.target.value })}
                                                             className={`w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border text-white text-sm outline-none focus:ring-2 focus:ring-violet-500/40 appearance-none cursor-pointer ${errors.department ? 'border-red-500/60' : 'border-white/10'}`}
                                                       >
-                                                            <option value="" className="bg-slate-900 text-slate-400">Select department</option>
+                                                            <option value="" className="bg-slate-900 text-slate-400">{t('auth.selectDepartment')}</option>
                                                             {ADMIN_LOGIN_DEPARTMENTS.map((d) => (
                                                                   <option key={d.value} value={d.value} className="bg-slate-900">{d.label}</option>
                                                             ))}
@@ -251,15 +251,15 @@ export default function AdminRegisterPage() {
                                                 {errors.department && <p className="text-xs text-red-400 mt-0.5">{errors.department}</p>}
                                           </motion.div>
 
+                                          {/* Password */}
                                           <motion.div custom={4} variants={fieldVariants} initial="hidden" animate="visible">
-                                                <label className="block text-xs font-bold text-slate-300 mb-1">Password *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1">{t('form.labels.password')} *</label>
                                                 <div className="relative">
                                                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                                       <input
-                                                            type={showPassword ? 'text' : 'password'}
-                                                            autoComplete="new-password"
+                                                            type={showPassword ? 'text' : 'password'} autoComplete="new-password"
                                                             className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-white/5 border text-white text-sm outline-none focus:ring-2 focus:ring-violet-500/40 ${errors.password ? 'border-red-500/60' : 'border-white/10'}`}
-                                                            placeholder="Min. 8 characters"
+                                                            placeholder={t('form.placeholders.password')}
                                                             value={form.password}
                                                             onChange={(e) => setForm({ ...form, password: e.target.value })}
                                                       />
@@ -270,15 +270,15 @@ export default function AdminRegisterPage() {
                                                 {errors.password && <p className="text-xs text-red-400 mt-0.5">{errors.password}</p>}
                                           </motion.div>
 
+                                          {/* Confirm Password */}
                                           <motion.div custom={5} variants={fieldVariants} initial="hidden" animate="visible">
-                                                <label className="block text-xs font-bold text-slate-300 mb-1">Confirm password *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1">{t('form.labels.confirmPassword')} *</label>
                                                 <div className="relative">
                                                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                                       <input
-                                                            type={showConfirm ? 'text' : 'password'}
-                                                            autoComplete="new-password"
+                                                            type={showConfirm ? 'text' : 'password'} autoComplete="new-password"
                                                             className={`w-full pl-10 pr-11 py-2.5 rounded-xl bg-white/5 border text-white text-sm outline-none focus:ring-2 focus:ring-violet-500/40 ${errors.confirmPassword ? 'border-red-500/60' : 'border-white/10'}`}
-                                                            placeholder="Repeat password"
+                                                            placeholder={t('form.placeholders.confirmPassword')}
                                                             value={form.confirmPassword}
                                                             onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                                                       />
@@ -290,20 +290,18 @@ export default function AdminRegisterPage() {
                                           </motion.div>
 
                                           <motion.button
-                                                type="submit"
-                                                disabled={loading}
-                                                whileHover={{ scale: loading ? 1 : 1.02 }}
-                                                whileTap={{ scale: 0.98 }}
+                                                type="submit" disabled={loading}
+                                                whileHover={{ scale: loading ? 1 : 1.02 }} whileTap={{ scale: 0.98 }}
                                                 className="w-full py-3 mt-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg disabled:opacity-60"
                                           >
                                                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowRight className="w-5 h-5" />}
-                                                {loading ? 'Creating account...' : 'Create admin account'}
+                                                {loading ? t('common.loading') : t('auth.adminAccount')}
                                           </motion.button>
                                     </form>
 
                                     <p className="mt-6 text-center text-xs text-slate-500">
-                                          Already registered?{' '}
-                                          <Link to="/admin/login" className="text-violet-400 font-semibold hover:underline">Admin sign in</Link>
+                                          {t('auth.alreadyHaveAccount')}{' '}
+                                          <Link to="/admin/login" className="text-violet-400 font-semibold hover:underline">{t('adminLogin.signIn')}</Link>
                                     </p>
                               </div>
                         </motion.div>

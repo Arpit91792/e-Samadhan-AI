@@ -8,6 +8,8 @@ import { Eye, EyeOff, Mail, Lock, Shield, Building2, ArrowRight, Loader2 } from 
 
 import toast from 'react-hot-toast';
 
+import { useTranslation } from 'react-i18next';
+
 import { adminLogin, verifyAdminSession } from '../../api/admin';
 
 import { useAuth } from '../../context/AuthContext';
@@ -36,6 +38,7 @@ export default function AdminLoginPage() {
       const navigate = useNavigate();
 
       const { setAdminSession } = useAuth();
+      const { t } = useTranslation();
 
       const [form, setForm] = useState(emptyForm);
 
@@ -61,13 +64,13 @@ export default function AdminLoginPage() {
 
             const errs = {};
 
-            if (!form.email.trim()) errs.email = 'Official email is required';
+            if (!form.email.trim()) errs.email = t('validation.emailRequired');
 
-            else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = 'Enter a valid email address';
+            else if (!/^\S+@\S+\.\S+$/.test(form.email)) errs.email = t('validation.enterValidEmail');
 
-            if (!form.password) errs.password = 'Password is required';
+            if (!form.password) errs.password = t('validation.passwordRequired');
 
-            if (!form.department) errs.department = 'You must select your department';
+            if (!form.department) errs.department = t('validation.departmentRequired');
 
             setErrors(errs);
 
@@ -113,7 +116,7 @@ export default function AdminLoginPage() {
 
                   if (!data.token || !adminUser) {
 
-                        toast.error('Invalid login response from server');
+                        toast.error(t('adminLogin.invalidResponse'));
 
                         return;
 
@@ -121,7 +124,7 @@ export default function AdminLoginPage() {
 
                   if (adminUser.role !== 'admin') {
 
-                        toast.error('Unauthorized access');
+                        toast.error(t('adminLogin.unauthorized'));
 
                         return;
 
@@ -149,7 +152,7 @@ export default function AdminLoginPage() {
 
                   if (!ok || !hasValidAdminSession()) {
 
-                        toast.error('Could not save session. Please try again.');
+                        toast.error(t('adminLogin.sessionError'));
 
                         return;
 
@@ -325,11 +328,11 @@ export default function AdminLoginPage() {
 
                                     </motion.div>
 
-                                    <h2 className="text-2xl font-black text-white mb-1">Official Admin Sign In</h2>
+                                    <h2 className="text-2xl font-black text-white mb-1">{t('adminLogin.signIn')}</h2>
 
                                     <p className="text-slate-400 text-sm mb-6">
 
-                                          Email · Password · Department (all required)
+                                          {t('adminLogin.allRequired')}
 
                                     </p>
 
@@ -365,7 +368,7 @@ export default function AdminLoginPage() {
 
                                           <motion.div custom={0} variants={fieldVariants} initial="hidden" animate="visible">
 
-                                                <label className="block text-xs font-bold text-slate-300 mb-1.5">Official Email *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1.5">{t('auth.emailAddress')} *</label>
 
                                                 <div className="relative">
 
@@ -403,7 +406,7 @@ export default function AdminLoginPage() {
 
                                           <motion.div custom={1} variants={fieldVariants} initial="hidden" animate="visible">
 
-                                                <label className="block text-xs font-bold text-slate-300 mb-1.5">Password *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1.5">{t('auth.password')} *</label>
 
                                                 <div className="relative">
 
@@ -457,7 +460,7 @@ export default function AdminLoginPage() {
 
                                           <motion.div custom={2} variants={fieldVariants} initial="hidden" animate="visible">
 
-                                                <label className="block text-xs font-bold text-slate-300 mb-1.5">Department *</label>
+                                                <label className="block text-xs font-bold text-slate-300 mb-1.5">{t('auth.department')} *</label>
 
                                                 <div className="relative">
 
@@ -481,7 +484,7 @@ export default function AdminLoginPage() {
 
                                                       >
 
-                                                            <option value="" className="bg-slate-900 text-slate-400">Select your department</option>
+                                                            <option value="" className="bg-slate-900 text-slate-400">{t('auth.selectDepartment')}</option>
 
                                                             {ADMIN_LOGIN_DEPARTMENTS.map((d) => (
 
@@ -527,7 +530,7 @@ export default function AdminLoginPage() {
 
                                                             <Loader2 className="w-5 h-5 animate-spin" />
 
-                                                            Verifying credentials...
+                                                            {t('adminLogin.verifying')}
 
                                                       </>
 
@@ -537,7 +540,7 @@ export default function AdminLoginPage() {
 
                                                             <ArrowRight className="w-5 h-5" />
 
-                                                            Access Department Dashboard
+                                                            {t('adminLogin.accessDashboard')}
 
                                                       </>
 
@@ -551,15 +554,15 @@ export default function AdminLoginPage() {
 
                                     <p className="mt-6 text-center text-xs text-slate-500">
 
-                                          New department admin?{' '}
+                                          {t('adminLogin.newAdmin')}{' '}
 
-                                          <Link to="/admin/register" className="text-red-400 font-semibold hover:underline">Register</Link>
+                                          <Link to="/admin/register" className="text-red-400 font-semibold hover:underline">{t('adminLogin.register')}</Link>
 
                                           {' · '}
 
-                                          Citizen or Officer?{' '}
+                                          {t('adminLogin.citizenOrOfficer')}{' '}
 
-                                          <Link to="/login" className="text-slate-400 font-semibold hover:underline">Standard login</Link>
+                                          <Link to="/login" className="text-slate-400 font-semibold hover:underline">{t('adminLogin.standardLogin')}</Link>
 
                                     </p>
 

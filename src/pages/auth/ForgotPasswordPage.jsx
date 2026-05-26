@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, ArrowRight, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import AuthLayout from '../../components/auth/AuthLayout';
 import { useAuth } from '../../context/AuthContext';
 
 export default function ForgotPasswordPage() {
       const { forgotPassword } = useAuth();
+      const { t } = useTranslation();
       const [email, setEmail] = useState('');
       const [loading, setLoading] = useState(false);
       const [sent, setSent] = useState(false);
@@ -15,8 +17,8 @@ export default function ForgotPasswordPage() {
 
       const handleSubmit = async (e) => {
             e.preventDefault();
-            if (!email) { setError('Please enter your email address'); return; }
-            if (!/^\S+@\S+\.\S+$/.test(email)) { setError('Enter a valid email address'); return; }
+            if (!email) { setError(t('validation.emailRequired')); return; }
+            if (!/^\S+@\S+\.\S+$/.test(email)) { setError(t('validation.enterValidEmail')); return; }
 
             setLoading(true);
             setError('');
@@ -25,7 +27,7 @@ export default function ForgotPasswordPage() {
                   setSent(true);
                   toast.success(data.message);
             } catch (err) {
-                  const msg = err.response?.data?.message || 'Something went wrong. Please try again.';
+                  const msg = err.response?.data?.message || t('forgotPassword.somethingWrong');
                   setError(msg);
                   toast.error(msg);
             } finally {
@@ -35,8 +37,8 @@ export default function ForgotPasswordPage() {
 
       return (
             <AuthLayout
-                  title={sent ? 'Check your email' : 'Forgot password?'}
-                  subtitle={sent ? `We sent a reset link to ${email}` : "No worries, we'll send you reset instructions"}
+                  title={sent ? t('forgotPassword.checkEmail') : t('forgotPassword.title')}
+                  subtitle={sent ? t('forgotPassword.sentTo', { email }) : t('forgotPassword.subtitle')}
             >
                   {sent ? (
                         <motion.div
@@ -48,17 +50,17 @@ export default function ForgotPasswordPage() {
                                     <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                               </div>
                               <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-sm text-blue-700 text-left">
-                                    <p className="font-semibold mb-1">What to do next:</p>
+                                    <p className="font-semibold mb-1">{t('forgotPassword.whatNext')}</p>
                                     <ol className="list-decimal list-inside space-y-1 text-blue-600">
-                                          <li>Check your inbox at <strong>{email}</strong></li>
-                                          <li>Click the reset link in the email</li>
-                                          <li>Create a new strong password</li>
+                                          <li>{t('forgotPassword.step1', { email })}</li>
+                                          <li>{t('forgotPassword.step2')}</li>
+                                          <li>{t('forgotPassword.step3')}</li>
                                     </ol>
                               </div>
                               <p className="text-sm text-gray-500">
-                                    Didn't receive the email?{' '}
+                                    {t('forgotPassword.didntReceive')}{' '}
                                     <button onClick={() => setSent(false)} className="text-blue-600 font-semibold hover:underline">
-                                          Try again
+                                          {t('forgotPassword.tryAgain')}
                                     </button>
                               </p>
                               <Link to="/login">
@@ -66,7 +68,7 @@ export default function ForgotPasswordPage() {
                                           whileHover={{ scale: 1.02 }}
                                           className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl text-sm cursor-pointer"
                                     >
-                                          <ArrowLeft className="w-4 h-4" /> Back to Login
+                                          <ArrowLeft className="w-4 h-4" /> {t('forgotPassword.backToLogin')}
                                     </motion.div>
                               </Link>
                         </motion.div>
@@ -83,7 +85,7 @@ export default function ForgotPasswordPage() {
                               )}
 
                               <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t('auth.emailAddress')}</label>
                                     <div className="relative">
                                           <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-[18px] h-[18px]" />
                                           <input
@@ -106,14 +108,14 @@ export default function ForgotPasswordPage() {
                                     className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl shadow-lg text-sm disabled:opacity-70 disabled:cursor-not-allowed"
                               >
                                     {loading ? (
-                                          <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</>
+                                          <><Loader2 className="w-4 h-4 animate-spin" /> {t('forgotPassword.sending')}</>
                                     ) : (
-                                          <>Send Reset Link <ArrowRight className="w-4 h-4" /></>
+                                          <>{t('forgotPassword.sendResetLink')} <ArrowRight className="w-4 h-4" /></>
                                     )}
                               </motion.button>
 
                               <Link to="/login" className="flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors">
-                                    <ArrowLeft className="w-4 h-4" /> Back to Login
+                                    <ArrowLeft className="w-4 h-4" /> {t('forgotPassword.backToLogin')}
                               </Link>
                         </form>
                   )}
