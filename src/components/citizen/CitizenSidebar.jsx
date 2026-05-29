@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
       LayoutDashboard, PlusCircle, Search, History, Siren,
-      Bell, MessageSquare, User, Settings, LogOut, Zap,
+      Bell, MessageSquare, User, Settings, LogOut, Zap, ClipboardList
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -15,6 +15,7 @@ export default function CitizenSidebar({ active, onNavigate, user, unreadCount, 
             { id: 'create', label: t('sidebar.createComplaint'), icon: PlusCircle },
             { id: 'track', label: t('sidebar.trackComplaint'), icon: Search },
             { id: 'history', label: t('sidebar.complaintHistory'), icon: History },
+            { id: 'reports', label: t('sidebar.resolutionReports', { defaultValue: 'Resolution Reports' }), icon: ClipboardList },
             { id: 'emergency', label: t('sidebar.emergency'), icon: Siren },
             { id: 'notifications', label: t('sidebar.notifications'), icon: Bell },
             { id: 'feedback', label: t('sidebar.feedbackRating'), icon: MessageSquare },

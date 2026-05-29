@@ -13,6 +13,7 @@ import AdminComplaints from '../../components/admin/AdminComplaints';
 import AdminOfficers from '../../components/admin/AdminOfficers';
 import AdminAnalytics from '../../components/admin/AdminAnalytics';
 import AdminEmergencies from '../../components/admin/AdminEmergencies';
+import AdminGovernance from '../../components/admin/AdminGovernance';
 
 export default function AdminDashboard() {
       const { user, logout } = useAuth();
@@ -45,6 +46,7 @@ export default function AdminDashboard() {
                   case 'officers': return <AdminOfficers />;
                   case 'emergency': return <AdminEmergencies />;
                   case 'analytics': return <AdminAnalytics />;
+                  case 'governance': return <AdminGovernance />;
                   default: return <AdminDashboardHome departmentName={departmentName} />;
             }
       };

@@ -1,7 +1,6 @@
-import React from 'react';
 import {
       LayoutDashboard, FileText, Users, BarChart3, Siren,
-      LogOut, Zap,
+      LogOut, Zap, Sparkles,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../LanguageSwitcher';
@@ -15,6 +14,7 @@ export default function AdminSidebar({ active, onNavigate, user, onLogout, mobil
             { id: 'officers', label: t('sidebar.officers'), icon: Users },
             { id: 'emergency', label: t('sidebar.emergency'), icon: Siren },
             { id: 'analytics', label: t('sidebar.analytics'), icon: BarChart3 },
+            { id: 'governance', label: t('sidebar.aiGovernance', { defaultValue: 'AI Governance' }), icon: Sparkles },
       ];
 
       return (

@@ -17,6 +17,7 @@ import CitizenProfile from '../../components/citizen/CitizenProfile';
 import CitizenSettings from '../../components/citizen/CitizenSettings';
 import AIChatbot from '../../components/citizen/AIChatbot';
 import VoiceComplaint from '../../components/VoiceComplaint';
+import ResolutionReports from '../../components/citizen/ResolutionReports';
 import { useSocket } from '../../hooks/useSocket';
 
 export default function CitizenDashboard() {
@@ -93,6 +94,8 @@ export default function CitizenDashboard() {
                         return <FeedbackPanel />;
                   case 'profile':
                         return <CitizenProfile />;
+                  case 'reports':
+                        return <ResolutionReports />;
                   case 'settings':
                         return <CitizenSettings />;
                   default:

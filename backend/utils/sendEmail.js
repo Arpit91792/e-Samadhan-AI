@@ -30,7 +30,7 @@ export const verifyEmailConnection = async () => {
 };
 
 // ── Core send ─────────────────────────────────────────────────────────────────
-const sendEmail = async ({ to, subject, html, text }) => {
+const sendEmail = async ({ to, subject, html, text, attachments }) => {
   if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
     throw new Error('SMTP credentials not configured');
   }
@@ -41,6 +41,7 @@ const sendEmail = async ({ to, subject, html, text }) => {
     subject,
     html,
     text: text || subject,
+    attachments,
   });
   return info;
 };

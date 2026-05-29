@@ -27,6 +27,7 @@ import ComplaintMapView from '../../components/maps/ComplaintMapView';
 import StatusBadge from '../../components/citizen/StatusBadge';
 import { deptLabel } from '../../utils/complaintConstants';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import { generateReportText, finalizeResolutionAndSend } from '../../api/reports';
 
 const PRIORITY_COLORS = {
   emergency: 'bg-red-100 text-red-700 border border-red-200',
@@ -84,10 +85,55 @@ function ComplaintCard({ complaint, onOpen, actionSlot }) {
   );
 }
 
-function DetailModal({ complaint, source, note, setNote, actionLoading, acceptingId, onClose, onAccept, onStatusUpdate, onAddNote, t }) {
+function DetailModal({ complaint, source, note, setNote, actionLoading, acceptingId, onClose, onAccept, onStatusUpdate, onAddNote, t, onSuccess }) {
   if (!complaint) return null;
   const isQueue = source === 'queue';
   const apiBase = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiReport, setAiReport] = useState('');
+  const [isFinalizing, setIsFinalizing] = useState(false);
+
+  const handleGenerateReport = async () => {
+    if (!note.trim()) {
+      toast.error("Please enter resolution notes first");
+      return;
+    }
+    setIsGenerating(true);
+    try {
+      const res = await generateReportText(complaint._id, note);
+      if (res.data?.success) {
+        setAiReport(res.data.resolutionReport);
+        toast.success("AI Resolution Report generated successfully!");
+      } else {
+        toast.error("Failed to generate AI report");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to generate report");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleApproveAndResolve = async () => {
+    if (!note.trim() || !aiReport) return;
+    setIsFinalizing(true);
+    try {
+      const res = await finalizeResolutionAndSend(complaint._id, note, aiReport);
+      if (res.data?.success) {
+        toast.success("Grievance resolved successfully! PDF sent to citizen.");
+        onClose();
+        if (onSuccess) onSuccess();
+      } else {
+        toast.error("Failed to finalize resolution");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to resolve complaint");
+    } finally {
+      setIsFinalizing(false);
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4"
@@ -138,32 +184,79 @@ function DetailModal({ complaint, source, note, setNote, actionLoading, acceptin
             </button>
           ) : (
             <>
-              <textarea value={note} onChange={(e) => setNote(e.target.value)}
-                placeholder={t('officerDashboardPage.resolutionNotes')}
-                className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm min-h-[80px] focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none" />
+              {complaint.status !== 'resolved' && complaint.status !== 'rejected' && !aiReport && !isGenerating && (
+                <textarea value={note} onChange={(e) => setNote(e.target.value)}
+                  placeholder={t('officerDashboardPage.resolutionNotes')}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm min-h-[80px] focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none" />
+              )}
+
+              {/* Generative AI report creation loading skeleton */}
+              {isGenerating && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} 
+                  className="p-5 bg-gradient-to-r from-blue-50/50 to-violet-50/50 border border-violet-100 rounded-2xl flex flex-col items-center justify-center gap-3 text-center py-8">
+                  <div className="relative flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    <div className="absolute inset-0 bg-blue-400 rounded-full blur-md opacity-25 animate-ping"></div>
+                  </div>
+                  <p className="text-xs font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent animate-pulse">Drafting Official Grievance Assessment via Gemini AI...</p>
+                  <p className="text-[10px] text-slate-400 px-4">Creating structured parts including Executive Summary, Actions Taken, and Citizen Recommendations using official language.</p>
+                </motion.div>
+              )}
+
+              {/* Animated report draft preview */}
+              {aiReport && !isGenerating && (
+                <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} 
+                  className="border border-slate-200 rounded-2xl overflow-hidden shadow-md bg-white flex flex-col">
+                  <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-2.5 flex items-center justify-between text-white text-[10px] font-black tracking-wider rounded-t-2xl">
+                    <span className="flex items-center gap-1.5">⚡ PREVIEW: COMPLAINT RESOLUTION REPORT</span>
+                    <span className="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full text-[8px] font-bold">DRAFT REPORT</span>
+                  </div>
+                  <div className="p-4 max-h-56 overflow-y-auto font-sans text-xs text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/50 shadow-inner">
+                    {aiReport}
+                  </div>
+                  <div className="p-3 bg-slate-100/50 border-t border-slate-100 flex gap-2">
+                    <button type="button" onClick={() => setAiReport('')} disabled={isFinalizing} 
+                      className="px-3 py-2 border border-slate-200 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors">
+                      Edit Notes
+                    </button>
+                    <button type="button" onClick={handleApproveAndResolve} disabled={isFinalizing} 
+                      className="flex-1 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white text-xs font-black rounded-lg shadow-sm flex items-center justify-center gap-1.5 transition-all">
+                      {isFinalizing ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Finalizing...</> : <><CheckCircle2 className="w-3.5 h-3.5" /> Approve & Resolve</>}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
               <div className="grid grid-cols-2 gap-2">
-                {complaint.status === 'assigned' && (
+                {complaint.status === 'assigned' && !aiReport && !isGenerating && (
                   <button type="button" disabled={actionLoading}
                     onClick={() => onStatusUpdate(complaint._id, 'in_progress', note)}
-                    className="col-span-2 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm disabled:opacity-60">
+                    className="col-span-2 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm disabled:opacity-60 shadow-sm">
                     {t('complaint.startWorking')}
                   </button>
                 )}
-                {complaint.status === 'in_progress' && (
-                  <button type="button" disabled={actionLoading}
-                    onClick={() => onStatusUpdate(complaint._id, 'resolved', note)}
-                    className="col-span-2 py-3 bg-emerald-600 text-white font-bold rounded-xl text-sm disabled:opacity-60">
-                    {t('complaint.markResolved')}
-                  </button>
+
+                {complaint.status === 'in_progress' && !aiReport && !isGenerating && (
+                  <div className="col-span-2 flex flex-col gap-2">
+                    <button type="button" disabled={actionLoading || !note.trim()}
+                      onClick={handleGenerateReport}
+                      className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-violet-600 text-white font-bold rounded-xl text-sm shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 transition-all hover:opacity-95">
+                      ⚡ Generate AI Resolution Report
+                    </button>
+                    {!note.trim() && (
+                      <p className="text-[10px] text-amber-500 text-center font-semibold">⚠️ Write resolution notes to unlock AI report generation</p>
+                    )}
+                  </div>
                 )}
-                {complaint.status !== 'resolved' && complaint.status !== 'rejected' && (
+
+                {complaint.status !== 'resolved' && complaint.status !== 'rejected' && !aiReport && !isGenerating && (
                   <button type="button" disabled={actionLoading}
                     onClick={() => onStatusUpdate(complaint._id, 'rejected', note)}
                     className="py-2.5 bg-red-50 text-red-600 font-bold rounded-xl text-sm border border-red-200 disabled:opacity-60">
                     {t('complaint.reject')}
                   </button>
                 )}
-                {note.trim() && (
+                {note.trim() && !aiReport && !isGenerating && (
                   <button type="button" disabled={actionLoading}
                     onClick={() => onAddNote(complaint._id, note)}
                     className="py-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 disabled:opacity-60">
@@ -193,6 +286,7 @@ export default function OfficerDashboard() {
 
   const [stats, setStats] = useState(null);
   const [performance, setPerformance] = useState(null);
+  const [reportStats, setReportStats] = useState(null);
   const [queue, setQueue] = useState([]);
   const [queueTotal, setQueueTotal] = useState(0);
   const [queueLoading, setQueueLoading] = useState(true);
@@ -209,9 +303,16 @@ export default function OfficerDashboard() {
 
   const loadStats = useCallback(async () => {
     try {
-      const [dashRes, perfRes] = await Promise.all([getOfficerDashboard(), getOfficerPerformance()]);
+      const [dashRes, perfRes, reportRes] = await Promise.all([
+        getOfficerDashboard(),
+        getOfficerPerformance(),
+        getOfficerReportAnalytics()
+      ]);
       setStats(dashRes.data.stats);
       setPerformance(perfRes.data.performance);
+      if (reportRes.data?.success) {
+        setReportStats(reportRes.data.analytics);
+      }
     } catch { /* non-fatal */ }
   }, []);
 
@@ -355,6 +456,49 @@ export default function OfficerDashboard() {
           </div>
         )}
 
+        {reportStats && (
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-6 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl text-white shadow-xl relative overflow-hidden border border-slate-800">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-violet-500/10 rounded-full blur-3xl -ml-20 -mb-20"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center gap-2.5 mb-5 border-b border-white/5 pb-4">
+                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                  <Zap className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-black tracking-wider text-indigo-300">AI Grievance Resolution & Citizen Ratings</h3>
+                  <p className="text-[10px] text-slate-400">Performance insights powered by e-Samadhan AI & Citizen Feedback</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center backdrop-blur-md">
+                  <p className="text-2xl font-black text-indigo-100">{reportStats.reportsGenerated}</p>
+                  <p className="text-[9px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">Reports Generated</p>
+                </div>
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center backdrop-blur-md">
+                  <p className="text-2xl font-black text-emerald-400">{reportStats.averageCitizenRating} / 5.0</p>
+                  <p className="text-[9px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">Average Rating</p>
+                </div>
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center backdrop-blur-md">
+                  <p className="text-2xl font-black text-indigo-100">{reportStats.resolvedComplaints}</p>
+                  <p className="text-[9px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">Resolved Grievances</p>
+                </div>
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 text-center backdrop-blur-md">
+                  <p className="text-2xl font-black text-indigo-100">{reportStats.reportDownloads}</p>
+                  <p className="text-[9px] text-slate-400 mt-1.5 uppercase font-bold tracking-wider">Report Downloads</p>
+                </div>
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 col-span-2 sm:col-span-1 text-center backdrop-blur-md bg-gradient-to-br from-indigo-500/10 to-violet-500/10 border-indigo-500/20">
+                  <p className="text-2xl font-black text-indigo-300">{reportStats.citizenSatisfaction}%</p>
+                  <p className="text-[9px] text-indigo-200 mt-1.5 uppercase font-bold tracking-wider">Satisfaction Rate</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <div className="flex gap-2 mb-5 flex-wrap">
           {[
             { key: 'queue', label: t('dashboard.departmentQueue'), count: queueTotal, countBg: 'bg-amber-100 text-amber-700' },
@@ -474,7 +618,8 @@ export default function OfficerDashboard() {
           <DetailModal complaint={selected} source={selectedSource} note={note} setNote={setNote}
             actionLoading={actionLoading} acceptingId={acceptingId}
             onClose={() => setSelected(null)} onAccept={handleAccept}
-            onStatusUpdate={handleStatusUpdate} onAddNote={handleAddNote} t={t} />
+            onStatusUpdate={handleStatusUpdate} onAddNote={handleAddNote} t={t}
+            onSuccess={() => { loadStats(); loadMyComplaints(); }} />
         )}
       </AnimatePresence>
     </div>

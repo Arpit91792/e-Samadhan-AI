@@ -36,6 +36,7 @@ import documentRoutes from './routes/documentRoutes.js';
 import faceRoutes from './routes/faceRoutes.js';
 import livenessRoutes from './routes/livenessRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
 import { initSocket } from './socket/index.js';
 
 // ── Register all Mongoose models ──────────────────────────────────────────────
@@ -75,7 +76,7 @@ const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ── Ensure upload dirs exist (also handled by initializeDatabase) ─────────────
-['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids', 'uploads/liveness', 'uploads/ids'].forEach(dir => {
+['uploads/profiles', 'uploads/complaints', 'uploads/govt-ids', 'uploads/liveness', 'uploads/ids', 'uploads/reports'].forEach(dir => {
       const full = path.join(__dirname, dir);
       if (!fs.existsSync(full)) fs.mkdirSync(full, { recursive: true });
 });
@@ -136,6 +137,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/face', faceRoutes);
 app.use('/api/liveness', livenessRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/reports', reportRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

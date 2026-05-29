@@ -88,6 +88,15 @@ const complaintSchema = new mongoose.Schema(
                   comment: { type: String, trim: true },
                   givenAt: { type: Date },
             },
+            // AI Resolution Report fields
+            resolutionNotes: { type: String },
+            resolutionReport: { type: String },
+            reportPdfUrl: { type: String },
+            reportGeneratedAt: { type: Date },
+            reportSent: { type: Boolean, default: false },
+            citizenRating: { type: Number, default: 0 },
+            citizenFeedback: { type: String },
+            resolvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
             // Crowd verification — other citizens who upvoted
             upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
             upvoteCount: { type: Number, default: 0 },
